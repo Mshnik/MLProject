@@ -17,6 +17,7 @@ project/plugins/project/
 .worksheet
 
 # Tex helper files
+*.aux
 *.aul
 *.bib
 *.out
