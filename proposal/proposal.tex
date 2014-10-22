@@ -57,7 +57,7 @@
 ]
 
 \section{Team}
-This project will be completed by a team of four students.
+This project will be completed by a team of 4 students.
 
 \section{Motivation}
 DonorsChoose is a crowd funding website that helps public school teachers request and receive funding. 70 percent of campaigns on DonorsChoose are successfully funded. While this is a healthy margin, it could be vastly improved. It would be valuable for teachers to learn what factors may affect the success of their campaign.  
@@ -74,34 +74,19 @@ DonorChoose enables various promotions such as having a corporation match donati
 The dataset also includes project description essays, written by the creating teachers. We'd like to use some existing software to extract important keywords and add these as feature vectors for our linear classifier.
 \section{Approach}
 
-We are trying to find a linear classifier that describes what a successful project entails, highlight which "features" are most important, and try to understand the effect of "momentum" in terms of donations. 
-
-We plan to use existing software to find a linear classifier (like SVM light) and will experiment with different scaling of our data as well as omitting certain fields to achieve the best outcome. 
-
-As for identifying the most important features we will look at the weighting of the feature vectors in the optimal hyperplane as well as run some model selection tests where we omit certain features and observe the change in accuracy on our test set. 
-
-In order to evaluate the effect of "momentum" we will try adding this data in during different parts of the funding process to see if SVM light can find a connection as well as model the correlation between amount and date of funding and the ultimate success of the project. 
+We are trying to find a linear classifier that describes what a successful project entails, highlight which "features" are most important, and try to understand the effect of "momentum" in terms of donations.  We plan to use existing software to find a linear classifier (like SVM light) and will experiment with different scaling of our data as well as omitting certain fields to achieve the best outcome.  As for identifying the most important features we will look at the weighting of the feature vectors in the optimal hyperplane as well as run some model selection tests where we omit certain features and observe the change in accuracy on our test set.  In order to evaluate the effect of "momentum" we will try adding this data in during different parts of the funding process to see if SVM light can find a connection as well as model the correlation between amount and date of funding and the ultimate success of the project. 
 
 \section{Resources}
-The full dataset for this project is provided publicly by Kaggle. It is available here: https://www.kaggle.com/c/kdd-cup-2014-predicting-excitement-at-donors-choose/data.
-
-We will use existing linear classification software provided publicly online, starting with SVM light and expanding to other software as necessary.
-
-File reading and other custom code written for this project is written in Scala, a publicly accessible and OS-agnostic language.
+We will use existing linear classification software provided publicly online, starting with SVM light and expanding to other software as necessary. File reading and other custom code written for this project is written in Scala, a publicly accessible and OS-agnostic language. The full dataset for this project is provided publicly by Kaggle. It is available here: https://www.kaggle.com/c/kdd-cup-2014-predicting-excitement-at-donors-choose/data. 
 \section{Schedule}
 
 \begin{itemize}
-\item 22nd October: This proposal submitted
 \item 25th October: Process data, begin classification
 \item 2nd November: Compile results, begin comparison of different results
 \item 9th November: Compile models, begin comparison of different models
-\item 11th November: Submit progress report.
-\item 16th November: Being writing poster and report.
-\item 4th December: Poster presentation. Submit poster.
-\item 5th December: Peer reviews for posters due.
+\item 16th November: Begin writing poster and report.
+\item 4th December: Poster presentation.
 \item 10th December: Final project report (and code) due.
-\item 15th December: Peer reviews for final project reports due.
-\item 16th December: Author Feedback on reviews for final project reports due.
 \end{itemize}
 
 \end{document} 
