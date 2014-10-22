@@ -71,15 +71,16 @@ We are also interested in looking at how characteristics of already pledged dona
 
 DonorChoose enables various promotions such as having a corporation match donations.  We would like to investigate if these promotions affect the number or size of donation as well as if they affect the likelihood of a project being funded.
 
-We also have access to project description essays, written by the creating teachers. We will analyze text samples to determine if certain keywords or other text features increase likelihood of funding for a given project.
+The dataset also includes project description essays, written by the creating teachers. We'd like to use some existing software to extract important keywords and add these as feature vectors for our linear classifier.
 \section{Approach}
 
-The problems we are interested in solving are binary classification problems.  If we can determine how to classify the projects then we can investigate which characteristics are more influential.
-We will use approaches learned in class for model selection 
+We are trying to find a linear classifier that describes what a successful project entails, highlight which "features" are most important, and try to understand the effect of "momentum" in terms of donations. 
 
-We will use existing linear classification software.
+We plan to use existing software to find a linear classifier (like SVM light) and will experiment with different scaling of our data as well as omitting certain fields to achieve the best outcome. 
 
- Once we determine how to classify the projects then we can investigate different binary classification approaches to compare for both efficiency and accuracy.
+As for identifying the most important features we will look at the weighting of the feature vectors in the optimal hyperplane as well as run some model selection tests where we omit certain features and observe the change in accuracy on our test set. 
+
+In order to evaluate the effect of "momentum" we will try adding this data in during different parts of the funding process to see if SVM light can find a connection as well as model the correlation between amount and date of funding and the ultimate success of the project. 
 
 \section{Resources}
 The full dataset for this project is provided publicly by Kaggle. It is available here: https://www.kaggle.com/c/kdd-cup-2014-predicting-excitement-at-donors-choose/data.
