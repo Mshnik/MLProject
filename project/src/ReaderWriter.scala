@@ -2,15 +2,21 @@
 /** Object to handle reading data from kaggle, assembling into Data objects */
 object ReaderWriter {
   
+  val donationsFile = "data/donations.csv"
+  val outcomesFile = "data/outcomes.csv"
+  val projectsFile = "data/projects.csv"
+  val resourcesFile = "data/resources.csv"
+  val outputFile = "data/SVMData.txt"
+  
   /** Reads from the .csv files given, writes to a new file of svm data */
   def readThenWriteToSVMData() : Unit = {
-    val donationsMap = read("data/donations.csv")
-    val outcomesMap = read("data/outcomes.csv")
-    val projectsMap = read("data/projects.csv")
-    val resourcesMap = read("data/resources.csv")
+    val donationsMap = read(donationsFile)
+    val outcomesMap = read(outcomesFile)
+    val projectsMap = read(projectsFile)
+    val resourcesMap = read(resourcesFile)
     
     val data = combine(donationsMap, outcomesMap, projectsMap, resourcesMap)
-    write(data, "data/SVMData.txt")
+    write(data, outputFile)
   }
   
   /** Reads the entries in the given file, converts to a map of maps,
