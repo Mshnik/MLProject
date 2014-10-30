@@ -17,6 +17,12 @@ project/plugins/project/
 .worksheet
 .metadata/
 
+# Eclipse
+*/.gitignore
+*/.classpath
+*/.settings/
+*/.cache
+
 # Tex helper files
 *.aux
 *.aul
