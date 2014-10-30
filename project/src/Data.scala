@@ -3,7 +3,7 @@ import scala.collection.JavaConversions._
 import scala.collection.immutable.HashMap
 import scala.io.Source
 
-/** Implementing classes are able to perform operations with other instances of their same class */
+/** Implementing classes are able to perform verctor operations with other instances of their same class */
 trait Operable[D] {
   /** Returns the dot product of this and the given other data as vectors.*/
   def dot(d : D) : Double
@@ -17,7 +17,7 @@ trait Operable[D] {
 trait Labelable[T <: Data.Label#Value]{
   /** Returns the label of this thing */
   val label : T
-  /** The possible labelings for this Labelable thing */
+  /** The possible labelings for this thing */
   val labels : List[T]
 }
 

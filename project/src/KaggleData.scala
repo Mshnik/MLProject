@@ -22,19 +22,32 @@ object KaggleData{
   /** Number of resource fields */
   val resourceFields = -1
   
+  //TODO
+  /** Returns a double value for the given string. 
+   *  The file the string value came from is also given, in case it depends on that
+   */
+  def convertValue(fName : String)(s : String) : Double = {
+    //TODO
+    
+    -1.0
+  }
+  
   /** Initializes a KaggleData instance from the given id and
    *  donation map, outcome map, projects map, resources map
    */
   def init(id : String, donationVals : Map[Int, Double],
            outcomeVals : Map[Int, Double], projectVals : Map[Int, Double],
            resourceVals : Map[Int, Double]) : KaggleData = {
-    //TODO - compile maps into one, call other init method
-    return null
+    val m = outcomeVals ++
+    		donationVals.map((a => (a._1 + outcomeFields, a._2))) ++ 
+    		projectVals.map((a => (a._1 + donationFields + outcomeFields, a._2))) ++
+    		resourceVals.map((a => (a._1 + donationFields + outcomeFields + projectFields, a._2)))
+    init(id, m)
   }
   
   
   /** Initializes a KaggleData instance from the given map and id */
-  def init(id : String, vals : Map[Int, Double]) : KaggleData = {
+  private def init(id : String, vals : Map[Int, Double]) : KaggleData = {
     new KaggleData(id, KaggleLabel.fromInt(vals(labelIndex).toInt), vals)
   }
 }
@@ -68,6 +81,7 @@ object KaggleLabel extends Data.Label{
 class KaggleData(val id : String, override val label : KaggleLabel.Value, override val vals : Map[Int, Double]) 
 	extends Data[KaggleLabel.Value](label, vals){
   
+  //TODO
   /** Valid length for KaggleData is any length. Maybe change this? */
   override def lengthOk = (a : Int) => true
   
@@ -76,7 +90,6 @@ class KaggleData(val id : String, override val label : KaggleLabel.Value, overri
   
   /** Returns a string representing this data that can be put into SVM-Light */
   def toSVMString : String = {
-    //TODO
-    ""
+    vals.foldLeft(KaggleLabel.toInt(label) + " ")((a, b) => a + b._1 + ":" + b._2 + " ") + "#" + id
   }
 }

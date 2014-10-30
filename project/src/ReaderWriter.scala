@@ -2,11 +2,46 @@
 /** Object to handle reading data from kaggle, assembling into Data objects */
 object ReaderWriter {
   
+  /** Reads from the .csv files given, writes to a new file of svm data */
+  def readThenWriteToSVMData() : Unit = {
+    val donationsMap = read("data/donations.csv")
+    val outcomesMap = read("data/outcomes.csv")
+    val projectsMap = read("data/projects.csv")
+    val resourcesMap = read("data/resources.csv")
+    
+    val data = combine(donationsMap, outcomesMap, projectsMap, resourcesMap)
+    write(data, "data/SVMData.txt")
+  }
   
-  /** Reads all rows of the given file, converts to kaggle data objects, then to svm strings.
-   *  May need to do this in chunks, because storing all in memory may be too intensive */
-  def convertToSVM(fName : String) : Unit = {
+  /** Reads the entries in the given file, converts to a map of maps,
+   *  where the outer map is id (String) -> ( index (int) -> val (double) )
+   *  
+   *  input converter function takes a string and converts it to a double
+   *  in the case that a given value is not a numeric type.
+   *  Conv should output the same input in the case that it is already a numeric type
+   */
+  def read(fName : String) : Map[String, Map[Int, Double]] = {
+    val convert = KaggleData.convertValue(fName)_
     //TODO
+    
+    null
+  }
+  
+  /** Combines the given data maps into a single list of KaggleData instances */
+  def combine(donationsMap : Map[String, Map[Int, Double]],
+		  	  outcomesMap : Map[String, Map[Int, Double]],
+		  	  projectsMap : Map[String, Map[Int, Double]],
+		  	  resourcesMap : Map[String, Map[Int, Double]]) : List[KaggleData] = {
+    //TODO - use KaggleData.init after identifying corresponding parts of maps
+    null
+  }
+  
+  /** Writes the given list of kaggleData to the given filepath, hopefully ending in .txt */
+  def write(elms : List[KaggleData], path : String) : Unit = {
+    val s = elms.foldLeft("")((acc, e) => acc + e.toSVMString + "\n")
+    val pw = new java.io.PrintWriter(new java.io.File(path))
+    try pw.write(s) 
+    finally pw.close()
   }
   
 }
