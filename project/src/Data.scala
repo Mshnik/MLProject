@@ -17,8 +17,8 @@ trait Operable[D] {
 trait Labelable[T <: Data.Label#Value]{
   /** Returns the label of this thing */
   val label : T
-  /** Returns the possible labelings for this Labelable thing */
-  def labels(): List[T]
+  /** The possible labelings for this Labelable thing */
+  val labels : List[T]
 }
 
 /** Abstract un-generified data class - used so all data classes can access vector without generic

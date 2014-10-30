@@ -5,3 +5,6 @@ Contents are too large to put on github. Here is an index of what should be in t
 for all reading/writing to run correctly
 
 projects.csv
+outcomes.csv
+donations.csv
+resources.csv
