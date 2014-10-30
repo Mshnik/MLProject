@@ -9,11 +9,4 @@ object ReaderWriter {
     //TODO
   }
   
-  /** Process a string (one row of the csv) into a 
-   *  kaggledata object of the same type as instance (a dummy instance) */
-  def process[T <: Data.Label#Value, D <: KaggleData[T]](s : String, instance : D) : D = {
-    //TODO
-    instance
-  }
-  
 }
