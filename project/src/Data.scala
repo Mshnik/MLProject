@@ -3,6 +3,38 @@ import scala.collection.JavaConversions._
 import scala.collection.immutable.HashMap
 import scala.io.Source
 
+/** Implementing classes are able to perform operations with other instances of their same class */
+trait Operable[D] {
+  /** Returns the dot product of this and the given other data as vectors.*/
+  def dot(d : D) : Double
+  /** Returns the euclidean distance from this to other */
+  def distance(d : D) : Double
+  /** Returns a double corresponding to how similiar this is to other. Higher numbers -> more similar */
+  def similarity(d : D) : Double
+}
+
+/** Implementing classes can be labeled */
+trait Labelable[T <: Data.Label#Value]{
+  /** Returns the label of this thing */
+  val label : T
+  /** Returns the possible labelings for this Labelable thing */
+  def labels(): List[T]
+}
+
+/** Abstract un-generified data class - used so all data classes can access vector without generic
+ *  param. of vals is index -> value */
+abstract class AbsData(val vals: Map[Int, Double]){
+  
+  /** Simple toString that returns the vector as a string */
+  override def toString() : String = {
+    val s = vals.foldLeft("")((a, b) => a + b._1.toString + ":" + b._2.toString + ", ")
+    "<" + s.substring(0, s.length - 2) + ">"
+  }
+  
+  /** Returns the magnitude of this data as a vector */
+  def magnitude(): Double = Data.magnitude(vals)
+}
+
 /** Companion object for Data class hosting helper and static methods */
 object Data {
   
@@ -13,32 +45,31 @@ object Data {
   /** Singleton instance for accessing NONE */
   object Label extends Label{}
 
-  /** Returns an array of the counts of the occurences of each label in the given list of data */
-  def labelCount[T <: Label#Value](elms : List[Labelable[T]]) : Array[Int] = {
-    if (elms.isEmpty()) null
-    else{
-      val labels = elms.head.labels
-      val arr = Array.ofDim[Int](labels.length)
-      for(e <- elms)
-        arr(e.label.id) = arr(e.label.id) + 1
-      arr
+  /** Returns an array of the counts of the occurences of each label in the given list of data.
+   *  Map is of label -> # occurances */
+  def labelCount[T <: Label#Value](elms : List[Labelable[T]]) : Map[T, Int] = {
+    def f(acc : HashMap[T, Int], e : Labelable[T]) : HashMap[T, Int] = {
+      if(acc.contains(e.label)){
+        val v = acc(e.label)
+        acc - e.label + ((e.label, v + 1))
+      } else{
+        acc + ((e.label, 1))
+      }
     }
+    elms.foldLeft(new HashMap[T, Int]())(f)
   }
   
-  /** Returns a list of lists, where each is split by its label */
-  def splitByLabel[T <: Label#Value](elms : List[Labelable[T]]) : List[List[Labelable[T]]] = {
-    var lstlst : List[List[Labelable[T]]] = List()
-    if (elms.isEmpty){
-      lstlst
-    }
-    else{
-      val lbls = elms.head.labels
-      for(l <- lbls){
-        val lst = elms.filter(a => a.label.equals(l))
-        lstlst = lst :: lstlst
+  /** Returns a map of lists, each list is similarly labeled data. Map is label -> list of data */
+  def splitByLabel[T <: Label#Value](elms : List[Labelable[T]]) : Map[T, List[Labelable[T]]] = {
+    def f(acc : HashMap[T, List[Labelable[T]]], e : Labelable[T]) : HashMap[T, List[Labelable[T]]] = {
+      if(acc.contains(e.label)){
+        val l = acc(e.label)
+        acc - e.label + ((e.label, (e :: l)))
+      } else{
+        acc + ((e.label, List(e)))
       }
-      lstlst
     }
+    elms.foldLeft(new HashMap[T, List[Labelable[T]]]())(f) 
   }
   
   /** Returns the length of the vector represented by the given array */
@@ -89,11 +120,11 @@ object Data {
     )
   }
   
-  /** Read and return a list of the correct subclass of data from the given file.
+  /** Read and return a list of the correct subclass of data from the given file, in SVMLight data input format.
    *  Parameters are the path to the data file, a map of string to correct labeling,
    *  and a dummy instance of the correct class (should have the default label - NONE as label though) for use in construction.
    *  Skips the first skipLines in reading */
-  def read[T <: Label#Value, E <: Data[T]](filePath : String, labelDictionary : HashMap[String, T], e : E, skipLines : Int) : List[E] = {
+  def readSVMData[T <: Label#Value, E <: Data[T]](filePath : String, labelDictionary : HashMap[String, T], e : E, skipLines : Int) : List[E] = {
     val lst : List[E] = List()
     
     def f(lst : List[E], line : String) : List[E] = {
@@ -116,40 +147,7 @@ object Data {
     }
     Source.fromFile(filePath).getLines.drop(skipLines).foldLeft(lst)(f).reverse
   }
-}
-
-/** Implementing classes are able to perform operations with other instances of their same class */
-trait Operable[D] {
-  /** Returns the dot product of this and the given other data as vectors.*/
-  def dot(d : D) : Double
-  /** Returns the euclidean distance from this to other */
-  def distance(d : D) : Double
-  /** Returns a double corresponding to how similiar this is to other. Higher numbers -> more similar */
-  def similarity(d : D) : Double
-}
-
-/** Implementing classes can be labeled */
-trait Labelable[T <: Data.Label#Value]{
   
-  /** Returns the label of this thing */
-  val label : T
-  
-  /** Returns the possible labelings for this Labelable thing */
-  def labels(): Array[T]
-}
-
-/** Abstract un-generified data class - used so all data classes can access vector without generic
- *  param. of vals is index -> value */
-abstract class AbsData(val vals: Map[Int, Double]){
-  
-  /** Simple toString that returns the vector as a string */
-  override def toString() : String = {
-    val s = vals.foldLeft("")((a, b) => a + b._1.toString + ":" + b._2.toString + ", ")
-    "<" + s.substring(0, s.length - 2) + ">"
-  }
-  
-  /** Returns the magnitude of this data as a vector */
-  def magnitude(): Double = Data.magnitude(vals)
 }
 
 /** Abstract data class represents a data value with a given vector length.

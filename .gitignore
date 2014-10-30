@@ -30,3 +30,7 @@ project/plugins/project/
 *.out
 *.bbl
 *.synctex.gz
+
+# Data files that are too large
+*/data/*.csv
+*/data/*.csv.zip
