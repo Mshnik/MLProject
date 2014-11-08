@@ -13,7 +13,9 @@ object ReaderWriter {
   
   /** Alter to run whichever routine is necessary */
   def main(args : Array[String]) : Unit = {
-
+    for(e <- read("data/combined_1.csv")){
+      println(e)
+    }
   }
   
   /** Reads from projects and outcomes files, then writes unioned data to new data files.

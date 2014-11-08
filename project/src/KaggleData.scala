@@ -8,7 +8,8 @@ object KaggleData{
   val idIndex = 0
   
   //TODO - index in input data that represents the label.
-  val labelIndex = -1
+  //Tentatively: fully_funded
+  val labelIndex = 37
   
   //Indices in combined_*.csv that are already numbers
   val numericIndices = List(3, 4, 5, 8, 28, 29, 30, 31, 43, 44, 45)
@@ -66,9 +67,9 @@ object KaggleData{
   }
   
   private val enumMap : Map[Int, List[String]] = 
-   Map(9 -> List("suburban", "urban"), 
+   Map(9 -> List("rural", "suburban", "urban"), 
        18 -> List("Mr.", "Ms.", "Mrs."),
-       25 -> List("Books", "Supplies", "Technology", "Other"),
+       25 -> List("Books", "Supplies", "Technology", "Trips", "Visitors", "Other"),
        26 -> List("low poverty", "moderate poverty", "high poverty", "highest poverty"),
        27 -> List("Grades PreK-2", "Grades 3-5", "Grades 6-8", "Grades 9-12")
       )
@@ -95,14 +96,15 @@ object KaggleData{
 
 /** Possible labelings for a KaggleData - multi class, not multi label */
 object KaggleLabel extends Data.Label{
+  val FALSE, TRUE = Value
   
-  //TODO
+  //TODO - current setting is for fully_funded
   /** Mapping of int to its corresponding KaggleLabel */
-  private val intToLabelMap : Map[Int, KaggleLabel.Value] = null
+  private val intToLabelMap : Map[Int, KaggleLabel.Value] = Map(0 -> FALSE, 1 -> TRUE)
   
-  //TODO
+  //TODO - current setting for is fully_funded
   /** Mapping of label to its corresponding int */
-  private val labelToIntMap : Map[KaggleLabel.Value, Int] = null
+  private val labelToIntMap : Map[KaggleLabel.Value, Int] = Map(FALSE -> 0, TRUE -> 1)
   
   /** Returns the corresponding KaggleLabel for the given double.
    *  Default KaggleLabel.NONE */
