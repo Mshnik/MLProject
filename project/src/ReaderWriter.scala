@@ -13,7 +13,7 @@ object ReaderWriter {
   
   /** Alter to run whichever routine is necessary */
   def main(args : Array[String]) : Unit = {
-    combineAndSplit(10000, 10)
+
   }
   
   /** Reads from projects and outcomes files, then writes unioned data to new data files.
@@ -60,39 +60,25 @@ object ReaderWriter {
       write(header :: lst.map(a => a._1 + a._2), combineFilePref + (i+1) + ".csv")
     }
   }  
-    
-  /** Reads from the .csv files given, writes to a new file of svm data */
-  def readThenWriteToSVMData() : Unit = {
-    val donationsMap = read(donationsFile)
-    val outcomesMap = read(outcomesFile)
-    val projectsMap = read(projectsFile)
-    val resourcesMap = read(resourcesFile)
-    
-    val data = combine(donationsMap, outcomesMap, projectsMap, resourcesMap)
-    write(data, outputFile)
-  }
   
-  /** Reads the entries in the given file, converts to a map of maps,
-   *  where the outer map is id (String) -> ( index (int) -> val (double) )
-   *  
-   *  input converter function takes a string and converts it to a double
-   *  in the case that a given value is not a numeric type.
-   *  Conv should output the same input in the case that it is already a numeric type
+  /** Reads the entries in the given file (in combine_*.csv format), 
+   *  outputs as a list of KaggleData
    */
-  def read(fName : String) : Map[String, Map[Int, Double]] = {
-    val convert = KaggleData.convertValue(fName)_
-    //TODO
+  def read(fName : String) : List[KaggleData] = {
+    val iterator = Source.fromFile(fName).getLines.drop(1) //Get iterator for data, drop header line
     
-    null
-  }
-  
-  /** Combines the given data maps into a single list of KaggleData instances */
-  def combine(donationsMap : Map[String, Map[Int, Double]],
-		  	  outcomesMap : Map[String, Map[Int, Double]],
-		  	  projectsMap : Map[String, Map[Int, Double]],
-		  	  resourcesMap : Map[String, Map[Int, Double]]) : List[KaggleData] = {
-    //TODO - use KaggleData.init after identifying corresponding parts of maps
-    null
+    def f(acc : List[KaggleData], e : String) : List[KaggleData] = {
+      val arr = e.split(",")
+      val id = arr(KaggleData.idIndex)
+      val m : Map[Int, Double] = Map()
+      val mp = arr.foldLeft((m, 0))((acc, d) => 
+        (acc._1 + ((acc._2, KaggleData.convertValue(acc._2, d))), acc._2 + 1) )._1
+      
+      KaggleData.init(id, mp) :: acc
+    }
+    
+    val lst : List[KaggleData] = List()
+    iterator.foldLeft(lst)(f)
   }
   
   /** Writes the given list of kaggleData to the given filepath, hopefully ending in .txt */
