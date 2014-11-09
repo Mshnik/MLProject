@@ -15,7 +15,7 @@ object KaggleData{
   val numericIndices = List(4, 5, 29, 30, 31)
   
   //Indices that are boolean values - either t or f
-  val booleanIndices = List(12, 13, 14, 15, 16, 17, 19, 20, 32, 33)
+  val booleanIndices = List(12, 13, 14, 15, 16, 17, 19, 20, 32, 33, 37)
   
   //Indices that are enum values - finite list of possible values
   val enumIndices = List(9, 18, 21, 22, 23, 24, 25, 26, 27)
@@ -32,6 +32,8 @@ object KaggleData{
   if(! allIndices.zip(0 to 45).foldLeft(true)((acc, e) => acc && e._1.equals(e._2))){
     println("Error with all Indices for KaggleData reading")
   }
+  
+  private val twoThousand = new java.util.Date("1/1/2000").getTime()
   
   /** Returns a double value for the given string. 
    *  The index of the field (in combined_*.csv) is given.
@@ -51,12 +53,9 @@ object KaggleData{
       } else if(enumIndices.contains(fieldIndex)){  //Outsource enum parsing to other method
         parseEnum(fieldIndex, s)
       } else if(dateIndices.contains(fieldIndex)){ //Parse as a date
-        //Gives two digits for each field. But easiest to re-parse to date.
-        //In order year, month, day
-        val mString = s.substring(0, s.indexOf('/'))
-        val dString = s.substring(s.indexOf('/') + 1, s.lastIndexOf('/'))
-        val yString = s.substring(s.lastIndexOf('/') + 1)
-        yString.toInt + mString.toInt / 100 + dString.toInt / 10000
+        //Write as (epoch ms - time in jan 1 2000) / (1000 * 60 * 60 * 24) = days since 2000
+        val d = new java.util.Date(s)
+        (d.getTime() - twoThousand) / (1000 * 60 * 60 * 24)
       } else if (ignoreIndices.contains(fieldIndex)){
         0.0 //Put 0 here, so this field ends up ignored and removed.
       }
@@ -69,6 +68,14 @@ object KaggleData{
   private val enumMap : Map[Int, List[String]] ={
     val m = Map(9 -> List("rural", "suburban", "urban"), 
        18 -> List("Mr.", "Ms.", "Mrs.", "Dr."),
+       21 -> List("Performing Arts", "Health & Life Science", "Applied Sciences", "Sports", "Other", "Music", 
+                  "Early Development", "Mathematics", "Character Education", "Social Sciences", "Nutrition", 
+                  "Environmental Science", "Health & Wellness", "Parent Involvement", "Gym & Fitness", 
+                  "History & Geography", "Literacy", "Economics", "Community Service", "Extracurricular", 
+                  "Foreign Languages", "College & Career Prep", "ESL", "Visual Arts", "Literature & Writing", 
+                  "Special Needs", "Civics & Government"),
+       22 -> List("Special Needs", "Health & Sports", "Math & Science", "Music & The Arts", "History & Civics", 
+                  "Literacy & Language", "Applied Learning"),
        25 -> List("Books", "Supplies", "Technology", "Trips", "Visitors", "Other"),
        26 -> List("low poverty", "moderate poverty", "high poverty", "highest poverty"),
        27 -> List("Grades PreK-2", "Grades 3-5", "Grades 6-8", "Grades 9-12")
@@ -93,7 +100,7 @@ object KaggleData{
   /** Initializes a KaggleData instance from the given map and id. Remove the
    *  label and id indices from the input map before constructing */
   def init(id : String, vals : Map[Int, Double]) : KaggleData = {
-    new KaggleData(id, KaggleLabel.fromInt(vals(labelIndex).toInt), vals.dropWhile(a => a._2.equals(0)) - labelIndex - idIndex )
+    new KaggleData(id, KaggleLabel.fromInt(vals(labelIndex).toInt), vals.filter(a => ! a._2.equals(0.0)) - labelIndex - idIndex )
   }
 }
 
