@@ -123,8 +123,10 @@ object Data {
   /** Read and return a list of the correct subclass of data from the given file, in SVMLight data input format.
    *  Parameters are the path to the data file, a map of string to correct labeling,
    *  and a dummy instance of the correct class (should have the default label - NONE as label though) for use in construction.
-   *  Skips the first skipLines in reading */
-  def readSVMData[T <: Label#Value, E <: Data[T]](filePath : String, labelDictionary : HashMap[String, T], e : E, skipLines : Int) : List[E] = {
+   *  Skips the first skipLines in reading.
+   *  
+   *   DO NOT USE FOR KAGGLEDATA Because # of constructor args changed. */
+  def readSVMData[T <: Label#Value, E <: Data[T]](filePath : String, labelDictionary : Map[String, T], e : E, skipLines : Int) : List[E] = {
     val lst : List[E] = List()
     
     def f(lst : List[E], line : String) : List[E] = {
@@ -136,9 +138,12 @@ object Data {
       
       def f(a : HashMap[Int, Double], s : String) : HashMap[Int,Double] = {
         val colIndex = s.indexOf(':')
-        val i = s.substring(0, colIndex).toInt 
-        val v = s.substring(colIndex+1).toDouble
-        a + ((i,v))
+        if(colIndex == -1) a
+        else{
+          val i = s.substring(0, colIndex).toInt 
+          val v = s.substring(colIndex+1).toDouble
+          a + ((i,v))
+        }
       }
         
       val map = entries.tail.foldLeft(new HashMap[Int, Double]())(f)

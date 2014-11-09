@@ -68,7 +68,7 @@ object KaggleData{
   
   private val enumMap : Map[Int, List[String]] = 
    Map(9 -> List("rural", "suburban", "urban"), 
-       18 -> List("Mr.", "Ms.", "Mrs."),
+       18 -> List("Mr.", "Ms.", "Mrs.", "Dr."),
        25 -> List("Books", "Supplies", "Technology", "Trips", "Visitors", "Other"),
        26 -> List("low poverty", "moderate poverty", "high poverty", "highest poverty"),
        27 -> List("Grades PreK-2", "Grades 3-5", "Grades 6-8", "Grades 9-12")
@@ -146,6 +146,7 @@ class KaggleData(val id : String, override val label : KaggleLabel.Value, overri
   
   /** Returns a string representing this data that can be put into SVM-Light */
   def toSVMString : String = {
-    vals.foldLeft(KaggleLabel.toInt(label) + " ")((a, b) => a + b._1 + ":" + b._2 + " ") + "#" + id
+    vals.toList.sortWith((a, b) => a._1 < b._1).foldLeft(KaggleLabel.toInt(label) + " ")(
+        (a, b) => a + b._1 + ":" + b._2 + " ") + "#" + id
   }
 }
