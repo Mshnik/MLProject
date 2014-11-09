@@ -44,8 +44,8 @@ object KaggleData{
     else{
       if(numericIndices.contains(fieldIndex)){ //Parse the string, should be a double already
         s.toDouble 
-      } else if(stringIndices.contains(fieldIndex)){ //Is non-finite string, return its hashcode
-        s.hashCode() 
+      } else if(stringIndices.contains(fieldIndex)){ //Is non-finite string, return its hashcode (bit normalized)
+        s.hashCode() / 100000
       } else if(booleanIndices.contains(fieldIndex)){ //should be t or f, return 1 for t, 0 for f
         if(s.equalsIgnoreCase("t")) 1 
         else if(s.equalsIgnoreCase("f")) 0
@@ -53,12 +53,12 @@ object KaggleData{
       } else if(enumIndices.contains(fieldIndex)){  //Outsource enum parsing to other method
         parseEnum(fieldIndex, s)
       } else if(dateIndices.contains(fieldIndex)){ //Parse as a date
-        //Gives three digits for each field. A bit of overkill, but easiest to re-parse to date.
+        //Gives two digits for each field. A bit of overkill, but easiest to re-parse to date.
         //In order year, month, day
         val mString = s.substring(0, s.indexOf('/'))
         val dString = s.substring(s.indexOf('/') + 1, s.lastIndexOf('/'))
         val yString = s.substring(s.lastIndexOf('/') + 1)
-        (((yString.toInt) * 1000 + mString.toInt) * 1000) + dString.toInt
+        yString.toInt + mString.toInt / 100 + dString.toInt / 10000
       }
       else{
         throw new RuntimeException("Bad fieldIndex : " + fieldIndex) 

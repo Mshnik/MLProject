@@ -18,7 +18,7 @@ object ReaderWriter {
   
   /** Alter to run whichever routine is necessary */
   def main(args : Array[String]) : Unit = {
-    checkEquality
+    convert
   }
   
   /** Returns a string representing rawDataFile i */
