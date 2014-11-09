@@ -12,22 +12,22 @@ object KaggleData{
   val labelIndex = 37
   
   //Indices in combined_*.csv that are already numbers
-  val numericIndices = List(3, 4, 5, 8, 28, 29, 30, 31, 43, 44, 45)
-  
-  //Indices in combined_*.csv that are unique strings - use hashcode
-  val stringIndices = List(0, 1, 2, 6, 7, 10, 11, 21, 22, 23, 24)
+  val numericIndices = List(4, 5, 29, 30, 31)
   
   //Indices that are boolean values - either t or f
-  val booleanIndices = List(12, 13, 14, 15, 16, 17, 19, 20, 32, 33, 35, 36, 37, 38, 39, 40, 41, 42)
+  val booleanIndices = List(12, 13, 14, 15, 16, 17, 19, 20, 32, 33)
   
   //Indices that are enum values - finite list of possible values
-  val enumIndices = List(9, 18, 25, 26, 27)
+  val enumIndices = List(9, 18, 21, 22, 23, 24, 25, 26, 27)
   
   //Indices that require special parsing as dates
   val dateIndices = List(34)
   
-  //All indices contatinated together and sortd. Should be perfect range [0, 45]. Use for testing.
-  val allIndices = (numericIndices ++ stringIndices ++ booleanIndices ++ enumIndices ++ dateIndices).sortWith((a, b) => a < b)
+  //Indices to ignore (give value 0 no matter what input)
+  val ignoreIndices = List(0, 1, 2, 3, 6, 7, 8, 10, 11, 28, 35, 36, 38, 39, 40, 41, 42, 43, 44, 45)
+  
+  //All indices contatinated together and sorted. Should be perfect range [0, 45]. Use for testing.
+  val allIndices = (numericIndices ++ booleanIndices ++ enumIndices ++ dateIndices ++ ignoreIndices).sortWith((a, b) => a < b)
 
   if(! allIndices.zip(0 to 45).foldLeft(true)((acc, e) => acc && e._1.equals(e._2))){
     println("Error with all Indices for KaggleData reading")
@@ -40,25 +40,25 @@ object KaggleData{
    */
   @throws[RuntimeException]
   def convertValue(fieldIndex : Int, s : String) : Double = {
-    if(s.equals("")) Integer.MIN_VALUE
+    if(s.equals("")) 0.0
     else{
       if(numericIndices.contains(fieldIndex)){ //Parse the string, should be a double already
         s.toDouble 
-      } else if(stringIndices.contains(fieldIndex)){ //Is non-finite string, return its hashcode (bit normalized)
-        s.hashCode() / 100000
       } else if(booleanIndices.contains(fieldIndex)){ //should be t or f, return 1 for t, 0 for f
         if(s.equalsIgnoreCase("t")) 1 
-        else if(s.equalsIgnoreCase("f")) 0
+        else if(s.equalsIgnoreCase("f")) -1
         else throw new RuntimeException("Bad boolean string encountered: " + s)
       } else if(enumIndices.contains(fieldIndex)){  //Outsource enum parsing to other method
         parseEnum(fieldIndex, s)
       } else if(dateIndices.contains(fieldIndex)){ //Parse as a date
-        //Gives two digits for each field. A bit of overkill, but easiest to re-parse to date.
+        //Gives two digits for each field. But easiest to re-parse to date.
         //In order year, month, day
         val mString = s.substring(0, s.indexOf('/'))
         val dString = s.substring(s.indexOf('/') + 1, s.lastIndexOf('/'))
         val yString = s.substring(s.lastIndexOf('/') + 1)
         yString.toInt + mString.toInt / 100 + dString.toInt / 10000
+      } else if (ignoreIndices.contains(fieldIndex)){
+        0.0 //Put 0 here, so this field ends up ignored and removed.
       }
       else{
         throw new RuntimeException("Bad fieldIndex : " + fieldIndex) 
@@ -66,13 +66,16 @@ object KaggleData{
     }
   }
   
-  private val enumMap : Map[Int, List[String]] = 
-   Map(9 -> List("rural", "suburban", "urban"), 
+  private val enumMap : Map[Int, List[String]] ={
+    val m = Map(9 -> List("rural", "suburban", "urban"), 
        18 -> List("Mr.", "Ms.", "Mrs.", "Dr."),
        25 -> List("Books", "Supplies", "Technology", "Trips", "Visitors", "Other"),
        26 -> List("low poverty", "moderate poverty", "high poverty", "highest poverty"),
        27 -> List("Grades PreK-2", "Grades 3-5", "Grades 6-8", "Grades 9-12")
       )
+    m + ((23, m(21)), (24, m(22)))
+  } 
+   
   
   /** Returns a double corresponding to the given string, for the given fieldIndex */
   @throws[RuntimeException]
@@ -80,7 +83,7 @@ object KaggleData{
     enumMap.get(fieldIndex) match{
       case None => throw new RuntimeException(fieldIndex + " Isn't an enum field")
       case Some(lst) => {
-        val l = lst.indexOf(s)
+        val l = lst.indexOf(s) + 1
         if(l == -1 ) throw new RuntimeException(s + " Isn't a valid value of enumlist " + lst)
         l
       }
@@ -90,7 +93,7 @@ object KaggleData{
   /** Initializes a KaggleData instance from the given map and id. Remove the
    *  label and id indices from the input map before constructing */
   def init(id : String, vals : Map[Int, Double]) : KaggleData = {
-    new KaggleData(id, KaggleLabel.fromInt(vals(labelIndex).toInt), vals - labelIndex - idIndex)
+    new KaggleData(id, KaggleLabel.fromInt(vals(labelIndex).toInt), vals.dropWhile(a => a._2.equals(0)) - labelIndex - idIndex )
   }
 }
 
@@ -100,11 +103,11 @@ object KaggleLabel extends Data.Label{
   
   //TODO - current setting is for fully_funded
   /** Mapping of int to its corresponding KaggleLabel */
-  private val intToLabelMap : Map[Int, KaggleLabel.Value] = Map(0 -> FALSE, 1 -> TRUE)
+  private val intToLabelMap : Map[Int, KaggleLabel.Value] = Map(-1 -> FALSE, 1 -> TRUE)
   
   //TODO - current setting for is fully_funded
   /** Mapping of label to its corresponding int */
-  private val labelToIntMap : Map[KaggleLabel.Value, Int] = Map(FALSE -> 0, TRUE -> 1)
+  private val labelToIntMap : Map[KaggleLabel.Value, Int] = Map(FALSE -> -1, TRUE -> 1)
   
   /** Returns the corresponding KaggleLabel for the given double.
    *  Default KaggleLabel.NONE */
