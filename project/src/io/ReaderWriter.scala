@@ -1,4 +1,8 @@
+package io
+
 import scala.io._
+import data.KaggleLabel
+import data.KaggleData
 
 /** Object to handle reading data from kaggle, assembling into Data objects */
 object ReaderWriter {

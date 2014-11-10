@@ -1,4 +1,5 @@
-import java.util.Arrays
+package data
+
 import scala.collection.JavaConversions._
 import scala.collection.immutable.HashMap
 import scala.io.Source

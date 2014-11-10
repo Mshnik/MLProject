@@ -1,5 +1,6 @@
+package data
+
 import scala.collection.immutable.List
-import scala.collection.immutable.HashMap
 
 /** Companion object for classes implementing KaggleData */
 object KaggleData{
