@@ -22,7 +22,7 @@ class Instance():
         if c != None:
             prefix += '_c_' + str(c).replace('.','-')
         if j != None:
-            prefix += '_j_' + str(j)
+            prefix += '_j_' + str(j).replace('.','-')
         self.model = prefix + '.model'
         self.prediction = prefix + '.prediction'
         self.classify_out = prefix +'_classify.out'
@@ -52,7 +52,7 @@ def learn(instance):
         args_list.append('-c')
         args_list.append(str(instance.c))
     if instance.j is not None:
-        args_list.append('j')
+        args_list.append('-j')
         args_list.append(str(instance.j))
     args_list.append(instance.train_file)
     args_list.append(instance.model)
@@ -119,7 +119,7 @@ DAT_NUMS = range(1,11) #TODO zero index the data files
 table = texttable.Texttable()
 table.header(['Train File', 'Accuracy',  '# FN ', '# FP'])
 for i in DAT_NUMS[:-1]:
-    instance = Instance(i,10)
+    instance = Instance(i,10,j=0.5)
     process(instance)
     table.add_row([instance.train_file, instance.accuracy, instance.fn, instance.fp])
     print instance.train_file, instance.accuracy, instance.fn, instance.fp
