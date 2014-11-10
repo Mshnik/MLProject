@@ -18,7 +18,7 @@ object ReaderWriter {
   
   /** Alter to run whichever routine is necessary */
   def main(args : Array[String]) : Unit = {
-    convert
+    checkEquality
   }
   
   /** Returns a string representing rawDataFile i */
@@ -50,7 +50,7 @@ object ReaderWriter {
       def s(a : KaggleData, b : KaggleData) : Boolean = a.id < b.id
       
       val dat1 = readRaw(rawFile(i)).sortWith(s)
-      val dat2 = readSVMData(svmFile(i), Map("1" -> KaggleLabel.TRUE, "0" -> KaggleLabel.FALSE), 0).sortWith(s)
+      val dat2 = readSVMData(svmFile(i), Map("1" -> KaggleLabel.TRUE, "-1" -> KaggleLabel.FALSE), 0).sortWith(s)
       
       def eq(a : Boolean, e : (KaggleData, KaggleData)) : Boolean = {
         a && e._1.id.equals(e._2.id) && e._1.label.equals(e._2.label) && e._1.vals.equals(e._2.vals)  
