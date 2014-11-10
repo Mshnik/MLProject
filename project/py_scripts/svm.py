@@ -5,11 +5,13 @@ import subprocess
 import scipy.sparse.linalg
 from sklearn.datasets import load_svmlight_file
 import tempfile
+import texttable
 
 # TODO better name for class
 class Instance():
     def __init__(self, train_dat_num, test_dat_num, c=None,j=None):
-        self.data_num = train_dat_num
+        self.train_data_num = train_dat_num
+        self.test_data_num = test_dat_num
         self.c = c
         self.j = j
         self.train_file = '../data/svm_data/dat_' + str(train_dat_num) +'.txt'
@@ -27,6 +29,7 @@ class Instance():
         self.accuracy = None
         self.fp = None
         self.np = None
+        self.w = None
 
 class Kernel():
     def __init__(self, type, pd, pg, ps, pr, pu, hfi, num_t_docs, num_sup_vec_plus_1, threshold):
@@ -67,14 +70,22 @@ def read_model(instance):
     lines = f.readlines()
     f.close()
     args = [x.split()[0] for x in lines[1:11]]
-    kernel = Kernel(*args)
+    instance.kernel = Kernel(*args)
     f_tmp = tempfile.TemporaryFile()
     f_tmp.writelines(lines[11:])
     x_data, y_data = load_svmlight_file(f_tmp)
     f_tmp.close()
-    return kernel, x_data, y_data
+    return x_data, y_data
 
-def get_results(instance):
+
+def find_w(instance):
+    x_data, y_data = read_model(instance)
+    x_data = x_data.transpose()
+    x_mat = scipy.sparse.linalg.aslinearoperator(x_data)
+    w = x_mat.matmat(y_data)
+    instance.w = w
+
+def find_results(instance):
     f = open(instance.prediction, 'r')
     _, y_data = load_svmlight_file(instance.test_file)
     predictions = [float(x.split()[0]) for x in f.readlines()]
@@ -83,4 +94,20 @@ def get_results(instance):
     instance.accuracy = 1 - float(instance.fn + instance.fp)/len(y_data)
     f.close()
 
+def process(instance):
+    learn(instance)
+    classify(instance)
+    find_results(instance)
+    find_w(instance)
 
+
+DAT_NUMS = range(1,11) #TODO zero index the data files
+
+table = texttable.Texttable()
+table.header(['Train File', 'Accuracy',  '# FN ', '# FP'])
+for i in DAT_NUMS[:-1]:
+    instance = Instance(i,10)
+    process(instance)
+    table.add_row([instance.train_file, instance.accuracy, instance.fn, instance.fp])
+
+print table.draw()
