@@ -24,6 +24,9 @@ class Instance():
         self.prediction = prefix + 'prediction'
         self.classify_out = prefix +'_classify.out'
         self.kernel = None
+        self.accuracy = None
+        self.fp = None
+        self.np = None
 
 class Kernel():
     def __init__(self, type, pd, pg, ps, pr, pu, hfi, num_t_docs, num_sup_vec_plus_1, threshold):
@@ -59,18 +62,25 @@ def classify(instance):
     popen.wait()
     output.close()
 
-def parse_kernel(lines):
-    args = [x.split()[0] for x in lines]
-    return Kernel(*args)
-
 def read_model(instance):
     f = open(instance.model, 'r')
     lines = f.readlines()
     f.close()
-    kernel = parse_kernel(lines[1:11])
+    args = [x.split()[0] for x in lines[1:11]]
+    kernel = Kernel(*args)
     f_tmp = tempfile.TemporaryFile()
     f_tmp.writelines(lines[11:])
     x_data, y_data = load_svmlight_file(f_tmp)
     f_tmp.close()
     return kernel, x_data, y_data
+
+def get_results(instance):
+    f = open(instance.prediction, 'r')
+    _, y_data = load_svmlight_file(instance.test_file)
+    predictions = [float(x.split()[0]) for x in f.readlines()]
+    instance.fn = sum([1 for (t, p) in zip(y_data, predictions) if t > 0 and p <= 0])
+    instance.fp = sum([1 for (t, p) in zip(y_data, predictions) if t <= 0 and p > 0])
+    instance.accuracy = 1 - float(instance.fn + instance.fp)/len(y_data)
+    f.close()
+
 
