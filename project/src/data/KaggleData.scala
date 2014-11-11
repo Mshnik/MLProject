@@ -133,7 +133,22 @@ object KaggleLabel extends Data.Label{
 /** Unioned data type of data gotten from kaggle.
  *  All kaggle data should be able to return a string of itself as a row for svm-processing */
 class KaggleData(val id : String, override val label : KaggleLabel.Value, override val vals : Map[Int, Double]) 
-	extends Data[KaggleLabel.Value](label, vals){
+	extends Data[KaggleLabel.Value](label, vals) with Operable[KaggleData]{
+  
+  /** Return the dot product of this with KaggleData d */
+  override def dot(d : KaggleData) : Double = {
+    Data.dot(vals, d.vals)
+  }
+  
+  /** Similarity of two KaggleDatas is based on their dot products */
+  override def similarity(d : KaggleData) : Double = {
+    dot(d)
+  }
+  
+  /** Use eucilidan distance for dist from this to d */
+  override def distance(d : KaggleData) : Double = {
+    Data.distance(vals, d.vals)
+  }
   
   /** Hash a KaggleData on its id */
   override def hashCode : Int = {

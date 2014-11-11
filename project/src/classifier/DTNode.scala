@@ -6,6 +6,12 @@ import data.Data._
 
 /** Holder for decision tree algorithms */
 object DTNode{
+  
+  /** Do runnings of the id3 algorithm here. */
+  def main(args : Array[String]) : Unit = {
+    
+  }
+  
   /** The ID3 DT creation algorithm. Returns the node that represents the root of the tree.
    *  Restricts to the given depth. CurrentDepth should be 1 when first passed in.
    *  splits - (int) different attributes that can be split on, with list[Double] as the splitted values
