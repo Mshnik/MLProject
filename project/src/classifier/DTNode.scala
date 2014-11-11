@@ -10,9 +10,13 @@ object DTNode{
   
   /** Do runings of the id3 algorithm here. */
   def main(args : Array[String]) : Unit = {
-    for(i <- 10 to 50 by 2){
-      trainTest(2, 3, i)
+    for(i <- 1 to 8 by 1){
+      trainTest(4, 5, i)
     }
+    
+//    val trainList = ReaderWriter.readRaw(ReaderWriter.rawFile(2))
+//    val tree = id3(combinedSplits, 1)(trainList, 0)
+//    println(tree.toString())
   }
   
   /** Basic run - train on combined_train, test on combined_test, with max depth d */
@@ -22,7 +26,7 @@ object DTNode{
     val tree = id3(combinedSplits, depth)(trainList, 0)
     println("Created tree, max depth " + depth)
     val a = tree.test(ReaderWriter.readRaw(ReaderWriter.rawFile(test)))
-    println("Tested on " + test + " : " + a + " accuracy = " + ((a._1 + a._4)/(a._1 + a._2 + a._3 + a._4)) + "\n")
+    println("Tested on " + test + " : " + a + " accuracy = " + ((a._1 + a._4).toDouble/(a._1 + a._2 + a._3 + a._4).toDouble) + "\n")
   }
   
   /** The map of splits for combined_*.csv data - possible things to split on, at different places*/
