@@ -7,8 +7,13 @@ import data.Data._
 /** Holder for decision tree algorithms */
 object DTNode{
   /** The ID3 DT creation algorithm. Returns the node that represents the root of the tree.
-   *  Restricts to the given depth. CurrentDepth should be 1 when first passed in */
-  def id3[T <: Label#Value, E <: Data[T]](elms : List[E], maxDepth : Int, currentDepth : Int) : DTNode[T, E] = {
+   *  Restricts to the given depth. CurrentDepth should be 1 when first passed in.
+   *  splits - (int) different attributes that can be split on, with list[Double] as the splitted values
+   *  elms - elements to split
+   *  maxDepth - maximum depth to allows a tree to go
+   *  currentDepth - current depth of this tree. Increment on successive calls */
+  def id3(splits : Map[Int, List[Double]], maxDepth : Int)(
+      elms : List[KaggleData], currentDepth : Int) : DTNode = {
     //First base case - no elms. Returns null
     if (elms.isEmpty) return null
     
@@ -37,13 +42,13 @@ object DTNode{
     //Keep track of ideal info gain thus far
     val currentEntropy = entropy(Data.splitByLabel(elms))
     var bestInfoGain : Double = 0
-    var bestCriteria : AttributeFunction[E, T] = null
+    var bestCriteria : AttributeFunction = null
     
     
-    //TODO! Figure out criteria for i, j
-    for(i <- 0 to 8; j <- 0 to 9){
+    //For each index, for each splittable value (j in list at index i)
+    for(i <- splits.keys; j <- splits(i)){
       //Construct the new criteria for given values of i, j
-      val criteria = new AttributeFunction(elms.head, i, (a : Double, b : List[Double]) => a <= b, List(j), ("data(" + i + ")<=" + j))
+      val criteria = new AttributeFunction(elms.head, i, (a : Double, b : List[Double]) => a <= b(0), List(j), ("data(" + i + ")<=" + j))
       //Do the partition based on this criteria
       val lstOne = elms.filter(criteria.fun)
       val lstTwo = elms.filter(criteria.fun.andThen(a => !a))
@@ -64,11 +69,11 @@ object DTNode{
     //Otherwise, no possible fix - use an impure leaf
     if(bestCriteria != null){
       //Recurse on the two children
-      val cOne = id3(elms.filter(bestCriteria.fun), maxDepth, (currentDepth + 1))
-      val cTwo = id3(elms.filter(bestCriteria.fun.andThen(a => !a)), maxDepth, (currentDepth + 1))
+      val cOne = id3(splits, maxDepth)(elms.filter(bestCriteria.fun), (currentDepth + 1))
+      val cTwo = id3(splits, maxDepth)(elms.filter(bestCriteria.fun.andThen(a => !a)), (currentDepth + 1))
       
       //Create and return this attribute node for the given criteria
-      val m = new HashMap[DTNode[T], AttributeFunction[T]]()
+      val m = new HashMap[DTNode, AttributeFunction]()
       m += ((cOne, bestCriteria))
       val s2 = bestCriteria.toString.replaceAll("<=", ">")
       m += ((cTwo, new AttributeFunction(bestCriteria, s2)))
@@ -82,7 +87,7 @@ object DTNode{
   /** Returns the proportional entropy by calculating the entropy and multiplying by the
    *  fraction of the set this set makes up
    */
-  def weightedEntropy[T <: Label#Value](lst : List[Labelable[T]], s : Int) : Double = {
+  def weightedEntropy(lst : List[Labelable[KaggleLabel.Value]], s : Int) : Double = {
     (lst.length.toDouble / s.toDouble) * entropy(Data.splitByLabel(lst))
   }
   
@@ -94,10 +99,10 @@ object DTNode{
   /** Returns the entropy of the given list partition.
    *  Input is a list of lists - each inner list is a partition of the greater list
    */
-  def entropy[T <: Label#Value](mp : Map[T, List[Labelable[T]]]) : Double = {
-    val totalSize = mp.foldLeft(0.0)( (a : Double, b : (T,List[Labelable[T]])) => a + b._2.length)
+  def entropy(mp : Map[KaggleLabel.Value, List[Labelable[KaggleLabel.Value]]]) : Double = {
+    val totalSize = mp.foldLeft(0.0)( (a : Double, b : (KaggleLabel.Value,List[Labelable[KaggleLabel.Value]])) => a + b._2.length)
     
-    def f (acc : Double, b : (T, List[Labelable[T]])) = {
+    def f (acc : Double, b : (KaggleLabel.Value, List[Labelable[KaggleLabel.Value]])) = {
      val c = if(b._2.length == 0) 0 else
        (b._2.length.toDouble/totalSize)*log2((b._2.length.toDouble/totalSize))
      acc - c
@@ -108,26 +113,26 @@ object DTNode{
 }
 
 /** Abstract node class that represents a Decision tree.
- *  May be asked to classify a given data to a label (T),
+ *  May be asked to classify a given data to a label (KaggleLabel.Value),
  *  and may maintain a list of children of the node.
  *  
  *  Maintains a list of elements that are classified by the decision made by this node
  *  If in the middle of construction and this isn't a leaf, elms needs to be divided up by creation
  *  of children
  */
-abstract class DTNode[T <: Label#Value, E <: Data[T]](val elms : List[E]) {
+abstract class DTNode(val elms : List[KaggleData]) {
 
   /** Classifies the given data using this node as the root of the tree.*/
-  def classify (data : E) : T
+  def classify (data : KaggleData) : KaggleLabel.Value
   
   /** Returns the node (of this' children) that does the classification for data */
-  def classifyingNode( data : E) : DTNode[T, E]
+  def classifyingNode( data : KaggleData) : DTNode
   
   /** Returns a hashmap of children of this node, mapping from child ->
    *  function that takes data and returns true if that data should be mapped
    *  to that child, false otherwise
    */
-  def children () : HashMap[DTNode[T, E], AttributeFunction[T, E]]
+  def children () : HashMap[DTNode, AttributeFunction]
   
   /** Returns the size of the tree rooted at this */
   def size() : Int
@@ -173,16 +178,16 @@ abstract class DTNode[T <: Label#Value, E <: Data[T]](val elms : List[E]) {
  *  and classifies all incomming data to that label.
  *  No children - returns an empty hashmap.
  */
-class DTLeafNode[T <: Label#Value, E <: Data[T]](val label : T, override val elms : List[E]) 
-    extends DTNode[T, E](elms){
+class DTLeafNode(val label : KaggleLabel.Value, override val elms : List[KaggleData]) 
+    extends DTNode(elms){
   
-  val emptyMap = new HashMap[DTNode[T, E], AttributeFunction[T, E]]()
+  val emptyMap = new HashMap[DTNode, AttributeFunction]()
   
   /** Classifies all data according to this' label. */
-  override def classify (data : E) = label
+  override def classify (data : KaggleData) = label
   
   /** This classifies all data passed to it */
-  override def classifyingNode(data : E) = this
+  override def classifyingNode(data : KaggleData) = this
   
   /** Leaf Nodes have no children - returns empty hashmap */
   override def children() = emptyMap
@@ -205,7 +210,7 @@ class DTLeafNode[T <: Label#Value, E <: Data[T]](val label : T, override val elm
 }
 
 /** A condition to test on - maintains a string representation of itself */
-class AttributeFunction[T <: Label#Value, E <: Data[T]](d : E, f : (E => Boolean), s : String){
+class AttributeFunction(d : KaggleData, f : (KaggleData => Boolean), s : String){
   /** Constructs from components.
    *  dta - dummy instane to get generic type
    *  i - index of testing in data (0 indexed, as usual)
@@ -213,11 +218,11 @@ class AttributeFunction[T <: Label#Value, E <: Data[T]](d : E, f : (E => Boolean
    *  v - the value to enter as the second through nth args
    *  s - a string representation of this function 
    *   */
-  def this(dta : E, i : Int, f : ((Double, List[Double]) => Boolean), v : List[Double], s : String) ={
-    this(dta, (d : E) => f(d.vals.getOrElse(i, 0.0), v), s)
+  def this(dta : KaggleData, i : Int, f : ((Double, List[Double]) => Boolean), v : List[Double], s : String) ={
+    this(dta, (d : KaggleData) => f(d.vals.getOrElse(i, 0.0), v), s)
   }
   /** Creates opposite of given attributefunction */
-  def this(a : AttributeFunction[T, E], s : String){
+  def this(a : AttributeFunction, s : String){
     this(a.aData, a.fun.andThen(a => !a), s)
   }
   /** A Single data reference, to get the generic type */
@@ -237,8 +242,8 @@ class AttributeFunction[T <: Label#Value, E <: Data[T]](d : E, f : (E => Boolean
  *  Maintains a naive labeling that represents what this would classify as
  *  were the tree to end here.
  */
-class DTAttributeNode[T <: Label#Value, E <: Data[T]](val m : HashMap[DTNode[T, E], AttributeFunction[T, E]], 
-    val label : T, override val elms : List[E]) extends DTNode[T, E](elms){
+class DTAttributeNode(val m : HashMap[DTNode, AttributeFunction], 
+    val label : KaggleLabel.Value, override val elms : List[KaggleData]) extends DTNode(elms){
   
   /** Passes control to child for classification. Iterates over all children
    *  and checks if any is matched with a function that accepts data.
@@ -247,7 +252,7 @@ class DTAttributeNode[T <: Label#Value, E <: Data[T]](val m : HashMap[DTNode[T, 
    *  Thus in construction, make sure that the functions for each child both
    *  cover all cases and don't overlap.
    */
-  override def classify(data : E) : T = {
+  override def classify(data : KaggleData) : KaggleLabel.Value = {
     for((node, fun) <- m){
       if(fun.fun(data)){
         return node.classify(data)
@@ -260,7 +265,7 @@ class DTAttributeNode[T <: Label#Value, E <: Data[T]](val m : HashMap[DTNode[T, 
   }
   
   /** Returns the child of this that does the classification for the given data */
-  override def classifyingNode(data : E) : DTNode[T, E] = {
+  override def classifyingNode(data : KaggleData) : DTNode = {
     for((node, fun) <- m){
       if(fun.fun(data)){
         return node
@@ -273,25 +278,25 @@ class DTAttributeNode[T <: Label#Value, E <: Data[T]](val m : HashMap[DTNode[T, 
   }
   
   /** Classifies Naively, using this as a leaf */
-  def naiveClassify(data : E) : T = label
+  def naiveClassify(data : KaggleData) : KaggleLabel.Value = label
   
   /** Returns the hashmap of children -> acceptance function */
-  override def children() : HashMap[DTNode[T, E], AttributeFunction[T, E]]  = m
+  override def children() : HashMap[DTNode, AttributeFunction]  = m
   
   /** The size of an attributeNodeTree is itself plus its children */
   override def size() = {
-    m.foldLeft(1)( (acc : Int, b : (DTNode[T, E], AttributeFunction[T, E])) => acc + b._1.size)
+    m.foldLeft(1)( (acc : Int, b : (DTNode, AttributeFunction)) => acc + b._1.size)
   }
   
   /** Returns the total number of leaves rooted at this */
     /** The size of an attributeNodeTree is itself plus its children */
   override def leaves() = {
-    m.foldLeft(0)( (acc : Int, b : (DTNode[T, E], AttributeFunction[T, E])) => acc + b._1.leaves)
+    m.foldLeft(0)( (acc : Int, b : (DTNode, AttributeFunction)) => acc + b._1.leaves)
   }
   
   /** The depth of an attributeNodeTree is itself plus the max of its children */
   override def depth() : Int = {
-    1 + m.foldLeft(0)((acc : Int, b : (DTNode[T, E], AttributeFunction[T, E])) => Math.max(acc,b._1.depth))
+    1 + m.foldLeft(0)((acc : Int, b : (DTNode, AttributeFunction)) => Math.max(acc,b._1.depth))
   }
   
   /** Recursively shows children for toString */

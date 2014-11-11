@@ -2,23 +2,23 @@ package classifier
 
 import scala.collection.immutable.HashMap
 import scala.annotation.tailrec
-import data.Data
+import data._
 
 //TODO - ties?
-/** Generic Naive Bayes implementation on Message objects, Predicts ties as Y = 1 (True)
+/** KaggleData Naive Bayes implementation on Message objects, Predicts ties as Y = 1 (True)
  *  Initialize once for each list of messages to predict on
  *  @author MPatashnik
  */
-class NaiveBayes[T <: Data.Label#Value, E <: Data[T]](val data : List[E], val vocabulary : List[String]) {
+class NaiveBayes(val data : List[KaggleData], val vocabulary : List[String]) {
   
   /** Map of label y -> Map of term index -> frequency. Notably, all frequencies are +1 */
   val termOccuranceMap = data.foldLeft(
-       data.head.labels.foldLeft(new HashMap[T, Map[Int, Double]]())(
+       data.head.labels.foldLeft(new HashMap[KaggleLabel.Value, Map[Int, Double]]())(
          (acc, e) => acc + ((e, new HashMap[Int, Double]()))
        ))(termOccuranceFun).map(v => (v._1, v._2.map(t => (t._1, t._2 + 1))))
          
   /** Folder function for creating termOccuranceMap */
-  private def termOccuranceFun (acc : HashMap[T, Map[Int, Double]], e : E) : HashMap[T, Map[Int, Double]] = {
+  private def termOccuranceFun (acc : HashMap[KaggleLabel.Value, Map[Int, Double]], e : KaggleData) : HashMap[KaggleLabel.Value, Map[Int, Double]] = {
     val m = acc.getOrElse(e.label, new HashMap[Int, Double]())
       
     /** Adds the tuple e to acc. If e's key is already there, combines doubles, otherwise adds as new tuple */
@@ -35,11 +35,11 @@ class NaiveBayes[T <: Data.Label#Value, E <: Data[T]](val data : List[E], val vo
   }
     
   /** Map of label y -> Number of tokens. Notably, all + size of vocabulary */
-  val termSizeMap = data.foldLeft(new HashMap[T, Double]()
+  val termSizeMap = data.foldLeft(new HashMap[KaggleLabel.Value, Double]()
       )(termSizeFun).map(a => (a._1, a._2 + vocabulary.size))
        
   /** Folder function for creating termSizeMap */
-  private def termSizeFun (acc : HashMap[T, Double], e : E) : HashMap[T, Double] = {
+  private def termSizeFun (acc : HashMap[KaggleLabel.Value, Double], e : KaggleData) : HashMap[KaggleLabel.Value, Double] = {
     val m = acc.getOrElse(e.label, 0.0)
       
     //New map of term frequency after this message's terms are added
@@ -56,13 +56,13 @@ class NaiveBayes[T <: Data.Label#Value, E <: Data[T]](val data : List[E], val vo
   val documentCount = data.length.toDouble
     
   /** Returns p(Y = y) */
-  private def pY(y : T) : Double = {
+  private def pY(y : KaggleLabel.Value) : Double = {
     val i = countClassMap.getOrElse(y, 0.0) / documentCount
     i
   }
   
   /** Returns p(W = w | Y = y) */
-  private def pWY(w : Int, y : T) : Double = {
+  private def pWY(w : Int, y : KaggleLabel.Value) : Double = {
     val n = termOccuranceMap.get(y) match{
       case Some(a) => a.getOrElse(w, 1.0)
       case None => 1.0
@@ -74,14 +74,14 @@ class NaiveBayes[T <: Data.Label#Value, E <: Data[T]](val data : List[E], val vo
   /** Classifies the given message (not looking at its label.
    *  Only functions properly for data in index -> # of occurances form
    *  For part 3b */
-  def classify(message : E, pos : T, neg : T) : T = {
+  def classify(message : KaggleData, pos : KaggleLabel.Value, neg : KaggleLabel.Value) : KaggleLabel.Value = {
     classify(message, (1.0, pos), (1.0, neg))
   }
   
   /** Classifies the given message with the given weights c00, c01, c10, c11.
    *  pos : cost of mislabeling a negative example (false positive) and the positive label
    *  neg : cost of mislabelign a positive example (false negative) and the negative label */
-  def classify(message : E, pos : (Double, T), neg : (Double, T)) : T = {
+  def classify(message : KaggleData, pos : (Double, KaggleLabel.Value), neg : (Double, KaggleLabel.Value)) : KaggleLabel.Value = {
     val p = message.labels.map(
         label => message.vals.foldLeft(Math.log10(pY(label)))(
         		(acc, a) => acc + Math.log10(pWY(a._1, label)) * a._2 
@@ -102,7 +102,7 @@ class NaiveBayes[T <: Data.Label#Value, E <: Data[T]](val data : List[E], val vo
   /** Trains the Naive Bayes on the given training set. Returns a tuple of
    *  (false positives, false negatives)
    */
-  def train(t : List[E], pos : T, neg : T) : (Int, Int) = {
+  def train(t : List[KaggleData], pos : KaggleLabel.Value, neg : KaggleLabel.Value) : (Int, Int) = {
     train(t, (1.0, pos), (1.0, neg))
   }
   
@@ -113,8 +113,8 @@ class NaiveBayes[T <: Data.Label#Value, E <: Data[T]](val data : List[E], val vo
    *  Returns a tuple of
    *  (false positives, false negatives)
    */
-  def train(train : List[E], pos : (Double, T), neg : (Double, T)) : (Int, Int) = {
-    def f(acc : (Int, Int), m : E) : (Int, Int) = {
+  def train(train : List[KaggleData], pos : (Double, KaggleLabel.Value), neg : (Double, KaggleLabel.Value)) : (Int, Int) = {
+    def f(acc : (Int, Int), m : KaggleData) : (Int, Int) = {
       val l = classify(m, pos, neg)
       if(l.equals(m.label)) acc
       else{
