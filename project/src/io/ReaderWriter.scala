@@ -26,12 +26,12 @@ object ReaderWriter {
   }
   
   /** Returns a string representing rawDataFile i */
-  private def rawFile(i : Int) : String = {
+  def rawFile(i : Int) : String = {
     rawData + i + rawExtension
   }
   
   /** Returns a string representing svmData file i */
-  private def svmFile(i : Int) : String = {
+  def svmFile(i : Int) : String = {
     svmData + i + svmExtension
   }
   
@@ -172,6 +172,11 @@ object ReaderWriter {
   /** Writes the given list of kaggleData as their svm representations to the given filepath */
   def writeSVM(elms : List[KaggleData], path : String) : Unit = {
     val s = elms.foldLeft("")((acc, e) => acc + e.toSVMString + "\n")
+    write(s, path)
+  }
+  
+  /** Writes the given string to the given path */
+  def write(s : String, path : String) : Unit = {
     val pw = new java.io.PrintWriter(new java.io.File(path))
     try pw.write(s) 
     finally pw.close()

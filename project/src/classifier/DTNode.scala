@@ -3,13 +3,49 @@ package classifier
 import scala.collection.mutable.HashMap
 import data._
 import data.Data._
+import io._
 
 /** Holder for decision tree algorithms */
 object DTNode{
   
-  /** Do runnings of the id3 algorithm here. */
+  /** Do runings of the id3 algorithm here. */
   def main(args : Array[String]) : Unit = {
-    
+    for(i <- 10 to 50 by 2){
+      trainTest(2, 3, i)
+    }
+  }
+  
+  /** Basic run - train on combined_train, test on combined_test, with max depth d */
+  def trainTest(train : Int, test : Int, depth : Int) : Unit = {
+    val trainList = ReaderWriter.readRaw(ReaderWriter.rawFile(train))
+    println("Read data from " + train)
+    val tree = id3(combinedSplits, depth)(trainList, 0)
+    println("Created tree, max depth " + depth)
+    val a = tree.test(ReaderWriter.readRaw(ReaderWriter.rawFile(test)))
+    println("Tested on " + test + " : " + a + " accuracy = " + ((a._1 + a._4)/(a._1 + a._2 + a._3 + a._4)) + "\n")
+  }
+  
+  /** The map of splits for combined_*.csv data - possible things to split on, at different places*/
+  val combinedSplits : Map[Int, List[Double]] = Map(
+    4 -> doubleSplits(30, 40, 1),
+    5 -> doubleSplits(-110, -76, 2),
+    29 -> doubleSplits(25, 1000, 25),
+    30 -> doubleSplits(50, 1500, 50),
+    31 -> doubleSplits(10, 200, 10),
+    34 -> doubleSplits(2000, 6000, 100)
+  ) ++ 
+  KaggleData.booleanIndices.map(a => (a, List(0.0))).toMap ++
+  KaggleData.enumIndices.map(a => (a, enumSplits(a))).toMap
+  
+  
+  /** Returns a list of doubles with the given min, max, inc */
+  private def doubleSplits(min : Double, max : Double, inc : Double) : List[Double] = {
+    (min to max by inc).toList
+  }
+  
+  /** Returns a list of doubles [1.0 ... enumMap(i).length] */
+  private def enumSplits(i : Int) : List[Double] = {
+    (1 to KaggleData.enumMap(i).length).toList.map(a => a.toDouble)
   }
   
   /** The ID3 DT creation algorithm. Returns the node that represents the root of the tree.
@@ -24,7 +60,7 @@ object DTNode{
     if (elms.isEmpty) return null
     
     //Check for base case - if all elms share a classification, create and return leaf node
-    val labels = elms.head.labels //Possible labelings of elements in elms
+    val labels = List(KaggleLabel.FALSE, KaggleLabel.TRUE) //Possible (legal) labelings of elements in elms
     for(l <- labels)
       if (elms.forall(a =>a.label.equals(l)))
     	return new DTLeafNode(l, elms)
@@ -34,7 +70,7 @@ object DTNode{
     var m = -1
     var k = -1
     for(i <- 0 until labelCount.length){
-      if(m > labelCount(i)._2){
+      if(m < labelCount(i)._2){
         m = labelCount(i)._2
         k = i
       }
@@ -154,6 +190,22 @@ abstract class DTNode(val elms : List[KaggleData]) {
   
   /** Helper for toString implementations that keeps track of how far in depth this is */
   def toStringRec(i : Int) : String
+  
+  /** Classifies each element in the input set, outputs (TP, FN, FP, TN). */
+  @throws[RuntimeException]
+  def test(testList : List[KaggleData]) : (Int, Int, Int, Int) = {
+    def f(acc : (Int, Int, Int, Int), e : KaggleData) : (Int, Int, Int, Int) = {
+      val c = classify(e)
+      (e.label, c) match{
+        case (KaggleLabel.TRUE, KaggleLabel.TRUE) => (acc._1 + 1, acc._2, acc._3, acc._4)
+        case (KaggleLabel.TRUE, KaggleLabel.FALSE) => (acc._1, acc._2 + 1, acc._3, acc._4)
+        case (KaggleLabel.FALSE, KaggleLabel.TRUE) => (acc._1, acc._2, acc._3 + 1, acc._4)
+        case (KaggleLabel.FALSE, KaggleLabel.FALSE) => (acc._1, acc._2, acc._3, acc._4 + 1)
+        case _ => throw new RuntimeException("Strange classification for " + e + " : " + c)
+      }
+    }
+    testList.foldLeft((0,0,0,0))(f)
+  }
   
   /** Returns a concatination of i tabs */
   protected def tabs(i : Int) : String = {

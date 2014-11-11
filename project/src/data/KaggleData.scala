@@ -101,8 +101,9 @@ object KaggleData{
     }
   }
   
-  private val enumMap : Map[Int, List[String]] ={
-    val m = Map(9 -> List("rural", "suburban", "urban"), 
+  val enumMap : Map[Int, List[String]] ={
+    val m = Map(
+        9 -> List("rural", "suburban", "urban"), 
        18 -> List("Mr.", "Ms.", "Mrs.", "Dr."),
        21 -> List("Performing Arts", "Health & Life Science", "Applied Sciences", "Sports", "Other", "Music", 
                   "Early Development", "Mathematics", "Character Education", "Social Sciences", "Nutrition", 
