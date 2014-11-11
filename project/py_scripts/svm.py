@@ -3,7 +3,8 @@ from random import shuffle
 import re
 import subprocess
 import scipy.sparse.linalg
-from sklearn.datasets import load_svmlight_file
+from sklearn.datasets import load_svmlight_file, dump_svmlight_file
+from sklearn.preprocessing import normalize
 import tempfile
 import texttable
 
@@ -17,6 +18,7 @@ class Instance():
         self.c = c
         self.j = j
         self.train_file = '../data/svm_data/dat_' + str(train_dat_num) +'.txt'
+        self.norm_train_file = '../data/svm_data/dat_' + str(train_dat_num) + '_norm.txt'
         self.test_file = '../data/svm_data/dat_' + str(test_dat_num) +'.txt'
         prefix = '../data/svm_out/dat_' + str(train_dat_num)
         if c != None:
@@ -45,6 +47,10 @@ class Kernel():
         self.num_sup_vec_plus_1 = int(num_sup_vec_plus_1)
         self.b = float(threshold)
 
+def normalize_data(instance):
+    x_data, y_data = load_svmlight_file(instance.train_file)
+    x_normal = normalize(x_data)
+    dump_svmlight_file(x_normal, y_data, instance.norm_train_file)
 
 def learn(instance):
     args_list = ['./svm_light/svm_learn']
@@ -54,7 +60,7 @@ def learn(instance):
     if instance.j is not None:
         args_list.append('-j')
         args_list.append(str(instance.j))
-    args_list.append(instance.train_file)
+    args_list.append(instance.norm_train_file)
     args_list.append(instance.model)
     args = tuple(args_list)
     f_tmp = tempfile.TemporaryFile()
@@ -108,6 +114,7 @@ def find_results(instance):
     f.close()
 
 def process(instance):
+    normalize_data(instance)
     learn(instance)
     classify(instance)
     find_results(instance)
@@ -116,13 +123,23 @@ def process(instance):
 
 DAT_NUMS = range(1,11) #TODO zero index the data files
 
+J_VALS = [.5]
+
+#table = texttable.Texttable()
+#table.header(['Train File', 'Accuracy',  '# FN ', '# FP'])
+# for i in DAT_NUMS[:-1]:
+#     instance = Instance(i,10)
+#     process(instance)
+#     table.add_row([instance.train_file, instance.accuracy, instance.fn, instance.fp])
+#     print instance.train_file, instance.accuracy, instance.fn, instance.fp
+
 table = texttable.Texttable()
-table.header(['Train File', 'Accuracy',  '# FN ', '# FP'])
-for i in DAT_NUMS[:-1]:
-    instance = Instance(i,10,j=0.5)
+table.header(['j', 'Accuracy',  '# FN ', '# FP'])
+for j in J_VALS:
+    instance = Instance(1,10)
     process(instance)
-    table.add_row([instance.train_file, instance.accuracy, instance.fn, instance.fp])
-    print instance.train_file, instance.accuracy, instance.fn, instance.fp
+    table.add_row([instance.j, instance.accuracy, instance.fn, instance.fp])
+    print instance.j, instance.accuracy, instance.fn, instance.fp
 
 print "---------------------------"
 print
