@@ -114,44 +114,11 @@ object Data {
   /** Returns a vector that represents the standard deviation of each field of the list of data provided.
    *  Output has length equal to data.expectedSize() (one value per field in each input data).
    *  Takes the mean of the dataset as an input - prevents redundant calculations of mean */
-  private def stDev[D <: AbsData](data: List[D], means : Map[Int, Double]): Map[Int, Double] = {
+  def stDev[D <: AbsData](data: List[D], means : Map[Int, Double]): Map[Int, Double] = {
     val count : Double = data.length
     data.foldLeft(new HashMap[Int, Double])((map, d) =>
       d.vals.foldLeft(map)((map, t) => map + ((t._1, Math.pow(t._2 - means(t._1), 2) / count + map.getOrElse(t._1, 0.0)) ))
     )
-  }
-  
-  /** Read and return a list of the correct subclass of data from the given file, in SVMLight data input format.
-   *  Parameters are the path to the data file, a map of string to correct labeling,
-   *  and a dummy instance of the correct class (should have the default label - NONE as label though) for use in construction.
-   *  Skips the first skipLines in reading.
-   *  
-   *   DO NOT USE FOR KAGGLEDATA Because # of constructor args changed. */
-  def readSVMData[T <: Label#Value, E <: Data[T]](filePath : String, labelDictionary : Map[String, T], e : E, skipLines : Int) : List[E] = {
-    val lst : List[E] = List()
-    
-    def f(lst : List[E], line : String) : List[E] = {
-      //Split line by spaces
-      val entries = line.split("\\s").toList
-        
-      //The correct classification of this example
-      val status : T = labelDictionary.getOrElse(entries(0), e.label)
-      
-      def f(a : HashMap[Int, Double], s : String) : HashMap[Int,Double] = {
-        val colIndex = s.indexOf(':')
-        if(colIndex == -1) a
-        else{
-          val i = s.substring(0, colIndex).toInt 
-          val v = s.substring(colIndex+1).toDouble
-          a + ((i,v))
-        }
-      }
-        
-      val map = entries.tail.foldLeft(new HashMap[Int, Double]())(f)
-      val a = e.getClass().getConstructors().head.newInstance(status, map).asInstanceOf[E]
-      a :: lst
-    }
-    Source.fromFile(filePath).getLines.drop(skipLines).foldLeft(lst)(f).reverse
   }
   
 }

@@ -7,8 +7,9 @@ object KNN {
 
 }
 
-/** Creates a KNN classifier with the given training data and k value */
-class KNN(val training: Map[KaggleData, KaggleLabel.Value], val k: Int) {
+/** Creates a KNN classifier with the given training data and k value.
+ *  Make sure the input set is normalized or some attributes will get more attention. */
+class KNN(val training: List[KaggleData], val k: Int) {
 
   /** Classifies a single KaggleData using the training set and k value for this KNN */
   def classifyK(d: KaggleData): KaggleLabel.Value = {
@@ -24,7 +25,7 @@ class KNN(val training: Map[KaggleData, KaggleLabel.Value], val k: Int) {
     })
     
     // Add all elements to priority queue
-    for (p2 <- training.keySet) {
+    for (p2 <- training) {
       kClosest.add(p2)
     }
     //For the first k elements, copy to list.
