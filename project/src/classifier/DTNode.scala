@@ -1,6 +1,5 @@
 package classifier
 
-import scala.collection.mutable.HashMap
 import data._
 import data.Data._
 import io._
@@ -8,26 +7,28 @@ import io._
 /** Holder for decision tree algorithms */
 object DTNode{
   
-  /** Do runings of the id3 algorithm here. */
+  /** Do runnings of the id3 algorithm here. */
   def main(args : Array[String]) : Unit = {
-    for(i <- 1 to 8 by 1){
+    for(i <- 1 to 10 by 1){
       trainTest(4, 5, i)
     }
-    
-//    val trainList = ReaderWriter.readRaw(ReaderWriter.rawFile(2))
-//    val tree = id3(combinedSplits, 1)(trainList, 0)
-//    println(tree.toString())
   }
   
   /** Basic run - train on combined_train, test on combined_test, with max depth d */
   def trainTest(train : Int, test : Int, depth : Int) : Unit = {
     val trainList = ReaderWriter.readRaw(ReaderWriter.rawFile(train))
     println("Read data from " + train)
-    val tree = id3(combinedSplits, depth)(trainList, 0)
+    val tree = id3(attributeSplits, combinedSplits, depth)(trainList, 0, null)
     println("Created tree, max depth " + depth)
     val a = tree.test(ReaderWriter.readRaw(ReaderWriter.rawFile(test)))
     println("Tested on " + test + " : " + a + " accuracy = " + ((a._1 + a._4).toDouble/(a._1 + a._2 + a._3 + a._4).toDouble) + "\n")
   }
+  
+  /** List of attributes that can be split on */
+  val attributeSplits : List[Int] = KaggleData.numericIndices ++
+                                    KaggleData.booleanIndices.filterNot(a => a.equals(KaggleData.labelIndex)) ++
+                                    KaggleData.enumIndices ++
+                                    KaggleData.dateIndices
   
   /** The map of splits for combined_*.csv data - possible things to split on, at different places*/
   val combinedSplits : Map[Int, List[Double]] = Map(
@@ -37,9 +38,7 @@ object DTNode{
     30 -> doubleSplits(50, 1500, 50),
     31 -> doubleSplits(10, 200, 10),
     34 -> doubleSplits(2000, 6000, 100)
-  ) ++ 
-  KaggleData.booleanIndices.map(a => (a, List(0.0))).toMap ++
-  KaggleData.enumIndices.map(a => (a, enumSplits(a))).toMap
+  )
   
   
   /** Returns a list of doubles with the given min, max, inc */
@@ -54,12 +53,14 @@ object DTNode{
   
   /** The ID3 DT creation algorithm. Returns the node that represents the root of the tree.
    *  Restricts to the given depth. CurrentDepth should be 1 when first passed in.
-   *  splits - (int) different attributes that can be split on, with list[Double] as the splitted values
+   *  attributes - all attributes that can be split on. Non-numeric are split on possible values + NONE.
+   *  splits - (int) different numeric attributes that can be split on, with list[Double] as the possible splitted values
    *  elms - elements to split
    *  maxDepth - maximum depth to allows a tree to go
-   *  currentDepth - current depth of this tree. Increment on successive calls */
-  def id3(splits : Map[Int, List[Double]], maxDepth : Int)(
-      elms : List[KaggleData], currentDepth : Int) : DTNode = {
+   *  currentDepth - current depth of this tree. Increment on successive calls
+   *  funToHere - the function that caused to get to this call. Null only in the initial call */
+  def id3(attributes : List[Int], splits : Map[Int, List[Double]], maxDepth : Int)(
+      elms : List[KaggleData], currentDepth : Int, funToHere : AttributeFunction) : DTNode = {
     //First base case - no elms. Returns null
     if (elms.isEmpty) return null
     
@@ -67,7 +68,7 @@ object DTNode{
     val labels = List(KaggleLabel.FALSE, KaggleLabel.TRUE) //Possible (legal) labelings of elements in elms
     for(l <- labels)
       if (elms.forall(a =>a.label.equals(l)))
-    	return new DTLeafNode(l, elms)
+    	return new DTLeafNode(funToHere, l, elms)
     
     //Find most common label among elements - break ties with earlier occuring enum
     val labelCount = Data.labelCount(elms).toList
@@ -80,7 +81,7 @@ object DTNode{
       }
     }
     if(currentDepth == maxDepth){ //Can't go any further - make the best leaf we can
-      return new DTLeafNode(labels(k), elms)
+      return new DTLeafNode(funToHere, labels(k), elms)
     }
     
     //Non-base case. Try to gain some information by splitting elms
@@ -88,45 +89,75 @@ object DTNode{
     //Keep track of ideal info gain thus far
     val currentEntropy = entropy(Data.splitByLabel(elms))
     var bestInfoGain : Double = 0
-    var bestCriteria : AttributeFunction = null
+    var bestCriterias : List[AttributeFunction] = List()
     
+    /**Tests the given attribute that is a double. Tries attribute i with split value j */
+    def testDoubleAtt(i : Int, j : List[Double]) : (Double, List[AttributeFunction]) = {
+      
+      /** Tries splitting on the value k. If better, returns that, otherwise returns acc */
+      def f(acc : (Double, List[AttributeFunction]), k : Double) : (Double, List[AttributeFunction]) = {
+        val criteria = new AttributeFunction(i, (a : Double, b : List[Double]) => a <= b(0), List(k), ("data(" + i + ")<=" + k))
+        //Do the partition based on this criteria
+        val lstOne = elms.filter(criteria.fun)
+        val lstTwo = elms.filter(criteria.fun.andThen(a => !a))
+      
+        //Calculate the information gain
+        val entropyOne = weightedEntropy(lstOne, elms.length)
+        val entropyTwo = weightedEntropy(lstTwo, elms.length)
+        val infoGain = currentEntropy - (entropyOne + entropyTwo)
+        
+        //Pick this if better than acc, else acc.
+        if((acc._1 < infoGain)) (infoGain, List(criteria, new AttributeFunction(criteria, "data(" + i + ")>" + k))) else acc
+      }
+      
+      //Fold over possible j values to find best
+      val a : AttributeFunction = null
+      j.foldLeft(-1.0, List(a, a))(f)
+    }
+    
+    /** Tests splitting on the given boolean or enum attribute (at index i) */
+    def testEnumAtt(i : Int) : (Double, List[AttributeFunction]) = {
+      val m =
+      (  if(KaggleData.enumIndices.contains(i)) 
+           "Not Provided" :: KaggleData.enumMap(i) //Possible enum values, with Not provided (blank) as index 0.
+         else 
+           List("f", "Not Provided", "t")
+      ).foldLeft((0, List[(Int, String)]()))((acc, e) => (acc._1 + 1, (acc._1, e) :: acc._2))._2  
+      //Map into a list of attribute functions
+      val criterias = m.map(a => new AttributeFunction(i, 
+        (x : Int) => x.equals(a._1), 
+        "Data(" + i + ") = " + KaggleData.enumMap.get(i).getOrElse(a._1, "Not Provided")))
+              
+      val lsts = criterias.map(a => elms.filter(a.fun))
+        
+      //Calculate information gain
+      val entropies = lsts.foldLeft(0.0)((acc, a) => acc + weightedEntropy(a, a.length))
+      val infoGain = currentEntropy - entropies
+      (infoGain, criterias)
+    }
     
     //For each index, for each splittable value (j in list at index i)
-    for(i <- splits.keys; j <- splits(i)){
-      //Construct the new criteria for given values of i, j
-      val criteria = new AttributeFunction(elms.head, i, (a : Double, b : List[Double]) => a <= b(0), List(j), ("data(" + i + ")<=" + j))
-      //Do the partition based on this criteria
-      val lstOne = elms.filter(criteria.fun)
-      val lstTwo = elms.filter(criteria.fun.andThen(a => !a))
-      
-      //Calculate the information gain
-      val entropyOne = weightedEntropy(lstOne, elms.length)
-      val entropyTwo = weightedEntropy(lstTwo, elms.length)
-      val infoGain = currentEntropy - (entropyOne + entropyTwo)
-      
-      //Check if better than previous best
+    for(i <- attributes){
+      val (infoGain, criteria) = if(splits.contains(i)) testDoubleAtt(i, splits(i)) else (0.0,null)
       if(infoGain > bestInfoGain){
         bestInfoGain = infoGain
-        bestCriteria = criteria
+        bestCriterias = criteria
       }
     }
     
     //If there is some best criteria to split on, split and recurse.
     //Otherwise, no possible fix - use an impure leaf
-    if(bestCriteria != null){
-      //Recurse on the two children
-      val cOne = id3(splits, maxDepth)(elms.filter(bestCriteria.fun), (currentDepth + 1))
-      val cTwo = id3(splits, maxDepth)(elms.filter(bestCriteria.fun.andThen(a => !a)), (currentDepth + 1))
+    if(! bestCriterias.isEmpty){
+      //Recurse on the many?!?!?!? children
+      val a : List[DTNode] = List()
+      val children = bestCriterias.foldLeft(a)((acc, a) => id3(attributes, splits, maxDepth)(elms.filter(a.fun), (currentDepth + 1), a) :: acc)
       
       //Create and return this attribute node for the given criteria
-      val m = new HashMap[DTNode, AttributeFunction]()
-      m += ((cOne, bestCriteria))
-      val s2 = bestCriteria.toString.replaceAll("<=", ">")
-      m += ((cTwo, new AttributeFunction(bestCriteria, s2)))
-      return new DTAttributeNode(m, labels(k), elms)
+      val m = children.map(a => (a, a.f)).toMap
+      return new DTAttributeNode(funToHere, m, labels(k), elms)
     } else{
       
-      return new DTLeafNode(labels(k), elms)
+      return new DTLeafNode(funToHere, labels(k), elms)
     }
   }
   
@@ -165,8 +196,10 @@ object DTNode{
  *  Maintains a list of elements that are classified by the decision made by this node
  *  If in the middle of construction and this isn't a leaf, elms needs to be divided up by creation
  *  of children
+ *  
+ *  f is the function that got to here. Null only for the root node
  */
-abstract class DTNode(val elms : List[KaggleData]) {
+abstract class DTNode(val f : AttributeFunction, val elms : List[KaggleData]) {
 
   /** Classifies the given data using this node as the root of the tree.*/
   def classify (data : KaggleData) : KaggleLabel.Value
@@ -178,7 +211,7 @@ abstract class DTNode(val elms : List[KaggleData]) {
    *  function that takes data and returns true if that data should be mapped
    *  to that child, false otherwise
    */
-  def children () : HashMap[DTNode, AttributeFunction]
+  def children () : Map[DTNode, AttributeFunction]
   
   /** Returns the size of the tree rooted at this */
   def size() : Int
@@ -240,10 +273,10 @@ abstract class DTNode(val elms : List[KaggleData]) {
  *  and classifies all incomming data to that label.
  *  No children - returns an empty hashmap.
  */
-class DTLeafNode(val label : KaggleLabel.Value, override val elms : List[KaggleData]) 
-    extends DTNode(elms){
+class DTLeafNode(override val f : AttributeFunction, val label : KaggleLabel.Value, override val elms : List[KaggleData]) 
+    extends DTNode(f, elms){
   
-  val emptyMap = new HashMap[DTNode, AttributeFunction]()
+  val emptyMap : Map[DTNode, AttributeFunction] = Map()
   
   /** Classifies all data according to this' label. */
   override def classify (data : KaggleData) = label
@@ -272,23 +305,31 @@ class DTLeafNode(val label : KaggleLabel.Value, override val elms : List[KaggleD
 }
 
 /** A condition to test on - maintains a string representation of itself */
-class AttributeFunction(d : KaggleData, f : (KaggleData => Boolean), s : String){
-  /** Constructs from components.
-   *  dta - dummy instane to get generic type
+class AttributeFunction(f : (KaggleData => Boolean), s : String){
+  
+  /** Constructs a Double (real valued) attribute function from components.
    *  i - index of testing in data (0 indexed, as usual)
    *  f - comparison function, with actual value as first input and v as second value
    *  v - the value to enter as the second through nth args
    *  s - a string representation of this function 
    *   */
-  def this(dta : KaggleData, i : Int, f : ((Double, List[Double]) => Boolean), v : List[Double], s : String) ={
-    this(dta, (d : KaggleData) => f(d.vals.getOrElse(i, 0.0), v), s)
+  def this(i : Int, f : ((Double, List[Double]) => Boolean), v : List[Double], s : String) ={
+    this((d : KaggleData) => f(d.vals.getOrElse(i, 0.0), v), s)
   }
+  /** Constructs a enum (discrete valued) attribute function from components.
+   *  f - comparison function, in the form a = (val)
+   *  s - a string representation of this function
+   */
+  def this(i : Int, f : (Int => Boolean), s : String) = {
+     this((d : KaggleData) => f(d.vals.getOrElse(i, 0.0).toInt), s)
+  }
+  
   /** Creates opposite of given attributefunction */
   def this(a : AttributeFunction, s : String){
-    this(a.aData, a.fun.andThen(a => !a), s)
+    this(a.fun.andThen(a => !a), s)
   }
-  /** A Single data reference, to get the generic type */
-  private val aData = d
+  
+  /** A reference to the function of this attributefunction */
   val fun = f
   
   /** Returns the string representation for the toString */
@@ -304,8 +345,8 @@ class AttributeFunction(d : KaggleData, f : (KaggleData => Boolean), s : String)
  *  Maintains a naive labeling that represents what this would classify as
  *  were the tree to end here.
  */
-class DTAttributeNode(val m : HashMap[DTNode, AttributeFunction], 
-    val label : KaggleLabel.Value, override val elms : List[KaggleData]) extends DTNode(elms){
+class DTAttributeNode(override val f : AttributeFunction, val m : Map[DTNode, AttributeFunction], 
+    val label : KaggleLabel.Value, override val elms : List[KaggleData]) extends DTNode(f, elms){
   
   /** Passes control to child for classification. Iterates over all children
    *  and checks if any is matched with a function that accepts data.
@@ -343,7 +384,7 @@ class DTAttributeNode(val m : HashMap[DTNode, AttributeFunction],
   def naiveClassify(data : KaggleData) : KaggleLabel.Value = label
   
   /** Returns the hashmap of children -> acceptance function */
-  override def children() : HashMap[DTNode, AttributeFunction]  = m
+  override def children() : Map[DTNode, AttributeFunction]  = m
   
   /** The size of an attributeNodeTree is itself plus its children */
   override def size() = {
