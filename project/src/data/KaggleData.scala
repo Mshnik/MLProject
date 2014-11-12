@@ -162,7 +162,7 @@ object KaggleData{
    *  normalizes each value with the given map of means and standard deviations
    */
   private def initNormalized(id : String, l : KaggleLabel.Value, vals : Map[Int, Double], 
-      means : Map[Int, Double], stDev : Map[Int, Double]) : KaggleData = {
+     means : Map[Int, Double], stDev : Map[Int, Double]) : KaggleData = {
      new KaggleData(id, l, vals.map(a => (a._1, (a._2 - means(a._1))/stDev(a._1) )))
   }
 }
@@ -172,10 +172,16 @@ object KaggleLabel extends Data.Label{
   val FALSE, TRUE = Value
   
   /** Mapping of int to its corresponding KaggleLabel */
-  private val intToLabelMap : Map[Int, KaggleLabel.Value] = Map(-1 -> FALSE, 1 -> TRUE)
+  val intToLabelMap : Map[Int, KaggleLabel.Value] = Map(-1 -> FALSE, 1 -> TRUE)
   
   /** Mapping of label to its corresponding int */
-  private val labelToIntMap : Map[KaggleLabel.Value, Int] = Map(FALSE -> -1, TRUE -> 1)
+  val labelToIntMap = intToLabelMap.map(a => (a._2, a._1))
+  
+  /** Mapping of a string to its corresponding label */
+  val stringToLabelMap = intToLabelMap.map(a => (a._1.toString, a._2))
+  
+  /** Mapping of a Label to its corresponding string */
+  val labelToStringMap = stringToLabelMap.map(a => (a._2, a._1))
   
   /** Returns the corresponding KaggleLabel for the given double.
    *  Default KaggleLabel.NONE */

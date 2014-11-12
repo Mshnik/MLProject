@@ -8,21 +8,22 @@ import data.KaggleData
 object ReaderWriter {
   
   //Where to put the files when you want to use them. Otherwise store at ../data/*.csv
-  val donationsFile = "data/donations.csv"
-  val outcomesFile = "data/outcomes.csv"
-  val projectsFile = "data/projects.csv"
-  val resourcesFile = "data/resources.csv"
+  private val donationsFile = "data/donations.csv"
+  private val outcomesFile = "data/outcomes.csv"
+  private val projectsFile = "data/projects.csv"
+  private val resourcesFile = "data/resources.csv"
     
-  val rawData = "data/raw/combined_" //Add # for which file
-  val rawExtension = ".csv"
-  val svmData = "data/svm_data/dat_" //Add # for which file
-  val svmExtension = ".txt"
+  private val rawData = "data/raw/combined_" //Add # for which file
+  private val rawExtension = ".csv"
+  private val svmRawData = "data/svm_raw/dat_" //Add # for which file
+  private val svmScaledData = "data/svm_scaled/dat_"  
+  private val svmExtension = ".txt"
     
   val numbFiles = 10 //Number of data files, both raw and converted. data indexs should be [1 .. this]
   
   /** Alter to run whichever routine is necessary */
   def main(args : Array[String]) : Unit = {
-    checkEquality
+    scale
   }
   
   /** Returns a string representing rawDataFile i */
@@ -30,18 +31,35 @@ object ReaderWriter {
     rawData + i + rawExtension
   }
   
-  /** Returns a string representing svmData file i */
-  def svmFile(i : Int) : String = {
-    svmData + i + svmExtension
+  /** Returns a string representing svmRawData file i */
+  def svmRawFile(i : Int) : String = {
+    svmRawData + i + svmExtension
   }
   
-  /** Converts raw data in data/raw/combined_* to data/svm_data/dat_* as svm data */
+  /** Returns a string representing svmScaled file i */
+  def svmScaledFile(i : Int) : String = {
+    svmScaledData + i + svmExtension
+  }
+  
+  /** Converts raw data in data/raw/combined_* to data/svm_raw/dat_* as svm data */
   def convert() : Unit = {
     for(i <- 1 to numbFiles){
       println("Reading raw data " + i)
       val dat = readRaw(rawFile(i))
       println("Writing to svm data " + i)
-      writeSVM(dat, svmFile(i))
+      writeSVM(dat, svmRawFile(i))
+    }
+  }
+  
+  /** Scales each of the raw data files in data/svm_raw/dat_* to data/svm_scaled/dat_* as scaled svm data */
+  def scale() : Unit = {
+    for(i <- 1 to numbFiles){
+      println("Reading unscaled svm data " + i)
+      val dat = readSVMData(svmRawFile(i), KaggleLabel.stringToLabelMap, 0)
+      println("Scaling data")
+      val sData = KaggleData.normalize(dat)
+      println("Writing to scaled svm data " + i)
+      writeSVM(sData, svmScaledFile(i))
     }
   }
   
@@ -54,7 +72,7 @@ object ReaderWriter {
       def s(a : KaggleData, b : KaggleData) : Boolean = a.id < b.id
       
       val dat1 = readRaw(rawFile(i)).sortWith(s)
-      val dat2 = readSVMData(svmFile(i), Map("1" -> KaggleLabel.TRUE, "-1" -> KaggleLabel.FALSE), 0).sortWith(s)
+      val dat2 = readSVMData(svmRawFile(i), KaggleLabel.stringToLabelMap, 0).sortWith(s)
       
       def eq(a : Boolean, e : (KaggleData, KaggleData)) : Boolean = {
         a && e._1.id.equals(e._2.id) && e._1.label.equals(e._2.label) && e._1.vals.equals(e._2.vals)  
