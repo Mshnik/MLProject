@@ -25,32 +25,50 @@ object KNN {
  *  Make sure the input set is normalized or some attributes will get more attention. */
 class KNN(val training: List[KaggleData], val k: Int) extends AbsClassifier {
 
+  var count = 0
+  
+  
   /** Classifies a single KaggleData using the training set and k value for this KNN */
   override def classify(d: KaggleData): KaggleLabel.Value = {
-    
-    /** Creates a priority queue of the k closest examples to d */
-    val kClosest = new java.util.PriorityQueue[KaggleData](1, new java.util.Comparator[KaggleData]() {
-      override def compare(o1: KaggleData, o2: KaggleData): Int = {
-        var diff = (d.similarity(o2) - d.similarity(o1))
-        if (diff < 0) return -1
-        if (diff > 0) return 1
-        return 0
+
+    /** Inserts elm into the list at the correct index to maintain acc's sorting.
+     *  Assumes sorting is by double field of elements in list (similarity to d)
+     *  Deletes the last element if over length k
+     *  acc is in form (unprocessed, processed
+     */
+    def r(acc : (List[(KaggleData, Double)], List[(KaggleData, Double)]), elm : KaggleData) : List[(KaggleData, Double)] = {
+      def r(acc : (List[(KaggleData, Double)], List[(KaggleData, Double)]), elm : (KaggleData, Double)) : List[(KaggleData, Double)] = {
+        acc match{
+          case (List(), processed) => 
+            if(processed.length < k) (elm :: processed).reverse
+            else processed.reverse
+          case (unprocessed, processed) => 
+            if(elm._2 > unprocessed.head._2){
+              val lst = processed.reverse ::: (elm :: unprocessed)
+              if(lst.length > k) lst.dropRight(lst.length - k)
+              else lst
+            } else{
+              r((unprocessed.tail, unprocessed.head :: processed), elm)
+            }
+        }
       }
-    })
-    
-    // Add all elements to priority queue
-    for (p2 <- training) {
-      kClosest.add(p2)
+      r(acc, (elm, elm.similarity(d)))
     }
-    //For the first k elements, copy to list.
-    val lst = (0 until k).toList.foldLeft(List[KaggleData]())((acc, e) => kClosest.poll() :: acc).reverse
-        
+    
+    //Create list of top k examples
+    val lst = training.foldLeft(List[(KaggleData, Double)]())(
+      (acc, a) => r( (List[(KaggleData, Double)](), acc), a)    
+    ).map(a => a._1)
+    
     //Convert to map
     val map = lst.foldLeft(Map[KaggleLabel.Value, Int]())((acc, e) => {
       val v = acc.getOrElse(e.label, 0)
       acc - e.label + ((e.label, v+1))
     })
     
-    map.toList.reduceLeft((a, b) => if(a._2 > b._2) a else b)._1
+    val l = map.toList.reduceLeft((a, b) => if(a._2 > b._2) a else b)._1
+    count = count+1
+    //println(count)
+    l
   }
 }
