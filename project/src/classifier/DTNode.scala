@@ -19,16 +19,17 @@ object DTNode{
     val trainList = ReaderWriter.readRaw(ReaderWriter.rawFile(train))
     println("Read data from " + train)
     val tree = id3(attributeSplits, combinedSplits, depth)(trainList, 0, null)
-    println("Created tree, max depth " + depth)
+    println("Created tree of depth: " + depth + " \n" + tree.toString)
     val a = tree.test(ReaderWriter.readRaw(ReaderWriter.rawFile(test)))
     println("Tested on " + test + " : " + a + " accuracy = " + ((a._1 + a._4).toDouble/(a._1 + a._2 + a._3 + a._4).toDouble) + "\n")
   }
   
   /** List of attributes that can be split on */
-  val attributeSplits : List[Int] = KaggleData.numericIndices ++
-                                    KaggleData.booleanIndices.filterNot(a => a.equals(KaggleData.labelIndex)) ++
+  val attributeSplits : List[Int] =
                                     KaggleData.enumIndices ++
-                                    KaggleData.dateIndices
+                                    KaggleData.dateIndices ++
+                                    KaggleData.numericIndices ++
+                                    KaggleData.booleanIndices.filterNot(a => a.equals(KaggleData.labelIndex))
   
   /** The map of splits for combined_*.csv data - possible things to split on, at different places*/
   val combinedSplits : Map[Int, List[Double]] = Map(
@@ -96,10 +97,12 @@ object DTNode{
       
       /** Tries splitting on the value k. If better, returns that, otherwise returns acc */
       def f(acc : (Double, List[AttributeFunction]), k : Double) : (Double, List[AttributeFunction]) = {
-        val criteria = new AttributeFunction(i, (a : Double, b : List[Double]) => a <= b(0), List(k), ("data(" + i + ")<=" + k))
+        val criteria = new AttributeFunction(i, (a : Double, b : List[Double]) => a <= b(0), List(k), 
+            ("data(" + KaggleData.indexName(i) + ")<=" + k))
+        val opCriteria = new AttributeFunction(criteria, "data(" + KaggleData.indexName(i) + ")>" + k)
         //Do the partition based on this criteria
         val lstOne = elms.filter(criteria.fun)
-        val lstTwo = elms.filter(criteria.fun.andThen(a => !a))
+        val lstTwo = elms.filter(opCriteria.fun)
       
         //Calculate the information gain
         val entropyOne = weightedEntropy(lstOne, elms.length)
@@ -107,7 +110,7 @@ object DTNode{
         val infoGain = currentEntropy - (entropyOne + entropyTwo)
         
         //Pick this if better than acc, else acc.
-        if((acc._1 < infoGain)) (infoGain, List(criteria, new AttributeFunction(criteria, "data(" + i + ")>" + k))) else acc
+        if((acc._1 < infoGain)) (infoGain, List(criteria, opCriteria)) else acc
       }
       
       //Fold over possible j values to find best
@@ -122,23 +125,40 @@ object DTNode{
            "Not Provided" :: KaggleData.enumMap(i) //Possible enum values, with Not provided (blank) as index 0.
          else 
            List("f", "Not Provided", "t")
-      ).foldLeft((0, List[(Int, String)]()))((acc, e) => (acc._1 + 1, (acc._1, e) :: acc._2))._2  
+      ).foldLeft((if(KaggleData.enumIndices.contains(i)) 0 else -1, List[(Int, String)]()))((acc, e) => (acc._1 + 1, (acc._1, e) :: acc._2))._2  
+      
+      /** Converts value z of enum/boolean i to a string */
+      def valToStr(z : Int) : String = {
+        if(KaggleData.enumIndices.contains(i)){
+          if(z.equals(0)) "Not Provided" else KaggleData.enumMap(i)(z - 1)
+        }else{
+          if(z.equals(1)) "t" 
+          else 
+            if(z.equals(-1)) "f" 
+            else "Not Provided"
+        } 
+      }
+      
       //Map into a list of attribute functions
       val criterias = m.map(a => new AttributeFunction(i, 
         (x : Int) => x.equals(a._1), 
-        "Data(" + i + ") = " + KaggleData.enumMap.get(i).getOrElse(a._1, "Not Provided")))
-              
-      val lsts = criterias.map(a => elms.filter(a.fun))
-        
+        "Data(" + KaggleData.indexName(i) + ") = " + valToStr(a._1)
+      ))
+      
+      //Filter out criterias that are unused
+      val z = criterias.map(a => elms.filter(a.fun)).zip(criterias).filter(a => a._1.length > 0)
+      val x = (List[List[KaggleData]](), List[AttributeFunction]())
+      val (lsts, nCriterias) = z.foldLeft(x)((acc, a) => (a._1 :: acc._1, a._2 :: acc._2))
+      
       //Calculate information gain
-      val entropies = lsts.foldLeft(0.0)((acc, a) => acc + weightedEntropy(a, a.length))
+      val entropies = lsts.foldLeft(0.0)((acc, a) => acc + weightedEntropy(a, elms.length))
       val infoGain = currentEntropy - entropies
-      (infoGain, criterias)
+      (infoGain, nCriterias)
     }
     
     //For each index, for each splittable value (j in list at index i)
     for(i <- attributes){
-      val (infoGain, criteria) = if(splits.contains(i)) testDoubleAtt(i, splits(i)) else (0.0,null)
+      val (infoGain, criteria) = if(splits.contains(i)) testDoubleAtt(i, splits(i)) else testEnumAtt(i)
       if(infoGain > bestInfoGain){
         bestInfoGain = infoGain
         bestCriterias = criteria
@@ -162,9 +182,11 @@ object DTNode{
   }
   
   /** Returns the proportional entropy by calculating the entropy and multiplying by the
-   *  fraction of the set this set makes up
+   *  fraction of the set this set makes up.
+   *  0 if the original set has size 0.
    */
   def weightedEntropy(lst : List[Labelable[KaggleLabel.Value]], s : Int) : Double = {
+    if(s.equals(0)) 0 else
     (lst.length.toDouble / s.toDouble) * entropy(Data.splitByLabel(lst))
   }
   
