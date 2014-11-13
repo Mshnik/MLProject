@@ -19,9 +19,14 @@ object DTNode{
     val trainList = ReaderWriter.readRaw(ReaderWriter.rawFile(train))
     println("Read data from " + train)
     val tree = id3(attributeSplits, combinedSplits, depth)(trainList, 0, null)
-    println("Created tree of depth: " + depth + " \n" + tree.toString)
+    println("Created tree of depth: " + depth)
     val a = tree.test(ReaderWriter.readRaw(ReaderWriter.rawFile(test)))
-    println("Tested on " + test + " : " + a + " accuracy = " + ((a._1 + a._4).toDouble/(a._1 + a._2 + a._3 + a._4).toDouble) + "\n")
+    println("Tested on " + test + " : " + a)
+    println("  Accuracy = " + AbsClassifier.accuracy(a))
+    println("  Recall = " + AbsClassifier.recall(a))
+    println("  Precision = " + AbsClassifier.precision(a))
+    println("  F1 = " + AbsClassifier.fOne(a._1, a._2, a._3, a._4))
+    println("  F2 = " + AbsClassifier.f(2.0)(a._1, a._2, a._3, a._4))
   }
   
   /** List of attributes that can be split on */
