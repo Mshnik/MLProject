@@ -9,24 +9,31 @@ object DTNode{
   
   /** Do runnings of the id3 algorithm here. */
   def main(args : Array[String]) : Unit = {
-    for(i <- 1 to 10 by 1){
-      trainTest(4, 5, i)
+    var best : (DTNode, Int, (Double, Double), Double) = (null, 0, (0.0, 0.0), 0)
+    for(d <- 5 to 15; i <- 1 to 3; j <- 1 to 5){
+      val n = trainTest(4, 5, d, (i, j))
+      if(best._4 < n._4) best = n
     }
+    println("--------------------------------------------")
+    println("Best Tree: Depth " + best._2 + " Betas : " + best._3 + " F1: " + best._4)
   }
   
-  /** Basic run - train on combined_train, test on combined_test, with max depth d */
-  def trainTest(train : Int, test : Int, depth : Int) : Unit = {
+  /** Basic run - train on combined_train, test on combined_test, with max depth d
+   *  Returns a tuple of the tree and the F1 score. */
+  def trainTest(train : Int, test : Int, depth : Int, betas : (Double, Double)) : (DTNode, Int, (Double, Double), Double) = {
     val trainList = ReaderWriter.readRaw(ReaderWriter.rawFile(train))
     println("Read data from " + train)
-    val tree = id3(attributeSplits, combinedSplits, depth)(trainList, 0, null)
-    println("Created tree of depth: " + depth)
+    val tree = id3(attributeSplits, combinedSplits, depth, betas)(trainList, 0, null)
+    println("Created tree of depth: " + depth + " with betas " + betas)
     val a = tree.test(ReaderWriter.readRaw(ReaderWriter.rawFile(test)))
     println("Tested on " + test + " : " + a)
     println("  Accuracy = " + AbsClassifier.accuracy(a))
     println("  Recall = " + AbsClassifier.recall(a))
     println("  Precision = " + AbsClassifier.precision(a))
-    println("  F1 = " + AbsClassifier.fOne(a._1, a._2, a._3, a._4))
+    val f1 = AbsClassifier.fOne(a._1, a._2, a._3, a._4)
+    println("  F1 = " + f1)
     println("  F2 = " + AbsClassifier.f(2.0)(a._1, a._2, a._3, a._4))
+    (tree, depth, betas, f1)
   }
   
   /** List of attributes that can be split on */
@@ -63,9 +70,10 @@ object DTNode{
    *  splits - (int) different numeric attributes that can be split on, with list[Double] as the possible splitted values
    *  elms - elements to split
    *  maxDepth - maximum depth to allows a tree to go
+   *  betas - weighted entropy weighting on (true portion, false portion)
    *  currentDepth - current depth of this tree. Increment on successive calls
    *  funToHere - the function that caused to get to this call. Null only in the initial call */
-  def id3(attributes : List[Int], splits : Map[Int, List[Double]], maxDepth : Int)(
+  def id3(attributes : List[Int], splits : Map[Int, List[Double]], maxDepth : Int, betas : (Double, Double))(
       elms : List[KaggleData], currentDepth : Int, funToHere : AttributeFunction) : DTNode = {
     //First base case - no elms. Returns null
     if (elms.isEmpty) return null
@@ -110,8 +118,8 @@ object DTNode{
         val lstTwo = elms.filter(opCriteria.fun)
       
         //Calculate the information gain
-        val entropyOne = weightedEntropy(lstOne, elms.length)
-        val entropyTwo = weightedEntropy(lstTwo, elms.length)
+        val entropyOne = weightedEntropy(betas._1, betas._2)(lstOne, elms.length)
+        val entropyTwo = weightedEntropy(betas._1, betas._2)(lstTwo, elms.length)
         val infoGain = currentEntropy - (entropyOne + entropyTwo)
         
         //Pick this if better than acc, else acc.
@@ -156,7 +164,7 @@ object DTNode{
       val (lsts, nCriterias) = z.foldLeft(x)((acc, a) => (a._1 :: acc._1, a._2 :: acc._2))
       
       //Calculate information gain
-      val entropies = lsts.foldLeft(0.0)((acc, a) => acc + weightedEntropy(a, elms.length))
+      val entropies = lsts.foldLeft(0.0)((acc, a) => acc + weightedEntropy(betas._1, betas._2)(a, elms.length))
       val infoGain = currentEntropy - entropies
       (infoGain, nCriterias)
     }
@@ -175,7 +183,7 @@ object DTNode{
     if(! bestCriterias.isEmpty){
       //Recurse on the many?!?!?!? children
       val a : List[DTNode] = List()
-      val children = bestCriterias.foldLeft(a)((acc, a) => id3(attributes, splits, maxDepth)(elms.filter(a.fun), (currentDepth + 1), a) :: acc)
+      val children = bestCriterias.foldLeft(a)((acc, a) => id3(attributes, splits, maxDepth, betas)(elms.filter(a.fun), (currentDepth + 1), a) :: acc)
       
       //Create and return this attribute node for the given criteria
       val m = children.map(a => (a, a.f)).toMap
@@ -190,9 +198,14 @@ object DTNode{
    *  fraction of the set this set makes up.
    *  0 if the original set has size 0.
    */
-  def weightedEntropy(lst : List[Labelable[KaggleLabel.Value]], s : Int) : Double = {
-    if(s.equals(0)) 0 else
-    (lst.length.toDouble / s.toDouble) * entropy(Data.splitByLabel(lst))
+  def weightedEntropy(beta1 : Double, beta2 : Double)(lst : List[Labelable[KaggleLabel.Value]], s : Int) : Double = {
+    if(s.equals(0)) 0 else{
+      val e = (lst.length.toDouble / s.toDouble) * entropy(Data.splitByLabel(lst))
+      if(e != 0){
+        val lbl = lst.head.label
+        if(lbl.equals(KaggleLabel.TRUE)) e * beta1 else if(lbl.equals(KaggleLabel.FALSE)) e * beta2 else e
+      } else 0
+    }
   }
   
   /** Returns Log_2(a) */
@@ -200,11 +213,13 @@ object DTNode{
     Math.log(d)/Math.log(2)
   }
   
-  /** Returns the entropy of the given list partition.
-   *  Input is a list of lists - each inner list is a partition of the greater list
+  /** Returns the entorpy of the given list partition
+   *  Allows input weights beta1 and beta2 which change the way the terms are added.
+   *  Beta1 is how much the portion of TRUE terms is weighted, Beta2 is how much the portion of
+   *  FALSE terms is weighted
    */
   def entropy(mp : Map[KaggleLabel.Value, List[Labelable[KaggleLabel.Value]]]) : Double = {
-    val totalSize = mp.foldLeft(0.0)( (a : Double, b : (KaggleLabel.Value,List[Labelable[KaggleLabel.Value]])) => a + b._2.length)
+     val totalSize = mp.foldLeft(0.0)( (a : Double, b : (KaggleLabel.Value,List[Labelable[KaggleLabel.Value]])) => a + b._2.length)
     
     def f (acc : Double, b : (KaggleLabel.Value, List[Labelable[KaggleLabel.Value]])) = {
      val c = if(b._2.length == 0) 0 else
