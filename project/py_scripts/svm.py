@@ -17,9 +17,9 @@ class Instance():
         self.test_data_num = test_dat_num
         self.c = c
         self.j = j
-        self.train_file = '../data/svm_data/dat_' + str(train_dat_num) +'.txt'
-        self.norm_train_file = '../data/svm_data/dat_' + str(train_dat_num) + '_norm.txt'
-        self.test_file = '../data/svm_data/dat_' + str(test_dat_num) +'.txt'
+        self.train_file = '../data/svm_scaled/dat_' + str(train_dat_num) +'.txt'
+        self.norm_train_file = '../data/svm_scaled/dat_' + str(train_dat_num) + '_norm.txt'
+        self.test_file = '../data/svm_scaled/dat_' + str(test_dat_num) +'.txt'
         prefix = '../data/svm_out/dat_' + str(train_dat_num)
         if c != None:
             prefix += '_c_' + str(c).replace('.','-')
@@ -120,27 +120,24 @@ def process(instance):
     find_results(instance)
     find_w(instance)
 
+def run(train_test_pairs, j_vals=[None], c_vals=[None]):
+    table = texttable.Texttable()
+    table.header(['Train File', 'Test File', 'j', 'c',  '# FN ', '# FP', 'Accuracy'])
+    for (train, test) in train_test_pairs:
+        for j in j_vals:
+            for c in c_vals:
+                instance = Instance(train, test, c=c, j=j)
+                process(instance)
+                table.add_row([instance.train_file, instance.test_file, instance.j, instance.c, instance.fn, instance.fp, instance.accuracy])
+                print instance.train_file, instance.test_file, instance.j, instance.c, instance.fn, instance.fp, instance.accuracy
+    print "---------------------------"
+    print
+    print table.draw()
 
 DAT_NUMS = range(1,11) #TODO zero index the data files
 
-J_VALS = [.5]
+J_VALS = [.5,1]
+C_VALS = [0.1,1.0,10.0,1000.0]
+pairs = [(i,10) for i in DAT_NUMS[:-1]]
 
-#table = texttable.Texttable()
-#table.header(['Train File', 'Accuracy',  '# FN ', '# FP'])
-# for i in DAT_NUMS[:-1]:
-#     instance = Instance(i,10)
-#     process(instance)
-#     table.add_row([instance.train_file, instance.accuracy, instance.fn, instance.fp])
-#     print instance.train_file, instance.accuracy, instance.fn, instance.fp
-
-table = texttable.Texttable()
-table.header(['j', 'Accuracy',  '# FN ', '# FP'])
-for j in J_VALS:
-    instance = Instance(1,10)
-    process(instance)
-    table.add_row([instance.j, instance.accuracy, instance.fn, instance.fp])
-    print instance.j, instance.accuracy, instance.fn, instance.fp
-
-print "---------------------------"
-print
-print table.draw()
+run(pairs, j_vals=J_VALS, c_vals=C_VALS)
