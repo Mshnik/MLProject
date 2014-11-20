@@ -7,6 +7,7 @@ from sklearn.datasets import load_svmlight_file, dump_svmlight_file
 import tempfile
 import texttable
 
+
 w_out = open('../data/svm_out/w.out','w')
 w_out_sorted = open('../data/svm_out/w_sorted.out','w')
 # TODO better name for class
@@ -16,8 +17,8 @@ class Instance():
         self.test_data_num = test_dat_num
         self.c = c
         self.j = j
-        self.train_file = '../data/svm_scaled/dat_' + str(train_dat_num) +'.txt'
-        self.test_file = '../data/svm_scaled/dat_' + str(test_dat_num) +'.txt'
+        self.train_file = '../data/svm_norm/dat_' + str(train_dat_num) +'.txt'
+        self.test_file = '../data/svm_norm/dat_' + str(test_dat_num) +'.txt'
         prefix = '../data/svm_out/dat_' + str(train_dat_num)
         if c != None:
             prefix += '_c_' + str(c).replace('.','-')
@@ -128,8 +129,9 @@ def run(train_test_pairs, j_vals=[None], c_vals=[None]):
 
 DAT_NUMS = range(1,11) #TODO zero index the data files
 
-J_VALS = [.6,.8]
+J_VALS = [.4,.6,.8]
 C_VALS = [0.1,1.0,10.0]
 pairs = [(i,10) for i in DAT_NUMS[:-1]]
 
-run(pairs, j_vals=J_VALS, c_vals=C_VALS)
+run(pairs, j_vals=J_VALS)
+
