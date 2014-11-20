@@ -3,7 +3,8 @@ from random import shuffle
 import re
 import subprocess
 import scipy.sparse.linalg
-from sklearn.datasets import load_svmlight_file
+from sklearn.datasets import load_svmlight_file, dump_svmlight_file
+from sklearn.preprocessing import normalize
 import tempfile
 import texttable
 
@@ -16,8 +17,9 @@ class Instance():
         self.test_data_num = test_dat_num
         self.c = c
         self.j = j
-        self.train_file = '../data/svm_data/dat_' + str(train_dat_num) +'.txt'
-        self.test_file = '../data/svm_data/dat_' + str(test_dat_num) +'.txt'
+        self.train_file = '../data/svm_scaled/dat_' + str(train_dat_num) +'.txt'
+        self.norm_train_file = '../data/svm_scaled/dat_' + str(train_dat_num) + '_norm.txt'
+        self.test_file = '../data/svm_scaled/dat_' + str(test_dat_num) +'.txt'
         prefix = '../data/svm_out/dat_' + str(train_dat_num)
         if c != None:
             prefix += '_c_' + str(c).replace('.','-')
@@ -45,6 +47,10 @@ class Kernel():
         self.num_sup_vec_plus_1 = int(num_sup_vec_plus_1)
         self.b = float(threshold)
 
+def normalize_data(instance):
+    x_data, y_data = load_svmlight_file(instance.train_file)
+    x_normal = normalize(x_data)
+    dump_svmlight_file(x_normal, y_data, instance.norm_train_file)
 
 def learn(instance):
     args_list = ['./svm_light/svm_learn']
@@ -54,7 +60,7 @@ def learn(instance):
     if instance.j is not None:
         args_list.append('-j')
         args_list.append(str(instance.j))
-    args_list.append(instance.train_file)
+    args_list.append(instance.norm_train_file)
     args_list.append(instance.model)
     args = tuple(args_list)
     f_tmp = tempfile.TemporaryFile()
@@ -108,22 +114,30 @@ def find_results(instance):
     f.close()
 
 def process(instance):
+    normalize_data(instance)
     learn(instance)
     classify(instance)
     find_results(instance)
     find_w(instance)
 
+def run(train_test_pairs, j_vals=[None], c_vals=[None]):
+    table = texttable.Texttable()
+    table.header(['Train File', 'Test File', 'j', 'c',  '# FN ', '# FP', 'Accuracy'])
+    for (train, test) in train_test_pairs:
+        for j in j_vals:
+            for c in c_vals:
+                instance = Instance(train, test, c=c, j=j)
+                process(instance)
+                table.add_row([instance.train_file, instance.test_file, instance.j, instance.c, instance.fn, instance.fp, instance.accuracy])
+                print instance.train_file, instance.test_file, instance.j, instance.c, instance.fn, instance.fp, instance.accuracy
+    print "---------------------------"
+    print
+    print table.draw()
 
 DAT_NUMS = range(1,11) #TODO zero index the data files
 
-table = texttable.Texttable()
-table.header(['Train File', 'Accuracy',  '# FN ', '# FP'])
-for i in DAT_NUMS[:-1]:
-    instance = Instance(i,10,j=0.5)
-    process(instance)
-    table.add_row([instance.train_file, instance.accuracy, instance.fn, instance.fp])
-    print instance.train_file, instance.accuracy, instance.fn, instance.fp
+J_VALS = [.5,1]
+C_VALS = [0.1,1.0,10.0,1000.0]
+pairs = [(i,10) for i in DAT_NUMS[:-1]]
 
-print "---------------------------"
-print
-print table.draw()
+run(pairs, j_vals=J_VALS, c_vals=C_VALS)
