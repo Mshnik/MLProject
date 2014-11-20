@@ -4,7 +4,6 @@ import re
 import subprocess
 import scipy.sparse.linalg
 from sklearn.datasets import load_svmlight_file, dump_svmlight_file
-from sklearn.preprocessing import normalize
 import tempfile
 import texttable
 
@@ -18,7 +17,6 @@ class Instance():
         self.c = c
         self.j = j
         self.train_file = '../data/svm_scaled/dat_' + str(train_dat_num) +'.txt'
-        self.norm_train_file = '../data/svm_scaled/dat_' + str(train_dat_num) + '_norm.txt'
         self.test_file = '../data/svm_scaled/dat_' + str(test_dat_num) +'.txt'
         prefix = '../data/svm_out/dat_' + str(train_dat_num)
         if c != None:
@@ -47,11 +45,6 @@ class Kernel():
         self.num_sup_vec_plus_1 = int(num_sup_vec_plus_1)
         self.b = float(threshold)
 
-def normalize_data(instance):
-    x_data, y_data = load_svmlight_file(instance.train_file)
-    x_normal = normalize(x_data)
-    dump_svmlight_file(x_normal, y_data, instance.norm_train_file)
-
 def learn(instance):
     args_list = ['./svm_light/svm_learn']
     if instance.c is not None:
@@ -60,7 +53,7 @@ def learn(instance):
     if instance.j is not None:
         args_list.append('-j')
         args_list.append(str(instance.j))
-    args_list.append(instance.norm_train_file)
+    args_list.append(instance.train_file)
     args_list.append(instance.model)
     args = tuple(args_list)
     f_tmp = tempfile.TemporaryFile()
@@ -96,11 +89,11 @@ def find_w(instance):
     x_mat = scipy.sparse.linalg.aslinearoperator(x_data)
     w = x_mat.matmat(y_data)
     instance.w = w
-    prt_str = str(instance.train_file) + "  " + str(w) + "\n"
+    prt_str = str(instance.accuracy) + "  " + str(w) + "\n"
     w_out.write(prt_str)
     w_out.flush() #TODO delete this (only for early testing)
     sorted_w = sorted(range(len(w)), key=lambda x : w[x], reverse=True)
-    srtd_prt_str = str(instance.train_file) + "  " + str(sorted_w) + "\n"
+    srtd_prt_str = str(instance.accuracy) + "  " + str(sorted_w) + "\n"
     w_out_sorted.write(srtd_prt_str)
     w_out_sorted.flush()#TODO delete this (only for early testing)
 
@@ -114,7 +107,6 @@ def find_results(instance):
     f.close()
 
 def process(instance):
-    normalize_data(instance)
     learn(instance)
     classify(instance)
     find_results(instance)
@@ -136,8 +128,8 @@ def run(train_test_pairs, j_vals=[None], c_vals=[None]):
 
 DAT_NUMS = range(1,11) #TODO zero index the data files
 
-J_VALS = [.5,1]
-C_VALS = [0.1,1.0,10.0,1000.0]
+J_VALS = [.6,.8]
+C_VALS = [0.1,1.0,10.0]
 pairs = [(i,10) for i in DAT_NUMS[:-1]]
 
 run(pairs, j_vals=J_VALS, c_vals=C_VALS)
