@@ -9,18 +9,46 @@ object DTNode{
   
   /** Do runnings of the id3 algorithm here. */
   def main(args : Array[String]) : Unit = {
-    var best : (DTNode, Int, (Double, Double), Double) = (null, 0, (0.0, 0.0), 0)
-    for(d <- 5 to 15; i <- 1 to 3; j <- 1 to 5){
-      val n = trainTest(4, 5, d, (i, j))
-      if(best._4 < n._4) best = n
+    val l = 4
+    var best : Array[(DTNode, Int, (Double, Double), (Int, Int, Int, Int))] = Array.ofDim(l)
+    for(i <- 0 to l){
+      best(i) = (null, 0, (0,0), (0, 0, 0, 0))
+    }
+    
+    for(d <- 5 to 15; i <- 1 to 6){
+      val n = trainTest(4, 5, d, (Math.max(1,i - 3), Math.max(1, 4 - i)))
+      
+      //First tree encountered
+      if(best(0) == null){
+        for(z <- 0 to l) best(z) = n
+      } else{
+        if(AbsClassifier.accuracy(best(0)._4) < AbsClassifier.accuracy(n._4))
+          best(0) = n
+        if(AbsClassifier.precision(best(1)._4) < AbsClassifier.precision(n._4))
+          best(1) = n
+        if(AbsClassifier.fOne(best(2)._4._1, best(2)._4._2, best(2)._4._3, best(2)._4._4) <
+           AbsClassifier.fOne(n._4._1, n._4._2, n._4._3, n._4._4))
+          best(2) = n
+        
+        val fP5 = AbsClassifier.f(0.5)_
+        if(fP5(best(3)._4._1, best(3)._4._2, best(3)._4._3, best(3)._4._4) <
+           fP5(n._4._1, n._4._2, n._4._3, n._4._4))
+          best(3) = n
+          
+      }
     }
     println("--------------------------------------------")
-    println("Best Tree: Depth " + best._2 + " Betas : " + best._3 + " F1: " + best._4)
+    println("--------------------------------------------")
+    println("--------------------------------------------")
+    println("Best Accuracy: Depth " + best(0)._2 + " Betas : " + best(0)._3 + " (TP, FP, FN, TN)" + best(0)._4)
+    println("Best Precision: Depth " + best(1)._2 + " Betas : " + best(1)._3 + " (TP, FP, FN, TN)" + best(1)._4)
+    println("Best F1: Depth " + best(2)._2 + " Betas : " + best(2)._3 + " (TP, FP, FN, TN)" + best(2)._4)
+    println("Best F0.5: Depth " + best(3)._2 + " Betas : " + best(3)._3 + " (TP, FP, FN, TN)" + best(3)._4)
   }
   
   /** Basic run - train on combined_train, test on combined_test, with max depth d
    *  Returns a tuple of the tree and the F1 score. */
-  def trainTest(train : Int, test : Int, depth : Int, betas : (Double, Double)) : (DTNode, Int, (Double, Double), Double) = {
+  def trainTest(train : Int, test : Int, depth : Int, betas : (Double, Double)) : (DTNode, Int, (Double, Double), (Int, Int, Int, Int)) = {
     val trainList = ReaderWriter.readRaw(ReaderWriter.rawFile(train))
     println("Read data from " + train)
     val tree = id3(attributeSplits, combinedSplits, depth, betas)(trainList, 0, null)
@@ -33,7 +61,7 @@ object DTNode{
     val f1 = AbsClassifier.fOne(a._1, a._2, a._3, a._4)
     println("  F1 = " + f1)
     println("  F2 = " + AbsClassifier.f(2.0)(a._1, a._2, a._3, a._4))
-    (tree, depth, betas, f1)
+    (tree, depth, betas, a)
   }
   
   /** List of attributes that can be split on */
