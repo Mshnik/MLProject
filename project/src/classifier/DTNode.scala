@@ -7,34 +7,40 @@ import io._
 /** Holder for decision tree algorithms */
 object DTNode{
   
+  val trainList = ReaderWriter.readRaw(ReaderWriter.rawFile(4))
+  val testList = ReaderWriter.readRaw(ReaderWriter.rawFile(5))
+  
   /** Do runnings of the id3 algorithm here. */
   def main(args : Array[String]) : Unit = {
     val l = 4
     var best : Array[(DTNode, Int, (Double, Double), (Int, Int, Int, Int))] = Array.ofDim(l)
-    for(i <- 0 to l){
+    for(i <- 0 until l){
       best(i) = (null, 0, (0,0), (0, 0, 0, 0))
     }
     
-    for(d <- 5 to 15; i <- 1 to 6){
-      val n = trainTest(4, 5, d, (Math.max(1,i - 3), Math.max(1, 4 - i)))
+    for(d <- 1 to 13; i <- 1 to 3){
+      val n = trainTest(d, (1, i))
       
       //First tree encountered
-      if(best(0) == null){
-        for(z <- 0 to l) best(z) = n
+      if(best(0)._1 == null){
+        for(z <- 0 until l) best(z) = n
       } else{
-        if(AbsClassifier.accuracy(best(0)._4) < AbsClassifier.accuracy(n._4))
+        if(AbsClassifier.accuracy(best(0)._4) < AbsClassifier.accuracy(n._4)){
           best(0) = n
-        if(AbsClassifier.precision(best(1)._4) < AbsClassifier.precision(n._4))
+        }
+        if(AbsClassifier.precision(best(1)._4) < AbsClassifier.precision(n._4)){
           best(1) = n
+        }
         if(AbsClassifier.fOne(best(2)._4._1, best(2)._4._2, best(2)._4._3, best(2)._4._4) <
-           AbsClassifier.fOne(n._4._1, n._4._2, n._4._3, n._4._4))
+           AbsClassifier.fOne(n._4._1, n._4._2, n._4._3, n._4._4)){
           best(2) = n
+        }
         
         val fP5 = AbsClassifier.f(0.5)_
         if(fP5(best(3)._4._1, best(3)._4._2, best(3)._4._3, best(3)._4._4) <
-           fP5(n._4._1, n._4._2, n._4._3, n._4._4))
+           fP5(n._4._1, n._4._2, n._4._3, n._4._4)){
           best(3) = n
-          
+        } 
       }
     }
     println("--------------------------------------------")
@@ -48,19 +54,17 @@ object DTNode{
   
   /** Basic run - train on combined_train, test on combined_test, with max depth d
    *  Returns a tuple of the tree and the F1 score. */
-  def trainTest(train : Int, test : Int, depth : Int, betas : (Double, Double)) : (DTNode, Int, (Double, Double), (Int, Int, Int, Int)) = {
-    val trainList = ReaderWriter.readRaw(ReaderWriter.rawFile(train))
-    println("Read data from " + train)
+  def trainTest(depth : Int, betas : (Double, Double)) : (DTNode, Int, (Double, Double), (Int, Int, Int, Int)) = {
     val tree = id3(attributeSplits, combinedSplits, depth, betas)(trainList, 0, null)
     println("Created tree of depth: " + depth + " with betas " + betas)
-    val a = tree.test(ReaderWriter.readRaw(ReaderWriter.rawFile(test)))
-    println("Tested on " + test + " : " + a)
+    val a = tree.test(testList)
+    println("Tested : " + a)
     println("  Accuracy = " + AbsClassifier.accuracy(a))
     println("  Recall = " + AbsClassifier.recall(a))
     println("  Precision = " + AbsClassifier.precision(a))
     val f1 = AbsClassifier.fOne(a._1, a._2, a._3, a._4)
     println("  F1 = " + f1)
-    println("  F2 = " + AbsClassifier.f(2.0)(a._1, a._2, a._3, a._4))
+    println("  F0.5 = " + AbsClassifier.f(0.5)(a._1, a._2, a._3, a._4))
     (tree, depth, betas, a)
   }
   
