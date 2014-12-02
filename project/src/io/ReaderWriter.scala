@@ -18,13 +18,31 @@ object ReaderWriter {
   private val rawData = "data/raw/combined_" //Add # for which file
   private val rawExtension = ".csv"
   private val svmRawData = "data/svm_raw/dat_" //Add # for which file
-  private val svmScaledData = "data/svm_scaled/dat_"  
+  private val svmScaledData = "data/svm_norm/dat_"  
   private val svmFiftyFifty = "data/svm_fiftyfifty/dat_"
   private val svmExtension = ".txt"
     
   val numbFiles = 10 //Number of data files, both raw and converted. data indexs should be [1 .. this]
   
-  /** Alter to run whichever routine is necessary */
+  /**dat_1.txt
+dat_2.txt
+dat_3.txt
+dat_4.txt
+dat_5.txt
+dat_6.txt
+dat_7.txt
+dat_8.txt
+dat_9.txt
+dat_10.txtdat_1.txt
+dat_2.txt
+dat_3.txt
+dat_4.txt
+dat_5.txt
+dat_6.txt
+dat_7.txt
+dat_8.txt
+dat_9.txt
+dat_10.txt Alter to run whichever routine is necessary */
   def main(args : Array[String]) : Unit = {
     shave
   }
