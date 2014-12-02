@@ -18,7 +18,7 @@ object ReaderWriter {
   private val rawData = "data/raw/combined_" //Add # for which file
   private val rawExtension = ".csv"
   private val svmRawData = "data/svm_raw/dat_" //Add # for which file
-  private val svmScaledData = "data/svm_scaled/dat_"  
+  private val svmScaledData = "data/svm_norm/dat_"  
   private val svmFiftyFifty = "data/svm_fiftyfifty/dat_"
   private val svmExtension = ".txt"
     
