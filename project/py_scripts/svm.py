@@ -31,6 +31,8 @@ class Instance():
         self.accuracy = None
         self.fp = None
         self.np = None
+        self.tp = None
+        self.f1 = None
         self.w = None
 
 class Kernel():
@@ -102,9 +104,13 @@ def find_results(instance):
     f = open(instance.prediction, 'r')
     _, y_data = load_svmlight_file(instance.test_file)
     predictions = [float(x.split()[0]) for x in f.readlines()]
-    instance.fn = sum([1 for (t, p) in zip(y_data, predictions) if t > 0 and p <= 0])
-    instance.fp = sum([1 for (t, p) in zip(y_data, predictions) if t <= 0 and p > 0])
+    instance.fn = sum([1. for (t, p) in zip(y_data, predictions) if t > 0 and p <= 0])
+    instance.fp = sum([1. for (t, p) in zip(y_data, predictions) if t <= 0 and p > 0])
+    instance.tp = sum([1. for (t, p) in zip(y_data, predictions) if t > 0 and p > 0])
     instance.accuracy = 1 - float(instance.fn + instance.fp)/len(y_data)
+    precision = instance.tp / (instance.tp+instance.fp)
+    recall = instance.tp / (instance.tp + instance.fn)
+    instance.f1 = 2 * precision * recall / (precision + recall)
     f.close()
 
 def process(instance):
@@ -115,21 +121,21 @@ def process(instance):
 
 def run(train_test_pairs, j_vals=[None], c_vals=[None]):
     table = texttable.Texttable()
-    table.header(['Train File', 'Test File', 'j', 'c',  '# FN ', '# FP', 'Accuracy'])
+    table.header(['Train File', 'Test File', 'j', 'c',  '# FN ', '# FP', 'Accuracy','F1'])
     for (train, test) in train_test_pairs:
         for j in j_vals:
             for c in c_vals:
                 instance = Instance(train, test, c=c, j=j)
                 process(instance)
-                table.add_row([instance.train_file, instance.test_file, instance.j, instance.c, instance.fn, instance.fp, instance.accuracy])
-                print instance.train_file, instance.test_file, instance.j, instance.c, instance.fn, instance.fp, instance.accuracy
+                table.add_row([instance.train_file, instance.test_file, instance.j, instance.c, instance.fn, instance.fp, instance.accuracy,instance.f1])
+                print instance.train_file, instance.test_file, instance.j, instance.c, instance.fn, instance.fp, instance.accuracy, instance.f1
     print "---------------------------"
     print
     print table.draw()
 
 DAT_NUMS = range(1,11) #TODO zero index the data files
 
-J_VALS = [.4,.6,.8]
+J_VALS = [.6,.75,.8]
 C_VALS = [0.1,1.0,10.0]
 pairs = [(i,10) for i in DAT_NUMS[:-1]]
 
