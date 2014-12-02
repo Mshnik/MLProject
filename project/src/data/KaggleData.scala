@@ -2,12 +2,31 @@ package data
 
 import io.ReaderWriter
 import scala.collection.immutable.List
+import scala.collection.immutable.HashMap
 
 /** Companion object for classes implementing KaggleData */
 object KaggleData{
   
   def main(args : Array[String]) : Unit = {
     val dat = ReaderWriter.readRaw(ReaderWriter.rawFile(1))
+    
+    val field = 30 //Total price + opt
+    
+    def f(m : Map[String, List[(Double, Double)]], a : KaggleData) : Map[String, List[(Double, Double)]] = {
+      val lbl = KaggleLabel.toInt(a.label).toDouble
+      val plus = "Funded"
+      val min = "Not Funded"
+      if(lbl > 0){
+        val lst = m.getOrElse(plus, List())
+        m - plus + ((plus, (a.vals.getOrElse(field, 0.0), lbl) :: lst))
+      } else{
+        val lst = m.getOrElse(min, List())
+        m - min + ((min, (a.vals.getOrElse(field, 0.0), lbl) :: lst))
+      } 
+    }
+    
+    Chartifier.showChart(dat.foldLeft(Map[String, List[(Double, Double)]]())(f),
+        "Total Price vs Funded", "Total Price", "Funded", 2)
     
   }
   

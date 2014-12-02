@@ -1,8 +1,9 @@
+package data
+
 import java.awt.geom.Ellipse2D
 import scala.collection.immutable.HashMap
 import org.jfree.chart._
 import org.jfree.chart.plot.XYPlot
-import org.jfree.chart.renderer.xy.XYItemRenderer
 import org.jfree.data.xy._
 import scala.collection.JavaConversions._
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer
@@ -11,7 +12,7 @@ import java.awt.geom.Rectangle2D
 
 object Chartifier {
 
-  def showChart(m: HashMap[String, List[(Double, Double)]], title: String, xAxis: String, yAxis: String, dotSize: Double) {
+  def showChart(m: Map[String, List[(Double, Double)]], title: String, xAxis: String, yAxis: String, dotSize: Double) {
     val data = new XYSeriesCollection()
     for(key <- m.keySet){
       val s = new XYSeries(key)
