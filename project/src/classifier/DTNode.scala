@@ -8,7 +8,8 @@ import io._
 object DTNode{
   
   val trainList = ReaderWriter.readRaw(ReaderWriter.rawFile(4))
-  val testList = ReaderWriter.readRaw(ReaderWriter.rawFile(5))
+  val validationList = ReaderWriter.readRaw(ReaderWriter.rawFile(5))
+  val testList = ReaderWriter.readRaw(ReaderWriter.rawFile(6))
   
   /** Do runnings of the id3 algorithm here. */
   def main(args : Array[String]) : Unit = {
@@ -18,9 +19,8 @@ object DTNode{
       best(i) = (null, 0, (0,0), (0, 0, 0, 0))
     }
     
-    for(d <- 1 to 13; i <- 1 to 3){
-      val n = trainTest(d, (1, i))
-      
+    for(d <- 1 to 10; i <- List(1.0, 1.2, 1.25, 1.5, 2, 3, 4, 5)){
+      val n = trainValidate(d, (1, i))
       //First tree encountered
       if(best(0)._1 == null){
         for(z <- 0 until l) best(z) = n
@@ -46,27 +46,61 @@ object DTNode{
     println("--------------------------------------------")
     println("--------------------------------------------")
     println("--------------------------------------------")
+    val tester = test(testList, "Tested")_
+    val depth = 3
+    
     println("Best Accuracy: Depth " + best(0)._2 + " Betas : " + best(0)._3 + " (TP, FP, FN, TN)" + best(0)._4)
+    println(best(0)._1.toStringLim(depth))
+    tester(best(0)._1)
+    println("--------------------------------------------")
+    println("--------------------------------------------")
+    
     println("Best Precision: Depth " + best(1)._2 + " Betas : " + best(1)._3 + " (TP, FP, FN, TN)" + best(1)._4)
+    println(best(1)._1.toStringLim(depth))
+    tester(best(1)._1)
+    println("--------------------------------------------")
+    println("--------------------------------------------")
+    
     println("Best F1: Depth " + best(2)._2 + " Betas : " + best(2)._3 + " (TP, FP, FN, TN)" + best(2)._4)
+    println(best(2)._1.toStringLim(depth))
+    tester(best(2)._1)
+
+    println("--------------------------------------------")
+    println("--------------------------------------------")
     println("Best F0.5: Depth " + best(3)._2 + " Betas : " + best(3)._3 + " (TP, FP, FN, TN)" + best(3)._4)
+    println(best(3)._1.toStringLim(depth))
+    tester(best(3)._1)
+
   }
   
-  /** Basic run - train on combined_train, test on combined_test, with max depth d
-   *  Returns a tuple of the tree and the F1 score. */
-  def trainTest(depth : Int, betas : (Double, Double)) : (DTNode, Int, (Double, Double), (Int, Int, Int, Int)) = {
-    val tree = id3(attributeSplits, combinedSplits, depth, betas)(trainList, 0, null)
-    println("Created tree of depth: " + depth + " with betas " + betas)
-    val a = tree.test(testList)
-    println("Tested : " + a)
+  /** Creates a decision tree with the given attributes */
+  def createTree(depth : Int, betas : (Double, Double)) : DTNode = {
+    id3(attributeSplits, combinedSplits, depth, betas)(trainList, 0, null)
+  }
+  
+  /** Tests the tree on the given test set */
+  def test(lst : List[KaggleData], msg : String)(tree : DTNode)  : (Int, Int, Int, Int) = {
+    val a = tree.test(lst)
+    println(msg + " : " + a)
     println("  Accuracy = " + AbsClassifier.accuracy(a))
     println("  Recall = " + AbsClassifier.recall(a))
     println("  Precision = " + AbsClassifier.precision(a))
     val f1 = AbsClassifier.fOne(a._1, a._2, a._3, a._4)
     println("  F1 = " + f1)
     println("  F0.5 = " + AbsClassifier.f(0.5)(a._1, a._2, a._3, a._4))
+    a
+  }
+  
+  /** Basic run - train on combined_train, test on combined_test, with max depth d
+   *  Returns a tuple of the tree and the F1 score. */
+  def trainValidate(depth : Int, betas : (Double, Double)) : (DTNode, Int, (Double, Double), (Int, Int, Int, Int)) = {
+    val tree = createTree(depth, betas)
+    println("Created tree of depth: " + depth + " with betas " + betas)
+    val a = test(validationList, "Validated ")(tree)
     (tree, depth, betas, a)
   }
+  
+  
   
   /** List of attributes that can be split on */
   val attributeSplits : List[Int] =
@@ -296,11 +330,17 @@ abstract class DTNode(val f : AttributeFunction, val elms : List[KaggleData]) ex
   /** Returns the max depth of the tree rooted at this. Trees of size 1 have depth 1 */
   def depth() : Int
   
-  /** Require that the children override toString */
-  def toString() : String
+  /** toString method calls the recursive version of to string on this with depth 0 */
+  override def toString() = toStringRec(0)
+  
+  /** toString implementation with the given maxDepth */
+  def toStringLim(maxDepth : Int) = toStringRec(0)(maxDepth)
+  
+  /** Implicit max depth to allow toStrings to go as far as they need to go */
+  implicit val maxDepth : Int = Integer.MAX_VALUE.toInt;
   
   /** Helper for toString implementations that keeps track of how far in depth this is */
-  def toStringRec(i : Int) : String
+  def toStringRec(i : Int)(implicit maxDepth : Int) : String
   
   /** Returns a concatination of i tabs */
   protected def tabs(i : Int) : String = {
@@ -354,11 +394,8 @@ class DTLeafNode(override val f : AttributeFunction, val label : KaggleLabel.Val
   /** Leaf Nodes have depth 1 */
   override def depth() = 1
   
-  /** Returns the label as the toString */
-  override def toString() = label.toString()
-  
   /** Still no recursion to do, just return s */
-  override def toStringRec(i : Int) : String = tabs(i) + toString()
+  override def toStringRec(i : Int)(implicit maxDepth : Int) : String = tabs(i) + label.toString()
   
 }
 
@@ -460,18 +497,16 @@ class DTAttributeNode(override val f : AttributeFunction, val m : Map[DTNode, At
     1 + m.foldLeft(0)((acc : Int, b : (DTNode, AttributeFunction)) => Math.max(acc,b._1.depth))
   }
   
-  /** Recursively shows children for toString */
-  override def toString() = {
-   toStringRec(0)
-  }
-  
   /** Recursive toString that maintains tabing along the way */
-  def toStringRec(i : Int) : String = {
-    var s = ""
-    for((node, fun) <- m){
-      s = s + tabs(i) + (fun.toString + "\n" + node.toStringRec(i+1) + "\n")
+  def toStringRec(i : Int)(implicit maxDepth : Int) : String = {
+    if(i >= maxDepth) tabs(i) + "..." 
+    else{
+      var s = ""
+      for((node, fun) <- m){
+        s = s + tabs(i) + (fun.toString + "\n" + node.toStringRec(i+1) + "\n")
+      }
+      s.substring(0, s.length() - 1)
     }
-    s.substring(0, s.length() - 1)
   }
   
 }
