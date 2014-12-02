@@ -12,12 +12,12 @@ w_out = open('../data/svm_out/w.out','w')
 w_out_sorted = open('../data/svm_out/w_sorted.out','w')
 # TODO better name for class
 class Instance():
-    def __init__(self, train_dat_num, test_dat_num, c=None,j=None, k=None):
+    def __init__(self, train_dat_num, test_dat_num, c=None,j=None, t=None):
         self.train_data_num = train_dat_num
         self.test_data_num = test_dat_num
         self.c = c
         self.j = j
-        self.k = k
+        self.t = t
         self.train_file = '../data/svm_norm/dat_' + str(train_dat_num) +'.txt'
         self.test_file = '../data/svm_norm/dat_' + str(test_dat_num) +'.txt'
         prefix = '../data/svm_out/dat_' + str(train_dat_num)
@@ -25,6 +25,8 @@ class Instance():
             prefix += '_c_' + str(c).replace('.','-')
         if j != None:
             prefix += '_j_' + str(j).replace('.','-')
+        if t != None:
+            prefix += '_t_' + str(t).replace('.','-')
         self.model = prefix + '.model'
         self.prediction = prefix + '.prediction'
         self.classify_out = prefix +'_classify.out'
@@ -57,9 +59,9 @@ def learn(instance):
     if instance.j is not None:
         args_list.append('-j')
         args_list.append(str(instance.j))
-    if instance.k is not None:
-        args_list.append('-k')
-        args_list.append(str(instance.k))
+    if instance.t is not None:
+        args_list.append('-t')
+        args_list.append(str(instance.t))
     args_list.append(instance.train_file)
     args_list.append(instance.model)
     args = tuple(args_list)
@@ -123,13 +125,13 @@ def process(instance):
     find_results(instance)
     find_w(instance)
 
-def run(train_test_pairs, j_vals=[None], c_vals=[None], k=None):
+def run(train_test_pairs, j_vals=[None], c_vals=[None], t=None):
     table = texttable.Texttable()
     table.header(['Train File', 'Test File', 'j', 'c',  '# FN ', '# FP', 'Accuracy','F1'])
     for (train, test) in train_test_pairs:
         for j in j_vals:
             for c in c_vals:
-                instance = Instance(train, test, c=c, j=j, k=k)
+                instance = Instance(train, test, c=c, j=j, t=t)
                 process(instance)
                 table.add_row([instance.train_file, instance.test_file, instance.j, instance.c, instance.fn, instance.fp, instance.accuracy,instance.f1])
                 print instance.train_file, instance.test_file, instance.j, instance.c, instance.fn, instance.fp, instance.accuracy, instance.f1
@@ -143,5 +145,5 @@ J_VALS = [.75,1]
 C_VALS = [0.1,1.0,10.0]
 pairs = [(i,10) for i in DAT_NUMS[:-1]]
 
-run(pairs,j_vals=J_VALS,k=2)
+run(pairs,j_vals=J_VALS,t=2)
 
