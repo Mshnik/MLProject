@@ -10,27 +10,32 @@ import tempfile
 import texttable
 
 
-w_out = open('../data/svm_out/w.out','w')
-w_out_sorted = open('../data/svm_out/w_sorted.out','w')
+w_out = open('../data/results/w.out','w')
+w_out_sorted = open('../data/results/w_sorted.out','w')
 # TODO better name for class
 class Instance():
-    def __init__(self, train_dat_num, val_dat_num, test_dat_num, c=None,j=None, t=None):
+    def __init__(self, train_dat_num, val_dat_num, test_dat_num, c=None,j=None, t=None, b=None, half=False):
         self.train_data_num = train_dat_num
         self.test_data_num = test_dat_num
         self.val_dat_num = val_dat_num
         self.c = c
         self.j = j
         self.t = t
-        self.train_file = '../data/svm_norm/dat_' + str(train_dat_num) +'.txt'
-        self.val_file = '../data/svm_norm/dat_' + str(train_dat_num) +'.txt'
-        self.test_file = '../data/svm_norm/dat_' + str(test_dat_num) +'.txt'
-        prefix = '../data/svm_out/dat_' + str(train_dat_num)
+        self.b = b
+        in_folder = '../data/svm_fiftyfifty_norm/dat_' if half else '../data/svm_norm/dat_'
+        self.train_file = in_folder + str(train_dat_num) +'.txt'
+        self.val_file = in_folder + str(train_dat_num) +'.txt'
+        self.test_file = in_folder + str(test_dat_num) +'.txt'
+        out_folder = '../data/svm_fiftyfifty_out/dat_' if half else '../data/svm_out/dat_'
+        prefix = out_folder  + str(train_dat_num)
         if c != None:
             prefix += '_c_' + str(c).replace('.','-')
         if j != None:
             prefix += '_j_' + str(j).replace('.','-')
         if t != None:
             prefix += '_t_' + str(t).replace('.','-')
+        if b != None:
+            prefix += '_b_' + str(b).replace('.','-')
         self.model = prefix + '.model'
         self.prediction = prefix + '.prediction'
         self.classify_out = prefix +'_classify.out'
@@ -72,6 +77,9 @@ def learn(instance):
     if instance.t is not None:
         args_list.append('-t')
         args_list.append(str(instance.t))
+    if instance.b is not None:
+        args_list.append('-b')
+        args_list.append(str(instance.b))
     args_list.append(instance.train_file)
     args_list.append(instance.model)
     args = tuple(args_list)
@@ -127,7 +135,7 @@ def find_results(instance):
     instance.fp = sum([1 for (t, p) in zip(y_data, predictions) if t <= 0 and p > 0])
     instance.tp = sum([1 for (t, p) in zip(y_data, predictions) if t > 0 and p > 0])
     instance.accuracy = 1 - float(instance.fn + instance.fp)/len(y_data)
-    instance.precision = instance.tp / float(instance.tp+instance.fp)
+    instance.precision = instance.tp / float(instance.tp+instance.fp) #TODO prevent div by 0 errors
     instance.recall = instance.tp / float(instance.tp + instance.fn)
     instance.f1 = 2 * instance.precision * instance.recall / float(instance.precision + instance.recall)
     instance.f_half = 1.25 * instance.precision * instance.recall / float(.25*instance.precision + instance.recall)
@@ -139,8 +147,9 @@ def process(instance):
     find_results(instance)
     find_w(instance)
 
-def run(train_test_pairs, j_vals=[None], c_vals=[None], t=None):
-    output = open('../data/svm_out/output.csv', 'wb')
+def run(train_test_pairs, j_vals=[None], c_vals=[None], t=None, b=None, half=False):
+
+    output = open('../data/results/output.csv', 'wb')
     writer = csv.writer(output)
     table = texttable.Texttable()
     header = ['Train File', 'Test File', 'j', 'c', 't',  '# FN ', '# FP', 'Accuracy','Precision','Recall','F1','F.5']
@@ -149,7 +158,7 @@ def run(train_test_pairs, j_vals=[None], c_vals=[None], t=None):
     for (train, val, test) in train_test_pairs:
         for j in j_vals:
             for c in c_vals:
-                instance = Instance(train, val, test, c=c, j=j, t=t)
+                instance = Instance(train, val, test, c=c, j=j, t=t, b=b, half=half)
                 process(instance)
                 row= [instance.train_file, instance.test_file, instance.j, instance.c, instance.t, instance.fn, instance.fp, instance.accuracy, instance.precision, instance.recall, instance.f1,instance.f_half]
                 table.add_row(row)
@@ -163,12 +172,12 @@ def run(train_test_pairs, j_vals=[None], c_vals=[None], t=None):
 
 DAT_NUMS = range(1,11) #TODO zero index the data files
 
-J_VALS = [.6,.75,.9]
+J_VALS = [.75,1]
 C_VALS = [1,10,100]
 
-#pairs = [(1,9,10)]
-pairs = [(i,9,10) for i in DAT_NUMS[:-2]]
+pairs = [(1,9,10)]
+#pairs = [(i,9,10) for i in DAT_NUMS[:-2]]
 
 
-run(pairs,c_vals=C_VALS,j_vals=J_VALS,t=2)
+run(pairs,c_vals=C_VALS,j_vals=J_VALS,t=2, b=0)
 
