@@ -16,6 +16,7 @@ object ReaderWriter {
   private val resourcesFile = "data/resources.csv"
     
   private val rawData = "data/raw/combined_" //Add # for which file
+  private val csvData = "data/csv/dat_"
   private val rawExtension = ".csv"
   private val svmRawData = "data/svm_raw/dat_"
   private val svmScaledData = "data/svm_norm/dat_"  
@@ -46,13 +47,17 @@ dat_8.txt
 dat_9.txt
 dat_10.txt Alter to run whichever routine is necessary */
   def main(args : Array[String]) : Unit = {
-    binerize(svmRawFile, svmBinFile)
-    binerize(svmFiftyFiftyFile, svmFiftyFiftyBinFile)
+    CSVize(svmRawFile, csvFile)
   }
   
   /** Returns a string representing rawDataFile i */
   def rawFile(i : Int) : String = {
     rawData + i + rawExtension
+  }
+  
+  /** Returns a string representing csv file i */
+  def csvFile(i : Int) : String = {
+    csvData + i + rawExtension
   }
   
   /** Returns a string representing svmRawData file i */
@@ -78,6 +83,17 @@ dat_10.txt Alter to run whichever routine is necessary */
   /** Returns a string representing svmFiftyFiftyBinData file i */
   def svmFiftyFiftyBinFile(i : Int) : String = {
     svmFiftyFiftyBinData + i + svmExtension
+  }
+  
+  /** CSV-izes each of the data in the given path to the given output path */
+  def CSVize(in: Int => String, out : Int => String) : Unit = {
+    for(i <- 1 to numbFiles){
+      println("Processing file " + i)
+      val dat = readSVMData(in(i), KaggleLabel.stringToLabelMap, 0)
+      println("Read data")
+      writeCSV(dat, out(i))
+      println("Wrote to file")
+    }
   }
   
   /** Binerizes each of the data in the given in path (svm) to the given out path (svm) */
@@ -270,6 +286,12 @@ dat_10.txt Alter to run whichever routine is necessary */
   /** Writes the given list of kaggleData as their svm representations to the given filepath */
   def writeSVM(elms : List[KaggleData], path : String) : Unit = {
     val s = elms.foldLeft("")((acc, e) => acc + e.toSVMString + "\n")
+    write(s, path)
+  }
+  
+  /** Writes the given list of kaggleData as their csv representations, with the header */
+  def writeCSV(elms : List[KaggleData], path :String) : Unit = {
+    val s = elms.foldLeft(KaggleData.CSVHeaders + "\n")((acc, e) => acc + e.toCSVString + "\n")
     write(s, path)
   }
   

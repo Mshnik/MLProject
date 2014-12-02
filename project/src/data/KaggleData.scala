@@ -68,6 +68,8 @@ object KaggleData{
     println("Error with all Indices for KaggleData reading")
   }
   
+  val CSVHeaders = (0 to 37).toList.foldLeft("Label,")((a,b) => a + indexName.getOrElse(b, "") + ",") + "ID"
+  
   /** Miliseconds from epoch to jan 1 2000 */
   private val twoThousand = new java.util.Date("1/1/2000").getTime()
   
@@ -144,7 +146,6 @@ object KaggleData{
       )
     m + ((23, m(21)), (24, m(22)))
   } 
-   
   
   /** Returns a double corresponding to the given string, for the given fieldIndex */
   @throws[RuntimeException]
@@ -291,10 +292,17 @@ class KaggleData(val id : String, override val label : KaggleLabel.Value, overri
   /** Returns a string representing this dat that shows the keys of the attributes as strings */
   def toDescriptiveString : String = {
     
-    
-    
     vals.toList.sortWith((a, b) => a._1 < b._1).foldLeft(if(KaggleLabel.toBool(label)) "Funded " else "Not Funded ")(
         (a, b) => a + KaggleData.indexName(b._1) + ":" + b._2 + " ") + " # " + id
+  }
+  
+  /** Returns a comma seperated string for this data. All columns represented, shifted over 1 for label
+   *  at index 0 */
+  def toCSVString : String = {
+    KaggleLabel.toInt(label) + "," + 
+    (0 to 37).toList.foldLeft("")(
+      (a,b) => a + vals.getOrElse(b, 0.0) + ","    
+    ) + "#" + id
   }
   
   /** Returns a string representing this data that can be put into SVM-Light */
