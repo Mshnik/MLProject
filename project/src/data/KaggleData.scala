@@ -1,9 +1,15 @@
 package data
 
+import io.ReaderWriter
 import scala.collection.immutable.List
 
 /** Companion object for classes implementing KaggleData */
 object KaggleData{
+  
+  def main(args : Array[String]) : Unit = {
+    val dat = ReaderWriter.readRaw(ReaderWriter.rawFile(1))
+    
+  }
   
   /** index in input data that represents the id */
   val idIndex = 0
