@@ -19,7 +19,7 @@ object ReaderWriter {
   private val rawExtension = ".csv"
   private val svmRawData = "data/svm_raw/dat_" //Add # for which file
   private val svmScaledData = "data/svm_scaled/dat_"  
-  private val svmFiftyFifty = "data/raw_fiftyfifty/dat_"
+  private val svmFiftyFifty = "data/svm_fiftyfifty/dat_"
   private val svmExtension = ".txt"
     
   val numbFiles = 10 //Number of data files, both raw and converted. data indexs should be [1 .. this]
@@ -53,7 +53,7 @@ object ReaderWriter {
   def shave() : Unit = {
     for(i <- 1 to numbFiles){
       println("Processing file " + i)
-      shaveFileToFile(svmRawFile(i), svmRawFile(i))
+      shaveFileToFile(svmRawFile(i), svmFiftyFiftyFile(i))
     }
   }
   
