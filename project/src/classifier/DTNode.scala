@@ -6,10 +6,10 @@ import io._
 
 /** Holder for decision tree algorithms */
 object DTNode{
-  
-  val trainList = ReaderWriter.readRaw(ReaderWriter.rawFile(4))
-  val validationList = ReaderWriter.readRaw(ReaderWriter.rawFile(5))
-  val testList = ReaderWriter.readRaw(ReaderWriter.rawFile(6))
+  val m = KaggleLabel.stringToLabelMap
+  val trainList = ReaderWriter.readSVMData(ReaderWriter.svmFiftyFiftyFile(7), m, 0)
+  val validationList = ReaderWriter.readSVMData(ReaderWriter.svmFiftyFiftyFile(8), m, 0)
+  val testList = ReaderWriter.readSVMData(ReaderWriter.svmFiftyFiftyFile(9), m, 0)
   
   /** Do runnings of the id3 algorithm here. */
   def main(args : Array[String]) : Unit = {
@@ -19,7 +19,7 @@ object DTNode{
       best(i) = (null, 0, (0,0), (0, 0, 0, 0))
     }
     
-    for(d <- 1 to 10; i <- List(1.0, 1.2, 1.25, 1.5, 2, 3, 4, 5)){
+    for(d <- 1 to 9; i <- List(0.6, 0.8, 1.0)){
       val n = trainValidate(d, (1, i))
       //First tree encountered
       if(best(0)._1 == null){
@@ -49,25 +49,25 @@ object DTNode{
     val tester = test(testList, "Tested")_
     val depth = 3
     
-    println("Best Accuracy: Depth " + best(0)._2 + " Betas : " + best(0)._3 + " (TP, FP, FN, TN)" + best(0)._4)
+    println("Best Accuracy: Depth " + best(0)._2 + " Betas : " + best(0)._3 + " (TP, FN, FP, TN)" + best(0)._4)
     println(best(0)._1.toStringLim(depth))
     tester(best(0)._1)
     println("--------------------------------------------")
     println("--------------------------------------------")
     
-    println("Best Precision: Depth " + best(1)._2 + " Betas : " + best(1)._3 + " (TP, FP, FN, TN)" + best(1)._4)
+    println("Best Precision: Depth " + best(1)._2 + " Betas : " + best(1)._3 + " (TP, FN, FP, TN)" + best(1)._4)
     println(best(1)._1.toStringLim(depth))
     tester(best(1)._1)
     println("--------------------------------------------")
     println("--------------------------------------------")
     
-    println("Best F1: Depth " + best(2)._2 + " Betas : " + best(2)._3 + " (TP, FP, FN, TN)" + best(2)._4)
+    println("Best F1: Depth " + best(2)._2 + " Betas : " + best(2)._3 + " (TP, FN, FP, TN)" + best(2)._4)
     println(best(2)._1.toStringLim(depth))
     tester(best(2)._1)
 
     println("--------------------------------------------")
     println("--------------------------------------------")
-    println("Best F0.5: Depth " + best(3)._2 + " Betas : " + best(3)._3 + " (TP, FP, FN, TN)" + best(3)._4)
+    println("Best F0.5: Depth " + best(3)._2 + " Betas : " + best(3)._3 + " (TP, FN, FP, TN)" + best(3)._4)
     println(best(3)._1.toStringLim(depth))
     tester(best(3)._1)
 
