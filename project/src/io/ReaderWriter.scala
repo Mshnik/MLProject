@@ -17,9 +17,11 @@ object ReaderWriter {
     
   private val rawData = "data/raw/combined_" //Add # for which file
   private val rawExtension = ".csv"
-  private val svmRawData = "data/svm_raw/dat_" //Add # for which file
+  private val svmRawData = "data/svm_raw/dat_"
   private val svmScaledData = "data/svm_norm/dat_"  
   private val svmFiftyFifty = "data/svm_fiftyfifty/dat_"
+  private val svmBinData = "data/svm_bin/dat_"
+  private val svmFiftyFiftyBinData = "data/svm_fiftyfifty_bin/data_"
   private val svmExtension = ".txt"
     
   val numbFiles = 10 //Number of data files, both raw and converted. data indexs should be [1 .. this]
@@ -44,7 +46,8 @@ dat_8.txt
 dat_9.txt
 dat_10.txt Alter to run whichever routine is necessary */
   def main(args : Array[String]) : Unit = {
-    shave
+    binerize(svmRawFile, svmBinFile)
+    binerize(svmFiftyFiftyFile, svmFiftyFiftyBinFile)
   }
   
   /** Returns a string representing rawDataFile i */
@@ -65,6 +68,29 @@ dat_10.txt Alter to run whichever routine is necessary */
   /** Returns a string representing svmScaled file i */
   def svmScaledFile(i : Int) : String = {
     svmScaledData + i + svmExtension
+  }
+  
+  /** Returns a string representing svmBinData file i */
+  def svmBinFile(i : Int) : String = {
+    svmBinData + i + svmExtension
+  }
+  
+  /** Returns a string representing svmFiftyFiftyBinData file i */
+  def svmFiftyFiftyBinFile(i : Int) : String = {
+    svmFiftyFiftyBinData + i + svmExtension
+  }
+  
+  /** Binerizes each of the data in the given in path (svm) to the given out path (svm) */
+  def binerize(in : Int => String, out : Int => String) : Unit = {
+    for(i <- 1 to numbFiles){
+      println("Processing file " + i)
+      val dat = readSVMData(in(i), KaggleLabel.stringToLabelMap, 0)
+      println("Read data")
+      val bined = dat.map(a => KaggleData.binerate(a))
+      println("Binned Data")
+      writeSVM(bined, out(i))
+      println("Wrote to file")
+    }
   }
   
   /** Shaves each svm data in data/svm/dat_* to data/svm_fiftyfifty/dat_* */
@@ -239,6 +265,7 @@ dat_10.txt Alter to run whichever routine is necessary */
     val shaved = Random.shuffle(plusShaved ::: minShaved)
     writeSVM(shaved.map(a => a.asInstanceOf[KaggleData]), outPath)
   }
+  
   
   /** Writes the given list of kaggleData as their svm representations to the given filepath */
   def writeSVM(elms : List[KaggleData], path : String) : Unit = {

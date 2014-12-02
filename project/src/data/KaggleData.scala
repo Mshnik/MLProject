@@ -165,7 +165,7 @@ object KaggleData{
     enumMap.get(fieldIndex) match{
       case None => throw new RuntimeException(fieldIndex + " Isn't an enum field")
       case Some(lst) => {
-        lst(d.toInt + 1)
+        lst(d.toInt - 1)
       }
     } 
   }
@@ -189,6 +189,29 @@ object KaggleData{
   private def initNormalized(id : String, l : KaggleLabel.Value, vals : Map[Int, Double], 
      means : Map[Int, Double], stDev : Map[Int, Double]) : KaggleData = {
      new KaggleData(id, l, vals.map(a => (a._1, (a._2 - means(a._1))/stDev(a._1) )))
+  }
+  
+   /** For the given KaggleData, expands enum fields into their boolean counterparts.
+   *  For a enum field at index n, splits into n0<vals> */
+  @throws[RuntimeException]
+  def binerate(elm : KaggleData) : KaggleData = {
+    
+    /** Splits the given enum index and reforms the val map */
+    @throws[RuntimeException]
+    def f(acc : Map[Int, Double], a : Int) : Map[Int, Double] = {
+      if(! enumMap.contains(a))
+        throw new RuntimeException("Can't split index " + a + " not an enum index")
+      val v = acc.getOrElse(a, -1.0)
+      if(v == -1.0){
+        acc - a
+      } else{
+        val m = acc - a + ((a * 100 + enumMap(a).indexOf(unparseEnum(a, acc(a))), 1.0)) 
+        m
+      }
+    }
+    
+    val m = enumIndices.foldLeft(elm.vals)(f)
+    new KaggleData(elm.id, elm.label, m)
   }
 }
 
