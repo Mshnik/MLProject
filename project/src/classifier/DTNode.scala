@@ -3,16 +3,55 @@ package classifier
 import data._
 import data.Data._
 import io._
+import java.io.PrintStream
+import java.io.File
 
 /** Holder for decision tree algorithms */
 object DTNode{
   val m = KaggleLabel.stringToLabelMap
-  val trainList = ReaderWriter.readSVMData(ReaderWriter.svmFiftyFiftyFile(7), m, 0)
-  val validationList = ReaderWriter.readSVMData(ReaderWriter.svmFiftyFiftyFile(8), m, 0)
-  val testList = ReaderWriter.readSVMData(ReaderWriter.svmFiftyFiftyFile(9), m, 0)
+  var trainList = ReaderWriter.readSVMData(ReaderWriter.svmFiftyFiftyFile(7), m, 0)
+  var validationList = ReaderWriter.readSVMData(ReaderWriter.svmFiftyFiftyFile(8), m, 0)
+  var testList = ReaderWriter.readSVMData(ReaderWriter.svmFiftyFiftyFile(9), m, 0)
   
   /** Do runnings of the id3 algorithm here. */
   def main(args : Array[String]) : Unit = {
+    val out = "data/DT_out/comp.txt"
+     
+    val o = System.out  
+    System.setOut(new PrintStream(new File(out)))
+      
+    trainList = ReaderWriter.readSVMData(ReaderWriter.svmRawFile(7), m, 0)
+    validationList = ReaderWriter.readSVMData(ReaderWriter.svmRawFile(8), m, 0)
+    testList = ReaderWriter.readSVMData(ReaderWriter.svmRawFile(9), m, 0)
+    System.out.println("\nSkewed-Skewed")
+    o.println("Test 1")
+    trainValidateTest()
+    
+    System.out.println("\nEqual-Equal")
+    trainList = ReaderWriter.readSVMData(ReaderWriter.svmFiftyFiftyFile(7), m, 0)
+    validationList = ReaderWriter.readSVMData(ReaderWriter.svmFiftyFiftyFile(8), m, 0)
+    testList = ReaderWriter.readSVMData(ReaderWriter.svmFiftyFiftyFile(9), m, 0)
+        o.println("Test 2")
+    trainValidateTest()
+    
+    System.out.println("\nSkewed-Equal")
+    trainList = ReaderWriter.readSVMData(ReaderWriter.svmRawFile(7), m, 0)
+    validationList = ReaderWriter.readSVMData(ReaderWriter.svmRawFile(8), m, 0)
+    testList = ReaderWriter.readSVMData(ReaderWriter.svmFiftyFiftyFile(9), m, 0)
+        o.println("Test 3")
+
+    trainValidateTest()
+    
+    System.out.println("\nEqual-Skewed")
+    trainList = ReaderWriter.readSVMData(ReaderWriter.svmFiftyFiftyFile(7), m, 0)
+    validationList = ReaderWriter.readSVMData(ReaderWriter.svmFiftyFiftyFile(8), m, 0)
+    testList = ReaderWriter.readSVMData(ReaderWriter.svmRawFile(9), m, 0)
+        o.println("Test 4")
+
+    trainValidateTest()
+  }
+  
+  def trainValidateTest() : Unit = {
     val l = 4
     var best : Array[(DTNode, Int, (Double, Double), (Int, Int, Int, Int))] = Array.ofDim(l)
     for(i <- 0 until l){
@@ -43,33 +82,33 @@ object DTNode{
         } 
       }
     }
-    println("--------------------------------------------")
-    println("--------------------------------------------")
-    println("--------------------------------------------")
-    val tester = test(testList, "Tested")_
+    System.out.println("--------------------------------------------")
+    System.out.println("--------------------------------------------")
+    System.out.println("--------------------------------------------")
+    val tester = test(testList, "Tested", true)_
     val depth = 3
     
-    println("Best Accuracy: Depth " + best(0)._2 + " Betas : " + best(0)._3 + " (TP, FN, FP, TN)" + best(0)._4)
-    println(best(0)._1.toStringLim(depth))
+    System.out.println("Best Accuracy: Depth " + best(0)._2 + " Betas : " + best(0)._3 + " (TP, FN, FP, TN)" + best(0)._4)
+    System.out.println(best(0)._1.toStringLim(depth))
     tester(best(0)._1)
-    println("--------------------------------------------")
-    println("--------------------------------------------")
+    System.out.println("--------------------------------------------")
+    System.out.println("--------------------------------------------")
     
-    println("Best Precision: Depth " + best(1)._2 + " Betas : " + best(1)._3 + " (TP, FN, FP, TN)" + best(1)._4)
-    println(best(1)._1.toStringLim(depth))
+    System.out.println("Best Precision: Depth " + best(1)._2 + " Betas : " + best(1)._3 + " (TP, FN, FP, TN)" + best(1)._4)
+    System.out.println(best(1)._1.toStringLim(depth))
     tester(best(1)._1)
-    println("--------------------------------------------")
-    println("--------------------------------------------")
+    System.out.println("--------------------------------------------")
+    System.out.println("--------------------------------------------")
     
-    println("Best F1: Depth " + best(2)._2 + " Betas : " + best(2)._3 + " (TP, FN, FP, TN)" + best(2)._4)
-    println(best(2)._1.toStringLim(depth))
+    System.out.println("Best F1: Depth " + best(2)._2 + " Betas : " + best(2)._3 + " (TP, FN, FP, TN)" + best(2)._4)
+    System.out.println(best(2)._1.toStringLim(depth))
     tester(best(2)._1)
 
-    println("--------------------------------------------")
-    println("--------------------------------------------")
-    println("Best F0.5: Depth " + best(3)._2 + " Betas : " + best(3)._3 + " (TP, FN, FP, TN)" + best(3)._4)
-    println(best(3)._1.toStringLim(depth))
-    tester(best(3)._1)
+//    System.out.print("--------------------------------------------")
+//    System.out.print("--------------------------------------------")
+//    System.out.print("Best F0.5: Depth " + best(3)._2 + " Betas : " + best(3)._3 + " (TP, FN, FP, TN)" + best(3)._4)
+//    System.out.print(best(3)._1.toStringLim(depth))
+//    tester(best(3)._1)
 
   }
   
@@ -79,15 +118,17 @@ object DTNode{
   }
   
   /** Tests the tree on the given test set */
-  def test(lst : List[KaggleData], msg : String)(tree : DTNode)  : (Int, Int, Int, Int) = {
+  def test(lst : List[KaggleData], msg : String, print : Boolean)(tree : DTNode)  : (Int, Int, Int, Int) = {
     val a = tree.test(lst)
-    println(msg + " : " + a)
-    println("  Accuracy = " + AbsClassifier.accuracy(a))
-    println("  Recall = " + AbsClassifier.recall(a))
-    println("  Precision = " + AbsClassifier.precision(a))
-    val f1 = AbsClassifier.fOne(a._1, a._2, a._3, a._4)
-    println("  F1 = " + f1)
-    println("  F0.5 = " + AbsClassifier.f(0.5)(a._1, a._2, a._3, a._4))
+    if(print){
+	    System.out.println(msg + " : " + a)
+	    System.out.println("  Accuracy = " + AbsClassifier.accuracy(a))
+	    System.out.println("  Recall = " + AbsClassifier.recall(a))
+	    System.out.println("  Precision = " + AbsClassifier.precision(a))
+	    val f1 = AbsClassifier.fOne(a._1, a._2, a._3, a._4)
+	    System.out.println("  F1 = " + f1)
+	    System.out.println("  F0.5 = " + AbsClassifier.f(0.5)(a._1, a._2, a._3, a._4))
+    }
     a
   }
   
@@ -95,8 +136,8 @@ object DTNode{
    *  Returns a tuple of the tree and the F1 score. */
   def trainValidate(depth : Int, betas : (Double, Double)) : (DTNode, Int, (Double, Double), (Int, Int, Int, Int)) = {
     val tree = createTree(depth, betas)
-    println("Created tree of depth: " + depth + " with betas " + betas)
-    val a = test(validationList, "Validated ")(tree)
+//    System.out.print("Created tree of depth: " + depth + " with betas " + betas)
+    val a = test(validationList, "Validated ", false)(tree)
     (tree, depth, betas, a)
   }
   

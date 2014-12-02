@@ -273,6 +273,11 @@ dat_10.txt Alter to run whichever routine is necessary */
     write(s, path)
   }
   
+  def printToFile(f: java.io.File)(op: java.io.PrintWriter => Unit) {
+  val p = new java.io.PrintWriter(f)
+  try { op(p) } finally { p.close() }
+  }
+  
   /** Writes the given string to the given path */
   def write(s : String, path : String) : Unit = {
     val pw = new java.io.PrintWriter(new java.io.File(path))
