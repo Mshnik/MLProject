@@ -1,8 +1,10 @@
 package io
 
 import scala.io._
+import data.Data
 import data.KaggleLabel
 import data.KaggleData
+import scala.util.Random
 
 /** Object to handle reading data from kaggle, assembling into Data objects */
 object ReaderWriter {
@@ -17,13 +19,14 @@ object ReaderWriter {
   private val rawExtension = ".csv"
   private val svmRawData = "data/svm_raw/dat_" //Add # for which file
   private val svmScaledData = "data/svm_scaled/dat_"  
+  private val svmFiftyFifty = "data/raw_fiftyfifty/dat_"
   private val svmExtension = ".txt"
     
   val numbFiles = 10 //Number of data files, both raw and converted. data indexs should be [1 .. this]
   
   /** Alter to run whichever routine is necessary */
   def main(args : Array[String]) : Unit = {
-    scale
+    shave
   }
   
   /** Returns a string representing rawDataFile i */
@@ -36,9 +39,22 @@ object ReaderWriter {
     svmRawData + i + svmExtension
   }
   
+    /** Returns a string representing svmFiftyFifty file i */
+  def svmFiftyFiftyFile(i : Int) : String = {
+    svmFiftyFifty + i + svmExtension
+  }
+  
   /** Returns a string representing svmScaled file i */
   def svmScaledFile(i : Int) : String = {
     svmScaledData + i + svmExtension
+  }
+  
+  /** Shaves each svm data in data/svm/dat_* to data/svm_fiftyfifty/dat_* */
+  def shave() : Unit = {
+    for(i <- 1 to numbFiles){
+      println("Processing file " + i)
+      shaveFileToFile(svmRawFile(i), svmRawFile(i))
+    }
   }
   
   /** Converts raw data in data/raw/combined_* to data/svm_raw/dat_* as svm data */
@@ -185,6 +201,25 @@ object ReaderWriter {
       a :: lst
     }
     Source.fromFile(filePath).getLines.drop(skipLines).foldLeft(lst)(f).reverse
+  }
+  
+  /** shave off examples such that there are an even number of positive and negative examples,
+   *  then write to the given the svm to the given path
+   */
+  @throws[Exception]
+  def shaveFileToFile(inPath : String, outPath : String) : Unit = {
+    val data = readSVMData(inPath, KaggleLabel.stringToLabelMap, 0)
+    val splitData = Data.splitByLabel(data)
+    val plusData = Random.shuffle(splitData(KaggleLabel.TRUE))
+    val minData = Random.shuffle(splitData(KaggleLabel.FALSE))
+    
+    val plusShaved = plusData.drop(Math.max(0, plusData.length - minData.length))
+    val minShaved = minData.drop(Math.max(0, minData.length - plusData.length))
+    if(plusShaved.length != minShaved.length){
+      throw new Exception("Shaved lists not of same length: " + plusShaved.length + ", " + minShaved.length)
+    }
+    val shaved = Random.shuffle(plusShaved ::: minShaved)
+    writeSVM(shaved.map(a => a.asInstanceOf[KaggleData]), outPath)
   }
   
   /** Writes the given list of kaggleData as their svm representations to the given filepath */
