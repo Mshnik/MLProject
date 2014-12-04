@@ -166,17 +166,19 @@ def run(train_test_pairs, j_vals=[None], c_vals=[None], t_vals=[None], b=None, h
                     process(instance)
                     row = [instance.train_file, instance.test_file, instance.j, instance.c, instance.t, instance.b, instance.fn, instance.fp, instance.accuracy, instance.precision, instance.recall, instance.f1,instance.f_half, instance.w, instance.sorted_w]
                     writer.writerow(row)
+                    output.flush()
+                    output.seek(0)
                     output.close()
 
 
 
 DAT_NUMS = range(1,11) #TODO zero index the data files
 
-J_VALS = [.7,.8]
-C_VALS = [100,500,1000]
+J_VALS = [.7]
+C_VALS = [100]
 T_VALS = [1]
 B_VALS = [0,None]
 pairs = [(2,9,i) for i in DAT_NUMS[2:]]
 
 
-run(pairs,c_vals=C_VALS,j_vals=J_VALS,t_vals=T_VALS, b=0,binary=True)
+run(pairs,c_vals=C_VALS,j_vals=J_VALS,t_vals=T_VALS, b=0,binary=False)
