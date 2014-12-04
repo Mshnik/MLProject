@@ -143,6 +143,7 @@ def find_w(instance):
     w = x_mat.matmat(y_data)
     instance.w = [i for i in w if i <> 0]
     sorted_w = sorted(range(len(w)), key=lambda x : w[x], reverse=True)
+    instance.sorted_w = sorted_w
 
 def find_results(instance):
     f = open(instance.prediction, 'r')
