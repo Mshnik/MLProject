@@ -1,31 +1,514 @@
 --------------------------------------------
 --------------------------------------------
 --------------------------------------------
-Best Accuracy: Depth 1 Betas : (1.0,0.6) (TP, FN, FP, TN)(1226,0,0,0)
-TRUE
-Tested : (1207,0,0,0)
-  Accuracy = 1.0
-  Recall = 1.0
-  Precision = 1.0
-  F1 = 1.0
-  F0.5 = 1.0
+Best Accuracy: Depth 2 Betas : List(1.0, 1.0, 1.0) (TP, FN, FP, TN)(4892,410,2696,838)
+Data(Poverty Level) = highest poverty
+--data(Latitude)>38.0
+----URBAN
+--data(Latitude)<=38.0
+----URBAN
+Data(Poverty Level) = high poverty
+--data(Longitude)>-110.0
+----URBAN
+--data(Longitude)<=-110.0
+----URBAN
+Data(Poverty Level) = moderate poverty
+--Data(School Magnet) = t
+----URBAN
+--Data(School Magnet) = f
+----SUBURBAN
+Data(Poverty Level) = low poverty
+--Data(Secondary Focus Subject) = Not Provided
+----SUBURBAN
+--Data(Secondary Focus Subject) = Extracurricular
+----RURAL
+--Data(Secondary Focus Subject) = History & Geography
+----SUBURBAN
+--Data(Secondary Focus Subject) = Sports
+----SUBURBAN
+--Data(Secondary Focus Subject) = Community Service
+----SUBURBAN
+--Data(Secondary Focus Subject) = Early Development
+----RURAL
+--Data(Secondary Focus Subject) = Special Needs
+----URBAN
+--Data(Secondary Focus Subject) = Mathematics
+----URBAN
+--Data(Secondary Focus Subject) = Social Sciences
+----SUBURBAN
+--Data(Secondary Focus Subject) = Applied Sciences
+----RURAL
+--Data(Secondary Focus Subject) = Performing Arts
+----SUBURBAN
+--Data(Secondary Focus Subject) = Literacy
+----SUBURBAN
+--Data(Secondary Focus Subject) = Health & Wellness
+----URBAN
+--Data(Secondary Focus Subject) = College & Career Prep
+----URBAN
+--Data(Secondary Focus Subject) = Music
+----URBAN
+--Data(Secondary Focus Subject) = Visual Arts
+----RURAL
+--Data(Secondary Focus Subject) = Literature & Writing
+----SUBURBAN
+--Data(Secondary Focus Subject) = Health & Life Science
+----SUBURBAN
+--Data(Secondary Focus Subject) = Nutrition
+----RURAL
+--Data(Secondary Focus Subject) = Gym & Fitness
+----SUBURBAN
+--Data(Secondary Focus Subject) = ESL
+----SUBURBAN
+--Data(Secondary Focus Subject) = Parent Involvement
+----SUBURBAN
+--Data(Secondary Focus Subject) = Environmental Science
+----SUBURBAN
+--Data(Secondary Focus Subject) = Character Education
+----SUBURBAN
+--Data(Secondary Focus Subject) = Other
+----RURAL
+Tested : (4979,429,2543,861)
+  Accuracy = 0.6627326373127553
+  Recall = 0.9206730769230769
+  Precision = 0.6619250199415049
+  F1 = 0.7701469450889404
+  F0.5 = 0.7013466306062655
 --------------------------------------------
 --------------------------------------------
-Best Precision: Depth 1 Betas : (1.0,0.6) (TP, FN, FP, TN)(1226,0,0,0)
-TRUE
-Tested : (1207,0,0,0)
-  Accuracy = 1.0
-  Recall = 1.0
-  Precision = 1.0
-  F1 = 1.0
-  F0.5 = 1.0
+Best Precision: Depth 6 Betas : List(1.0, 1.0, 1.0) (TP, FN, FP, TN)(2838,2464,1227,2307)
+Data(Poverty Level) = highest poverty
+--data(Latitude)>38.0
+----data(Date Posted)>2900.0
+------...
+----data(Date Posted)<=2900.0
+------...
+--data(Latitude)<=38.0
+----data(Longitude)>-110.0
+------...
+----data(Longitude)<=-110.0
+------...
+Data(Poverty Level) = high poverty
+--data(Longitude)>-110.0
+----Data(School Magnet) = t
+------...
+----Data(School Magnet) = f
+------...
+--data(Longitude)<=-110.0
+----Data(Secondary Focus Subject) = Special Needs
+------...
+----Data(Secondary Focus Subject) = ESL
+------...
+----Data(Secondary Focus Subject) = Character Education
+------...
+----Data(Secondary Focus Subject) = Literacy
+------...
+----Data(Secondary Focus Subject) = Mathematics
+------...
+----Data(Secondary Focus Subject) = Community Service
+------URBAN
+----Data(Secondary Focus Subject) = Health & Wellness
+------...
+----Data(Secondary Focus Subject) = Performing Arts
+------...
+----Data(Secondary Focus Subject) = Civics & Government
+------...
+----Data(Secondary Focus Subject) = Extracurricular
+------...
+----Data(Secondary Focus Subject) = Sports
+------...
+----Data(Secondary Focus Subject) = Health & Life Science
+------...
+----Data(Secondary Focus Subject) = Music
+------...
+----Data(Secondary Focus Subject) = College & Career Prep
+------...
+----Data(Secondary Focus Subject) = Visual Arts
+------...
+----Data(Secondary Focus Subject) = Other
+------...
+----Data(Secondary Focus Subject) = Parent Involvement
+------...
+----Data(Secondary Focus Subject) = Social Sciences
+------...
+----Data(Secondary Focus Subject) = Literature & Writing
+------...
+----Data(Secondary Focus Subject) = Applied Sciences
+------...
+----Data(Secondary Focus Subject) = Economics
+------...
+----Data(Secondary Focus Subject) = Environmental Science
+------...
+----Data(Secondary Focus Subject) = Nutrition
+------...
+----Data(Secondary Focus Subject) = Gym & Fitness
+------...
+----Data(Secondary Focus Subject) = History & Geography
+------...
+----Data(Secondary Focus Subject) = Early Development
+------...
+----Data(Secondary Focus Subject) = Foreign Languages
+------...
+----Data(Secondary Focus Subject) = Not Provided
+------...
+Data(Poverty Level) = moderate poverty
+--Data(School Magnet) = t
+----Data(Secondary Focus Subject) = Other
+------URBAN
+----Data(Secondary Focus Subject) = Applied Sciences
+------URBAN
+----Data(Secondary Focus Subject) = Environmental Science
+------URBAN
+----Data(Secondary Focus Subject) = History & Geography
+------...
+----Data(Secondary Focus Subject) = Music
+------URBAN
+----Data(Secondary Focus Subject) = Social Sciences
+------...
+----Data(Secondary Focus Subject) = Early Development
+------...
+----Data(Secondary Focus Subject) = Visual Arts
+------URBAN
+----Data(Secondary Focus Subject) = Extracurricular
+------...
+----Data(Secondary Focus Subject) = College & Career Prep
+------URBAN
+----Data(Secondary Focus Subject) = Parent Involvement
+------URBAN
+----Data(Secondary Focus Subject) = Character Education
+------...
+----Data(Secondary Focus Subject) = Mathematics
+------...
+----Data(Secondary Focus Subject) = Civics & Government
+------URBAN
+----Data(Secondary Focus Subject) = ESL
+------...
+----Data(Secondary Focus Subject) = Literature & Writing
+------...
+----Data(Secondary Focus Subject) = Performing Arts
+------URBAN
+----Data(Secondary Focus Subject) = Not Provided
+------...
+----Data(Secondary Focus Subject) = Health & Life Science
+------...
+----Data(Secondary Focus Subject) = Literacy
+------URBAN
+--Data(School Magnet) = f
+----Data(Secondary Focus Subject) = Music
+------...
+----Data(Secondary Focus Subject) = Visual Arts
+------...
+----Data(Secondary Focus Subject) = Health & Wellness
+------...
+----Data(Secondary Focus Subject) = Literacy
+------...
+----Data(Secondary Focus Subject) = Character Education
+------...
+----Data(Secondary Focus Subject) = Economics
+------...
+----Data(Secondary Focus Subject) = Applied Sciences
+------...
+----Data(Secondary Focus Subject) = Community Service
+------...
+----Data(Secondary Focus Subject) = Special Needs
+------...
+----Data(Secondary Focus Subject) = Environmental Science
+------...
+----Data(Secondary Focus Subject) = ESL
+------...
+----Data(Secondary Focus Subject) = History & Geography
+------...
+----Data(Secondary Focus Subject) = Early Development
+------...
+----Data(Secondary Focus Subject) = Sports
+------...
+----Data(Secondary Focus Subject) = Civics & Government
+------...
+----Data(Secondary Focus Subject) = Foreign Languages
+------URBAN
+----Data(Secondary Focus Subject) = Gym & Fitness
+------...
+----Data(Secondary Focus Subject) = College & Career Prep
+------...
+----Data(Secondary Focus Subject) = Literature & Writing
+------...
+----Data(Secondary Focus Subject) = Mathematics
+------...
+----Data(Secondary Focus Subject) = Performing Arts
+------...
+----Data(Secondary Focus Subject) = Not Provided
+------...
+----Data(Secondary Focus Subject) = Nutrition
+------...
+----Data(Secondary Focus Subject) = Parent Involvement
+------...
+----Data(Secondary Focus Subject) = Other
+------...
+----Data(Secondary Focus Subject) = Health & Life Science
+------...
+----Data(Secondary Focus Subject) = Social Sciences
+------...
+----Data(Secondary Focus Subject) = Extracurricular
+------...
+Data(Poverty Level) = low poverty
+--Data(Secondary Focus Subject) = Health & Wellness
+----URBAN
+--Data(Secondary Focus Subject) = Not Provided
+----Data(Primary Focus Subject) = Literacy
+------...
+----Data(Primary Focus Subject) = History & Geography
+------...
+----Data(Primary Focus Subject) = Visual Arts
+------...
+----Data(Primary Focus Subject) = Social Sciences
+------URBAN
+----Data(Primary Focus Subject) = Special Needs
+------URBAN
+----Data(Primary Focus Subject) = Character Education
+------URBAN
+----Data(Primary Focus Subject) = Applied Sciences
+------SUBURBAN
+----Data(Primary Focus Subject) = Early Development
+------SUBURBAN
+----Data(Primary Focus Subject) = Economics
+------SUBURBAN
+----Data(Primary Focus Subject) = Performing Arts
+------URBAN
+----Data(Primary Focus Subject) = Other
+------SUBURBAN
+----Data(Primary Focus Subject) = Foreign Languages
+------SUBURBAN
+----Data(Primary Focus Subject) = Mathematics
+------...
+----Data(Primary Focus Subject) = Environmental Science
+------SUBURBAN
+----Data(Primary Focus Subject) = Health & Life Science
+------SUBURBAN
+----Data(Primary Focus Subject) = College & Career Prep
+------URBAN
+----Data(Primary Focus Subject) = Literature & Writing
+------...
+--Data(Secondary Focus Subject) = Special Needs
+----Data(Primary Focus Subject) = Literacy
+------...
+----Data(Primary Focus Subject) = Special Needs
+------URBAN
+----Data(Primary Focus Subject) = College & Career Prep
+------URBAN
+----Data(Primary Focus Subject) = Mathematics
+------SUBURBAN
+----Data(Primary Focus Subject) = Literature & Writing
+------...
+----Data(Primary Focus Subject) = Health & Life Science
+------RURAL
+--Data(Secondary Focus Subject) = Mathematics
+----Data(Grade Level) = Grades 9-12
+------...
+----Data(Grade Level) = Grades 6-8
+------SUBURBAN
+----Data(Grade Level) = Grades 3-5
+------...
+----Data(Grade Level) = Grades PreK-2
+------...
+--Data(Secondary Focus Subject) = Community Service
+----SUBURBAN
+--Data(Secondary Focus Subject) = Music
+----Data(Primary Focus Subject) = Literacy
+------URBAN
+----Data(Primary Focus Subject) = Mathematics
+------RURAL
+----Data(Primary Focus Subject) = Performing Arts
+------...
+--Data(Secondary Focus Subject) = Character Education
+----SUBURBAN
+--Data(Secondary Focus Subject) = Performing Arts
+----SUBURBAN
+--Data(Secondary Focus Subject) = History & Geography
+----Data(Primary Focus Subject) = Other
+------SUBURBAN
+----Data(Primary Focus Subject) = Music
+------SUBURBAN
+----Data(Primary Focus Subject) = Literacy
+------...
+----Data(Primary Focus Subject) = Mathematics
+------RURAL
+----Data(Primary Focus Subject) = Literature & Writing
+------SUBURBAN
+--Data(Secondary Focus Subject) = ESL
+----data(Latitude)>38.0
+------SUBURBAN
+----data(Latitude)<=38.0
+------URBAN
+--Data(Secondary Focus Subject) = Social Sciences
+----SUBURBAN
+--Data(Secondary Focus Subject) = Environmental Science
+----SUBURBAN
+--Data(Secondary Focus Subject) = Literacy
+----Data(Primary Focus Subject) = ESL
+------URBAN
+----Data(Primary Focus Subject) = Health & Life Science
+------URBAN
+----Data(Primary Focus Subject) = Special Needs
+------...
+----Data(Primary Focus Subject) = Literacy
+------SUBURBAN
+----Data(Primary Focus Subject) = Visual Arts
+------URBAN
+----Data(Primary Focus Subject) = Literature & Writing
+------SUBURBAN
+----Data(Primary Focus Subject) = History & Geography
+------URBAN
+----Data(Primary Focus Subject) = Mathematics
+------...
+--Data(Secondary Focus Subject) = Parent Involvement
+----SUBURBAN
+--Data(Secondary Focus Subject) = Visual Arts
+----Data(Resource Type) = Technology
+------SUBURBAN
+----Data(Resource Type) = Supplies
+------URBAN
+----Data(Resource Type) = Books
+------RURAL
+--Data(Secondary Focus Subject) = College & Career Prep
+----URBAN
+--Data(Secondary Focus Subject) = Nutrition
+----RURAL
+--Data(Secondary Focus Subject) = Health & Life Science
+----Data(Teacher Prefix) = Mrs.
+------...
+----Data(Teacher Prefix) = Ms.
+------...
+----Data(Teacher Prefix) = Mr.
+------URBAN
+--Data(Secondary Focus Subject) = Applied Sciences
+----Data(Grade Level) = Grades 9-12
+------URBAN
+----Data(Grade Level) = Grades 6-8
+------SUBURBAN
+----Data(Grade Level) = Grades 3-5
+------...
+----Data(Grade Level) = Grades PreK-2
+------RURAL
+--Data(Secondary Focus Subject) = Other
+----data(Date Posted)>3700.0
+------URBAN
+----data(Date Posted)<=3700.0
+------RURAL
+--Data(Secondary Focus Subject) = Gym & Fitness
+----SUBURBAN
+--Data(Secondary Focus Subject) = Early Development
+----Data(Resource Type) = Other
+------URBAN
+----Data(Resource Type) = Technology
+------SUBURBAN
+----Data(Resource Type) = Supplies
+------URBAN
+----Data(Resource Type) = Books
+------SUBURBAN
+--Data(Secondary Focus Subject) = Literature & Writing
+----Data(Primary Focus Subject) = Literacy
+------...
+----Data(Primary Focus Subject) = Special Needs
+------...
+----Data(Primary Focus Subject) = Environmental Science
+------URBAN
+----Data(Primary Focus Subject) = Mathematics
+------...
+----Data(Primary Focus Subject) = Civics & Government
+------...
+----Data(Primary Focus Subject) = Literature & Writing
+------...
+----Data(Primary Focus Subject) = History & Geography
+------SUBURBAN
+----Data(Primary Focus Subject) = Visual Arts
+------SUBURBAN
+----Data(Primary Focus Subject) = Social Sciences
+------URBAN
+--Data(Secondary Focus Subject) = Extracurricular
+----Data(Primary Focus Subject) = ESL
+------SUBURBAN
+----Data(Primary Focus Subject) = Literacy
+------URBAN
+--Data(Secondary Focus Subject) = Sports
+----SUBURBAN
+Tested : (2854,2554,1240,2164)
+  Accuracy = 0.5694507489786654
+  Recall = 0.5277366863905325
+  Precision = 0.6971177332681974
+  F1 = 0.6007156388128815
+  F0.5 = 0.6550679397723099
 --------------------------------------------
 --------------------------------------------
-Best F1: Depth 1 Betas : (1.0,0.6) (TP, FN, FP, TN)(1226,0,0,0)
-TRUE
-Tested : (1207,0,0,0)
-  Accuracy = 1.0
-  Recall = 1.0
-  Precision = 1.0
-  F1 = 1.0
-  F0.5 = 1.0
+Best F1: Depth 2 Betas : List(1.0, 1.0, 1.0) (TP, FN, FP, TN)(4892,410,2696,838)
+Data(Poverty Level) = highest poverty
+--data(Latitude)>38.0
+----URBAN
+--data(Latitude)<=38.0
+----URBAN
+Data(Poverty Level) = high poverty
+--data(Longitude)>-110.0
+----URBAN
+--data(Longitude)<=-110.0
+----URBAN
+Data(Poverty Level) = moderate poverty
+--Data(School Magnet) = t
+----URBAN
+--Data(School Magnet) = f
+----SUBURBAN
+Data(Poverty Level) = low poverty
+--Data(Secondary Focus Subject) = Not Provided
+----SUBURBAN
+--Data(Secondary Focus Subject) = Extracurricular
+----RURAL
+--Data(Secondary Focus Subject) = History & Geography
+----SUBURBAN
+--Data(Secondary Focus Subject) = Sports
+----SUBURBAN
+--Data(Secondary Focus Subject) = Community Service
+----SUBURBAN
+--Data(Secondary Focus Subject) = Early Development
+----RURAL
+--Data(Secondary Focus Subject) = Special Needs
+----URBAN
+--Data(Secondary Focus Subject) = Mathematics
+----URBAN
+--Data(Secondary Focus Subject) = Social Sciences
+----SUBURBAN
+--Data(Secondary Focus Subject) = Applied Sciences
+----RURAL
+--Data(Secondary Focus Subject) = Performing Arts
+----SUBURBAN
+--Data(Secondary Focus Subject) = Literacy
+----SUBURBAN
+--Data(Secondary Focus Subject) = Health & Wellness
+----URBAN
+--Data(Secondary Focus Subject) = College & Career Prep
+----URBAN
+--Data(Secondary Focus Subject) = Music
+----URBAN
+--Data(Secondary Focus Subject) = Visual Arts
+----RURAL
+--Data(Secondary Focus Subject) = Literature & Writing
+----SUBURBAN
+--Data(Secondary Focus Subject) = Health & Life Science
+----SUBURBAN
+--Data(Secondary Focus Subject) = Nutrition
+----RURAL
+--Data(Secondary Focus Subject) = Gym & Fitness
+----SUBURBAN
+--Data(Secondary Focus Subject) = ESL
+----SUBURBAN
+--Data(Secondary Focus Subject) = Parent Involvement
+----SUBURBAN
+--Data(Secondary Focus Subject) = Environmental Science
+----SUBURBAN
+--Data(Secondary Focus Subject) = Character Education
+----SUBURBAN
+--Data(Secondary Focus Subject) = Other
+----RURAL
+Tested : (4979,429,2543,861)
+  Accuracy = 0.6627326373127553
+  Recall = 0.9206730769230769
+  Precision = 0.6619250199415049
+  F1 = 0.7701469450889404
+  F0.5 = 0.7013466306062655
