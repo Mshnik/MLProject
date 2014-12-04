@@ -152,8 +152,7 @@ def process(instance):
     find_w(instance)
 
 def run(train_test_pairs, j_vals=[None], c_vals=[None], t_vals=[None], b=None, half=False, binary=False):
-    output = open(instance.outfile, 'wb')
-    writer = csv.writer(output)  
+
     for (train, val, test) in train_test_pairs:
         print "--------------------" + str(train)
         for t in t_vals:
@@ -162,10 +161,12 @@ def run(train_test_pairs, j_vals=[None], c_vals=[None], t_vals=[None], b=None, h
                 for c in c_vals:
                     print "c: " + str(c) + "\t" + gettime()
                     instance = Instance(train, val, test, c=c, j=j, t=t, b=b, half=half,binary=binary)
+                    output = open(instance.outfile, 'wb')
+                    writer = csv.writer(output)
                     process(instance)
                     row = [instance.train_file, instance.test_file, instance.j, instance.c, instance.t, instance.b, instance.fn, instance.fp, instance.accuracy, instance.precision, instance.recall, instance.f1,instance.f_half, instance.w, instance.sorted_w]
                     writer.writerow(row)
-    output.close()
+                    output.close()
 
 
 
