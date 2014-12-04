@@ -174,6 +174,7 @@ def run(train_test_pairs, j_vals=[None], c_vals=[None], t_vals=[None], b=None, h
     header.append('sorted_w')
     w_writer.writerow(header)
     for (train, val, test) in train_test_pairs:
+        print "--------------------" + str(train)
         for t in t_vals:
             for j in j_vals:
                 print "j: " + str(j) + "\t" + gettime()
@@ -198,11 +199,11 @@ def run(train_test_pairs, j_vals=[None], c_vals=[None], t_vals=[None], b=None, h
 
 DAT_NUMS = range(1,11) #TODO zero index the data files
 
-J_VALS = [.6,.7,.8]
-C_VALS = [50, 100, 1000]
-T_VALS = [1,2]
+J_VALS = [.7]
+C_VALS = [100]
+T_VALS = [1]
 B_VALS = [0,None]
-pairs = [(2,9,10)]
+pairs = [(2,9,i) for i in DAT_NUMS[2:]]
 
 
-run(pairs,c_vals=C_VALS,j_vals=J_VALS,t_vals=T_VALS, b=0,binary=False)
+run(pairs,c_vals=C_VALS,j_vals=J_VALS,t_vals=T_VALS, b=0,bin=True)
