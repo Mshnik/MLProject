@@ -23,7 +23,7 @@ object KaggleData{
     }
     
     Chartifier.showChart(dat.foldLeft(Map[String, List[(Double, Double)]]())(f),
-        "Total Price vs Funded", "Total Price", "Funded", 2)
+        "Latitude and Longitude vs Funded", "Longitude", "Latitude", 3)
     
   }
   
