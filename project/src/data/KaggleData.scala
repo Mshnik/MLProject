@@ -10,19 +10,16 @@ object KaggleData{
   def main(args : Array[String]) : Unit = {
     val dat = ReaderWriter.readRaw(ReaderWriter.rawFile(1))
     
-    val field = 30 //Total price + opt
+    val field1 = 5 //longitude
+    val field2 = 4 // latitude
     
     def f(m : Map[String, List[(Double, Double)]], a : KaggleData) : Map[String, List[(Double, Double)]] = {
       val lbl = KaggleLabel.toInt(a.label).toDouble
       val plus = "Funded"
       val min = "Not Funded"
-      if(lbl > 0){
-        val lst = m.getOrElse(plus, List())
-        m - plus + ((plus, (a.vals.getOrElse(field, 0.0), lbl) :: lst))
-      } else{
-        val lst = m.getOrElse(min, List())
-        m - min + ((min, (a.vals.getOrElse(field, 0.0), lbl) :: lst))
-      } 
+      val lab = if(lbl > 0) plus else min
+      val lst = m.getOrElse(lab, List())
+      m - lab + ((lab, (a.vals.getOrElse(field1, 0.0), a.vals.getOrElse(field2, 0.0)) :: lst)) 
     }
     
     Chartifier.showChart(dat.foldLeft(Map[String, List[(Double, Double)]]())(f),
