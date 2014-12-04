@@ -1,14 +1,9 @@
 import csv
-import math
-import numpy as np
 import os
-from random import shuffle
-import re
 import subprocess
 import scipy.sparse.linalg
-from sklearn.datasets import load_svmlight_file, dump_svmlight_file
+from sklearn.datasets import load_svmlight_file
 import tempfile
-import texttable
 import time
 
 START = time.time()
@@ -16,12 +11,6 @@ def gettime():
     now = time.time() - START
     return format(now, '.2f') + "s"
 
-w_out = open('../data/results/w.out','w')
-w_out_sorted = open('../data/results/w_sorted.out','w')
-w_out_anotated = open('../data/results/w_anotated.out','w')
-w_writer = csv.writer(w_out_anotated)
-complete_output = open('../data/results/output.csv', 'w')
-output_writer = csv.writer(complete_output)
 # TODO better name for class
 class Instance():
     def __init__(self, train_dat_num, val_dat_num, test_dat_num, c=None,j=None, t=None, b=None, half=False, binary=False):
@@ -32,7 +21,16 @@ class Instance():
         self.j = j
         self.t = t
         self.b = b
-        in_str = '_fiftyfifty_' if half else ('_bin_' if binary else '_')
+        in_str = ""
+        if half and binary:
+            in_str = '_fiftyfifty_bin_'
+        elif half:
+            in_str = '_fiftyfifty_'
+        elif binary:
+            in_str = '_bin_'
+        else:
+            in_str = '_'
+        self.outfile = '../data/results/output' + in_str[:-1] + '.csv'
         in_folder =  '../data/svm' + in_str + 'norm/dat_'
         self.train_file = in_folder + str(train_dat_num) +'.txt'
         self.val_file = in_folder + str(train_dat_num) +'.txt'
@@ -131,12 +129,7 @@ def find_w(instance):
     x_mat = scipy.sparse.linalg.aslinearoperator(x_data)
     w = x_mat.matmat(y_data)
     instance.w = [i for i in w if i <> 0]
-    w_out.write(str(w))
-    w_out.flush() #TODO delete this (only for early testing)
     sorted_w = sorted(range(len(w)), key=lambda x : w[x], reverse=True)
-    instance.sorted_w = sorted_w
-    w_out_sorted.write(str(sorted_w))
-    w_out_sorted.flush()#TODO delete this (only for early testing)
 
 def find_results(instance):
     f = open(instance.prediction, 'r')
@@ -159,20 +152,8 @@ def process(instance):
     find_w(instance)
 
 def run(train_test_pairs, j_vals=[None], c_vals=[None], t_vals=[None], b=None, half=False, binary=False):
-#    outfile = '../data/results/output_'+ str(int(math.floor(time.time()))) + '.csv'
-#    outfile = '../data/results/output_t_'+ str(t) + '.csv'
-#    output = open(outfile, 'wb')
-#    writer = csv.writer(output)
-
-#    table = texttable.Texttable()
-    header = ['Train File', 'Test File', 'j', 'c', 't', 'b',  'FN ', 'FP', 'Accuracy','Precision','Recall','F1','F.5']
-#    table.header(header)
-#    writer.writerow(header)
-    output_writer.writerow(header)
-    print header
-    header.append('w')
-    header.append('sorted_w')
-    w_writer.writerow(header)
+    output = open(instance.outfile, 'wb')
+    writer = csv.writer(output)  
     for (train, val, test) in train_test_pairs:
         print "--------------------" + str(train)
         for t in t_vals:
@@ -182,28 +163,19 @@ def run(train_test_pairs, j_vals=[None], c_vals=[None], t_vals=[None], b=None, h
                     print "c: " + str(c) + "\t" + gettime()
                     instance = Instance(train, val, test, c=c, j=j, t=t, b=b, half=half,binary=binary)
                     process(instance)
-                    row= [instance.train_file, instance.test_file, instance.j, instance.c, instance.t, instance.b, instance.fn, instance.fp, instance.accuracy, instance.precision, instance.recall, instance.f1,instance.f_half]
-    #                table.add_row(row)
-#                    writer.writerow(row)
-                    output_writer.writerow(row)
-    #                print row
-                    row.append(instance.w)
-                    row.append(instance.sorted_w)
-                    w_writer.writerow(row)
-#    output.close()
-#    print "---------------------------"
-#    print
-#    print table.draw()
+                    row = [instance.train_file, instance.test_file, instance.j, instance.c, instance.t, instance.b, instance.fn, instance.fp, instance.accuracy, instance.precision, instance.recall, instance.f1,instance.f_half, instance.w, instance.sorted_w]
+                    writer.writerow(row)
+    output.close()
 
 
 
 DAT_NUMS = range(1,11) #TODO zero index the data files
 
-J_VALS = [.7]
-C_VALS = [100]
+J_VALS = [.7,.8]
+C_VALS = [100,500,1000]
 T_VALS = [1]
 B_VALS = [0,None]
 pairs = [(2,9,i) for i in DAT_NUMS[2:]]
 
 
-run(pairs,c_vals=C_VALS,j_vals=J_VALS,t_vals=T_VALS, b=0,bin=True)
+run(pairs,c_vals=C_VALS,j_vals=J_VALS,t_vals=T_VALS, b=0,binary=True)
