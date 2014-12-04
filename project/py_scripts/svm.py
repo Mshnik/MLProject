@@ -12,7 +12,7 @@ def gettime():
     return format(now, '.2f') + "s"
 
 #TODO write this prettier but seriously doesnt matter at all so dont
-def get_output(binary, half):
+def get_in_str(binary,half):
     if half and binary:
         in_str = '_fiftyfifty_bin_'
     elif half:
@@ -21,13 +21,21 @@ def get_output(binary, half):
         in_str = '_bin_'
     else:
         in_str = '_'
+    return in_str
+
+def get_output(binary, half):
+    in_str = get_in_str(binary, half)
     outfile = '../data/results/output' + in_str[:-1] + '.csv'
     return outfile
 
 
 # TODO better name for class
 class Instance():
-    def __init__(self, train_dat_num, val_dat_num, test_dat_num, c=None,j=None, t=None, b=None, half=False, binary=False):
+    def __init__(self, train_dat_num, val_dat_num, test_dat_num, c=None,j=None, t=None, b=None, half=False, binary=False, test_half=None,test_binary=None):
+        if test_binary is None:
+            self.test_binary = binary
+        if test_half is None:
+            self.test_half = half
         self.train_data_num = train_dat_num
         self.test_data_num = test_dat_num
         self.val_dat_num = val_dat_num
@@ -35,19 +43,13 @@ class Instance():
         self.j = j
         self.t = t
         self.b = b
-        if half and binary:
-            in_str = '_fiftyfifty_bin_'
-        elif half:
-            in_str = '_fiftyfifty_'
-        elif binary:
-            in_str = '_bin_'
-        else:
-            in_str = '_'
+        in_str = get_in_str(binary, half)
+        test_in_str = get_in_str(test_binary,test_half)
         self.outfile = '../data/results/output' + in_str[:-1] + '.csv'
         in_folder =  '../data/svm' + in_str + 'norm/dat_'
         self.train_file = in_folder + str(train_dat_num) +'.txt'
         self.val_file = in_folder + str(train_dat_num) +'.txt'
-        self.test_file = in_folder + str(test_dat_num) +'.txt'
+        self.test_file = '../data/svm' + test_in_str + 'norm/dat_' + str(test_dat_num) +'.txt'
         out_folder =  '../data/svm'+ in_str +'out/dat_'
         prefix = out_folder  + str(train_dat_num)
         if c != None:
@@ -169,7 +171,7 @@ def run(train_test_pairs, j_vals=[None], c_vals=[None], t_vals=[None], b=None, h
     output = open(get_output(binary,half), 'ab')
     writer = csv.writer(output)
     for (train, val, test) in train_test_pairs:
-        print "--------------------" + str(train)
+        print "---------------------------------------------------------------------" + str(train) + "---------------" + str(test)
         for t in t_vals:
             for j in j_vals:
                 print "j: " + str(j) + "\t" + gettime()
@@ -187,11 +189,11 @@ def run(train_test_pairs, j_vals=[None], c_vals=[None], t_vals=[None], b=None, h
 
 DAT_NUMS = range(1,11) #TODO zero index the data files
 
-J_VALS = [.5,.6,.7,.75,.8,9]
-C_VALS = [1,10,100,500,1000]
-T_VALS = [0,1,2,3]
+J_VALS = [.7,.75,.8,]
+C_VALS = [50,100,200]
+T_VALS = [1,2]
 B_VALS = [0,None]
-pairs = [(i,9,j) for i in range(1,4) for j in range(8,10)]
+pairs = [(i,9,j) for i in range(1,3) for j in range(8,11)]
 
 
-run(pairs,c_vals=C_VALS,j_vals=J_VALS,t_vals=T_VALS, b=0,binary=True, ONLY_EXISTING_MODELS=True)
+run(pairs,c_vals=C_VALS,j_vals=J_VALS,t_vals=T_VALS, b=0,binary=False, ONLY_EXISTING_MODELS=False)
