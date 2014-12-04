@@ -28,8 +28,8 @@ object Chartifier {
     val img = ImageIO.read(new File("img/whiteSquare.png"))
     img.flush()
     plot.setBackgroundImage(img)
-    plot.setBackgroundImageAlpha(0.0f)
-    plot.setForegroundAlpha(0.5f);
+    plot.setBackgroundImageAlpha(1.0f)
+    plot.setForegroundAlpha(0.4f);
     val delta = dotSize / 2
     for (i <- 0 until plot.getSeriesCount) {
       plot.getRenderer.setSeriesShape(i, new Ellipse2D.Double(-delta, -delta, dotSize, dotSize))
