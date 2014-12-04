@@ -164,7 +164,7 @@ def process(instance):
     find_results(instance)
     find_w(instance)
 
-def run(train_test_pairs, j_vals=[None], c_vals=[None], t_vals=[None], b=None, half=False, binary=False):
+def run(train_test_pairs, j_vals=[None], c_vals=[None], t_vals=[None], b=None, half=False, binary=False, ONLY_EXISTING_MODELS=False):
     output = open(get_output(binary,half), 'ab')
     writer = csv.writer(output)
     for (train, val, test) in train_test_pairs:
@@ -175,6 +175,8 @@ def run(train_test_pairs, j_vals=[None], c_vals=[None], t_vals=[None], b=None, h
                 for c in c_vals:
                     print "c: " + str(c) + "\t" + gettime()
                     instance = Instance(train, val, test, c=c, j=j, t=t, b=b, half=half,binary=binary)
+                    if ONLY_EXISTING_MODELS and not os.path.isfile(instance.model):
+                        continue
                     process(instance)
                     row = [instance.train_file, instance.test_file, instance.j, instance.c, instance.t, instance.b, instance.fn, instance.fp, instance.accuracy, instance.precision, instance.recall, instance.f1,instance.f_half, instance.w, instance.sorted_w]
                     writer.writerow(row)
@@ -184,11 +186,11 @@ def run(train_test_pairs, j_vals=[None], c_vals=[None], t_vals=[None], b=None, h
 
 DAT_NUMS = range(1,11) #TODO zero index the data files
 
-J_VALS = [.7]
-C_VALS = [100]
-T_VALS = [1]
+J_VALS = [.5,.6,.7,.75,.8,9]
+C_VALS = [1,10,100,500,1000]
+T_VALS = [0,1,2,3]
 B_VALS = [0,None]
-pairs = [(2,9,i) for i in DAT_NUMS[2:]]
+pairs = [(i,9,j) for i in range(1,4) for j in range(8,10)]
 
 
-run(pairs,c_vals=C_VALS,j_vals=J_VALS,t_vals=T_VALS, b=0,binary=False)
+run(pairs,c_vals=C_VALS,j_vals=J_VALS,t_vals=T_VALS, b=0,binary=True, ONLY_EXISTING_MODELS=True)
