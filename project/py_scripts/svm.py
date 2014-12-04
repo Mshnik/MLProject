@@ -11,6 +11,20 @@ def gettime():
     now = time.time() - START
     return format(now, '.2f') + "s"
 
+#TODO write this prettier but seriously doesnt matter at all so dont
+def get_output(binary, half):
+    if half and binary:
+        in_str = '_fiftyfifty_bin_'
+    elif half:
+        in_str = '_fiftyfifty_'
+    elif binary:
+        in_str = '_bin_'
+    else:
+        in_str = '_'
+    outfile = '../data/results/output' + in_str[:-1] + '.csv'
+    return outfile
+
+
 # TODO better name for class
 class Instance():
     def __init__(self, train_dat_num, val_dat_num, test_dat_num, c=None,j=None, t=None, b=None, half=False, binary=False):
@@ -21,7 +35,6 @@ class Instance():
         self.j = j
         self.t = t
         self.b = b
-        in_str = ""
         if half and binary:
             in_str = '_fiftyfifty_bin_'
         elif half:
@@ -152,7 +165,8 @@ def process(instance):
     find_w(instance)
 
 def run(train_test_pairs, j_vals=[None], c_vals=[None], t_vals=[None], b=None, half=False, binary=False):
-
+    output = open(get_output(binary,half), 'ab')
+    writer = csv.writer(output)
     for (train, val, test) in train_test_pairs:
         print "--------------------" + str(train)
         for t in t_vals:
@@ -161,14 +175,10 @@ def run(train_test_pairs, j_vals=[None], c_vals=[None], t_vals=[None], b=None, h
                 for c in c_vals:
                     print "c: " + str(c) + "\t" + gettime()
                     instance = Instance(train, val, test, c=c, j=j, t=t, b=b, half=half,binary=binary)
-                    output = open(instance.outfile, 'wb')
-                    writer = csv.writer(output)
                     process(instance)
                     row = [instance.train_file, instance.test_file, instance.j, instance.c, instance.t, instance.b, instance.fn, instance.fp, instance.accuracy, instance.precision, instance.recall, instance.f1,instance.f_half, instance.w, instance.sorted_w]
                     writer.writerow(row)
-                    output.flush()
-                    output.seek(0)
-                    output.close()
+    output.close()
 
 
 
