@@ -9,6 +9,8 @@ import scala.collection.JavaConversions._
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer
 import org.jfree.chart.axis.NumberAxis
 import java.awt.geom.Rectangle2D
+import javax.imageio.ImageIO
+import java.io.File
 
 object Chartifier {
 
@@ -23,6 +25,11 @@ object Chartifier {
     }
     val chart = ChartFactory.createScatterPlot(title, xAxis, yAxis, data)
     val plot = chart.getPlot.asInstanceOf[XYPlot]
+    val img = ImageIO.read(new File("img/whiteSquare.png"))
+    img.flush()
+    plot.setBackgroundImage(img)
+    plot.setBackgroundImageAlpha(0.0f)
+    plot.setForegroundAlpha(0.5f);
     val delta = dotSize / 2
     for (i <- 0 until plot.getSeriesCount) {
       plot.getRenderer.setSeriesShape(i, new Ellipse2D.Double(-delta, -delta, dotSize, dotSize))
