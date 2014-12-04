@@ -109,13 +109,13 @@ dat_10.txt Alter to run whichever routine is necessary */
     }
   }
   
-  /** Shaves each svm data in data/svm/dat_* to data/svm_fiftyfifty/dat_* */
-  def shave() : Unit = {
-    for(i <- 1 to numbFiles){
-      println("Processing file " + i)
-      shaveFileToFile(svmRawFile(i), svmFiftyFiftyFile(i))
-    }
-  }
+//  /** Shaves each svm data in data/svm/dat_* to data/svm_fiftyfifty/dat_* */
+//  def shave() : Unit = {
+//    for(i <- 1 to numbFiles){
+//      println("Processing file " + i)
+//      shaveFileToFile(svmRawFile(i), svmFiftyFiftyFile(i))
+//    }
+//  }
   
   /** Converts raw data in data/raw/combined_* to data/svm_raw/dat_* as svm data */
   def convert() : Unit = {
@@ -226,7 +226,9 @@ dat_10.txt Alter to run whichever routine is necessary */
       val mp = arr.foldLeft((m, 0))((acc, d) => 
         (acc._1 + ((acc._2, KaggleData.convertValue(acc._2, d))), acc._2 + 1) )._1
     
-      KaggleData.init(id, mp) :: acc
+      val thingy = KaggleData.init(id, mp)
+      if(thingy.label.equals(KaggleLabel.NONE)) acc
+      else thingy :: acc
     }
     
     val lst : List[KaggleData] = List()
@@ -263,24 +265,24 @@ dat_10.txt Alter to run whichever routine is necessary */
     Source.fromFile(filePath).getLines.drop(skipLines).foldLeft(lst)(f).reverse
   }
   
-  /** shave off examples such that there are an even number of positive and negative examples,
-   *  then write to the given the svm to the given path
-   */
-  @throws[Exception]
-  def shaveFileToFile(inPath : String, outPath : String) : Unit = {
-    val data = readSVMData(inPath, KaggleLabel.stringToLabelMap, 0)
-    val splitData = Data.splitByLabel(data)
-    val plusData = Random.shuffle(splitData(KaggleLabel.TRUE))
-    val minData = Random.shuffle(splitData(KaggleLabel.FALSE))
-    
-    val plusShaved = plusData.drop(Math.max(0, plusData.length - minData.length))
-    val minShaved = minData.drop(Math.max(0, minData.length - plusData.length))
-    if(plusShaved.length != minShaved.length){
-      throw new Exception("Shaved lists not of same length: " + plusShaved.length + ", " + minShaved.length)
-    }
-    val shaved = Random.shuffle(plusShaved ::: minShaved)
-    writeSVM(shaved.map(a => a.asInstanceOf[KaggleData]), outPath)
-  }
+//  /** shave off examples such that there are an even number of positive and negative examples,
+//   *  then write to the given the svm to the given path
+//   */
+//  @throws[Exception]
+//  def shaveFileToFile(inPath : String, outPath : String) : Unit = {
+//    val data = readSVMData(inPath, KaggleLabel.stringToLabelMap, 0)
+//    val splitData = Data.splitByLabel(data)
+//    val plusData = Random.shuffle(splitData(KaggleLabel.TRUE))
+//    val minData = Random.shuffle(splitData(KaggleLabel.FALSE))
+//    
+//    val plusShaved = plusData.drop(Math.max(0, plusData.length - minData.length))
+//    val minShaved = minData.drop(Math.max(0, minData.length - plusData.length))
+//    if(plusShaved.length != minShaved.length){
+//      throw new Exception("Shaved lists not of same length: " + plusShaved.length + ", " + minShaved.length)
+//    }
+//    val shaved = Random.shuffle(plusShaved ::: minShaved)
+//    writeSVM(shaved.map(a => a.asInstanceOf[KaggleData]), outPath)
+//  }
   
   
   /** Writes the given list of kaggleData as their svm representations to the given filepath */

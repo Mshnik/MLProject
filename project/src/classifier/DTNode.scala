@@ -9,57 +9,58 @@ import java.io.File
 /** Holder for decision tree algorithms */
 object DTNode{
   val m = KaggleLabel.stringToLabelMap
-  var trainList = ReaderWriter.readSVMData(ReaderWriter.svmFiftyFiftyFile(7), m, 0)
-  var validationList = ReaderWriter.readSVMData(ReaderWriter.svmFiftyFiftyFile(8), m, 0)
-  var testList = ReaderWriter.readSVMData(ReaderWriter.svmFiftyFiftyFile(9), m, 0)
+  var trainList = ReaderWriter.readRaw(ReaderWriter.rawFile(7))
+  var validationList = ReaderWriter.readRaw(ReaderWriter.rawFile(8))
+  var testList = ReaderWriter.readRaw(ReaderWriter.rawFile(9))
   
   /** Do runnings of the id3 algorithm here. */
   def main(args : Array[String]) : Unit = {
-    val out = "data/DT_out/comp.txt"
+    val out = "data/DT_out/comp_predictMetro.txt"
      
     val o = System.out  
     System.setOut(new PrintStream(new File(out)))
-      
-    trainList = ReaderWriter.readSVMData(ReaderWriter.svmRawFile(7), m, 0)
-    validationList = ReaderWriter.readSVMData(ReaderWriter.svmRawFile(8), m, 0)
-    testList = ReaderWriter.readSVMData(ReaderWriter.svmRawFile(9), m, 0)
-    System.out.println("\nSkewed-Skewed")
-    o.println("Test 1")
-    trainValidateTest()
+    trainValidateTest()  
     
-    System.out.println("\nEqual-Equal")
-    trainList = ReaderWriter.readSVMData(ReaderWriter.svmFiftyFiftyFile(7), m, 0)
-    validationList = ReaderWriter.readSVMData(ReaderWriter.svmFiftyFiftyFile(8), m, 0)
-    testList = ReaderWriter.readSVMData(ReaderWriter.svmFiftyFiftyFile(9), m, 0)
-        o.println("Test 2")
-    trainValidateTest()
-    
-    System.out.println("\nSkewed-Equal")
-    trainList = ReaderWriter.readSVMData(ReaderWriter.svmRawFile(7), m, 0)
-    validationList = ReaderWriter.readSVMData(ReaderWriter.svmRawFile(8), m, 0)
-    testList = ReaderWriter.readSVMData(ReaderWriter.svmFiftyFiftyFile(9), m, 0)
-        o.println("Test 3")
-
-    trainValidateTest()
-    
-    System.out.println("\nEqual-Skewed")
-    trainList = ReaderWriter.readSVMData(ReaderWriter.svmFiftyFiftyFile(7), m, 0)
-    validationList = ReaderWriter.readSVMData(ReaderWriter.svmFiftyFiftyFile(8), m, 0)
-    testList = ReaderWriter.readSVMData(ReaderWriter.svmRawFile(9), m, 0)
-        o.println("Test 4")
-
-    trainValidateTest()
+//    trainList = ReaderWriter.readSVMData(ReaderWriter.svmRawFile(7), m, 0)
+//    validationList = ReaderWriter.readSVMData(ReaderWriter.svmRawFile(8), m, 0)
+//    testList = ReaderWriter.readSVMData(ReaderWriter.svmRawFile(9), m, 0)
+//    System.out.println("\nSkewed-Skewed")
+//    o.println("Test 1")
+//    trainValidateTest()
+//    
+//    System.out.println("\nEqual-Equal")
+//    trainList = ReaderWriter.readSVMData(ReaderWriter.svmFiftyFiftyFile(7), m, 0)
+//    validationList = ReaderWriter.readSVMData(ReaderWriter.svmFiftyFiftyFile(8), m, 0)
+//    testList = ReaderWriter.readSVMData(ReaderWriter.svmFiftyFiftyFile(9), m, 0)
+//        o.println("Test 2")
+//    trainValidateTest()
+//    
+//    System.out.println("\nSkewed-Equal")
+//    trainList = ReaderWriter.readSVMData(ReaderWriter.svmRawFile(7), m, 0)
+//    validationList = ReaderWriter.readSVMData(ReaderWriter.svmRawFile(8), m, 0)
+//    testList = ReaderWriter.readSVMData(ReaderWriter.svmFiftyFiftyFile(9), m, 0)
+//        o.println("Test 3")
+//
+//    trainValidateTest()
+//    
+//    System.out.println("\nEqual-Skewed")
+//    trainList = ReaderWriter.readSVMData(ReaderWriter.svmFiftyFiftyFile(7), m, 0)
+//    validationList = ReaderWriter.readSVMData(ReaderWriter.svmFiftyFiftyFile(8), m, 0)
+//    testList = ReaderWriter.readSVMData(ReaderWriter.svmRawFile(9), m, 0)
+//        o.println("Test 4")
+//
+//    trainValidateTest()
   }
   
   def trainValidateTest() : Unit = {
     val l = 4
-    var best : Array[(DTNode, Int, (Double, Double), (Int, Int, Int, Int))] = Array.ofDim(l)
+    var best : Array[(DTNode, Int, List[Double], (Int, Int, Int, Int))] = Array.ofDim(l)
     for(i <- 0 until l){
-      best(i) = (null, 0, (0,0), (0, 0, 0, 0))
+      best(i) = (null, 0, List(), (0, 0, 0, 0))
     }
     
-    for(d <- 1 to 9; i <- List(0.6, 0.8, 1.0)){
-      val n = trainValidate(d, (1, i))
+    for(d <- 1 to 9){
+      val n = trainValidate(d, List(1.0, 1.0, 1.0))
       //First tree encountered
       if(best(0)._1 == null){
         for(z <- 0 until l) best(z) = n
@@ -113,7 +114,7 @@ object DTNode{
   }
   
   /** Creates a decision tree with the given attributes */
-  def createTree(depth : Int, betas : (Double, Double)) : DTNode = {
+  def createTree(depth : Int, betas : List[Double]) : DTNode = {
     id3(attributeSplits, combinedSplits, depth, betas)(trainList, 0, null)
   }
   
@@ -134,7 +135,7 @@ object DTNode{
   
   /** Basic run - train on combined_train, test on combined_test, with max depth d
    *  Returns a tuple of the tree and the F1 score. */
-  def trainValidate(depth : Int, betas : (Double, Double)) : (DTNode, Int, (Double, Double), (Int, Int, Int, Int)) = {
+  def trainValidate(depth : Int, betas : List[Double]) : (DTNode, Int, List[Double], (Int, Int, Int, Int)) = {
     val tree = createTree(depth, betas)
 //    System.out.print("Created tree of depth: " + depth + " with betas " + betas)
     val a = test(validationList, "Validated ", false)(tree)
@@ -180,13 +181,13 @@ object DTNode{
    *  betas - weighted entropy weighting on (true portion, false portion)
    *  currentDepth - current depth of this tree. Increment on successive calls
    *  funToHere - the function that caused to get to this call. Null only in the initial call */
-  def id3(attributes : List[Int], splits : Map[Int, List[Double]], maxDepth : Int, betas : (Double, Double))(
+  def id3(attributes : List[Int], splits : Map[Int, List[Double]], maxDepth : Int, betas : List[Double])(
       elms : List[KaggleData], currentDepth : Int, funToHere : AttributeFunction) : DTNode = {
     //First base case - no elms. Returns null
     if (elms.isEmpty) return null
     
     //Check for base case - if all elms share a classification, create and return leaf node
-    val labels = List(KaggleLabel.FALSE, KaggleLabel.TRUE) //Possible (legal) labelings of elements in elms
+    val labels = List(KaggleLabel.RURAL, KaggleLabel.SUBURBAN, KaggleLabel.URBAN) //Possible (legal) labelings of elements in elms
     for(l <- labels)
       if (elms.forall(a =>a.label.equals(l)))
     	return new DTLeafNode(funToHere, l, elms)
@@ -225,8 +226,8 @@ object DTNode{
         val lstTwo = elms.filter(opCriteria.fun)
       
         //Calculate the information gain
-        val entropyOne = weightedEntropy(betas._1, betas._2)(lstOne, elms.length)
-        val entropyTwo = weightedEntropy(betas._1, betas._2)(lstTwo, elms.length)
+        val entropyOne = weightedEntropy(labels, betas)(lstOne, elms.length)
+        val entropyTwo = weightedEntropy(labels, betas)(lstTwo, elms.length)
         val infoGain = currentEntropy - (entropyOne + entropyTwo)
         
         //Pick this if better than acc, else acc.
@@ -271,7 +272,7 @@ object DTNode{
       val (lsts, nCriterias) = z.foldLeft(x)((acc, a) => (a._1 :: acc._1, a._2 :: acc._2))
       
       //Calculate information gain
-      val entropies = lsts.foldLeft(0.0)((acc, a) => acc + weightedEntropy(betas._1, betas._2)(a, elms.length))
+      val entropies = lsts.foldLeft(0.0)((acc, a) => acc + weightedEntropy(labels, betas)(a, elms.length))
       val infoGain = currentEntropy - entropies
       (infoGain, nCriterias)
     }
@@ -305,12 +306,15 @@ object DTNode{
    *  fraction of the set this set makes up.
    *  0 if the original set has size 0.
    */
-  def weightedEntropy(beta1 : Double, beta2 : Double)(lst : List[Labelable[KaggleLabel.Value]], s : Int) : Double = {
+  def weightedEntropy(labels : List[KaggleLabel.Value], betas : List[Double])(lst : List[Labelable[KaggleLabel.Value]], s : Int) : Double = {
     if(s.equals(0)) 0 else{
       val e = (lst.length.toDouble / s.toDouble) * entropy(Data.splitByLabel(lst))
       if(e != 0){
         val lbl = lst.head.label
-        if(lbl.equals(KaggleLabel.TRUE)) e * beta1 else if(lbl.equals(KaggleLabel.FALSE)) e * beta2 else e
+        for(i <- 0 until labels.length){
+          if(lbl.equals(labels(i))) return e * betas(i)
+        }
+        return e
       } else 0
     }
   }

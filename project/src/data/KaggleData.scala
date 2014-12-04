@@ -31,7 +31,7 @@ object KaggleData{
   val idIndex = 0
   
   /** Tentatively: fully_funded */
-  val labelIndex = 37
+  val labelIndex = 9
   
   /** Indices in combined_*.csv that are already numbers */
   val numericIndices = List(4, 5, 29, 30, 31)
@@ -215,10 +215,10 @@ object KaggleData{
 
 /** Possible labelings for a KaggleData - multi class, not multi label */
 object KaggleLabel extends Data.Label{
-  val FALSE, TRUE = Value
+  val RURAL, SUBURBAN, URBAN = Value
   
   /** Mapping of int to its corresponding KaggleLabel */
-  val intToLabelMap : Map[Int, KaggleLabel.Value] = Map(-1 -> FALSE, 1 -> TRUE)
+  val intToLabelMap : Map[Int, KaggleLabel.Value] = Map(1 -> RURAL, 2 -> SUBURBAN, 3 -> URBAN)
   
   /** Mapping of label to its corresponding int */
   val labelToIntMap = intToLabelMap.map(a => (a._2, a._1))
@@ -241,10 +241,10 @@ object KaggleLabel extends Data.Label{
     labelToIntMap.getOrElse(v, -9999)
   }
   
-  /** Returns the value of a label as a boolean */
-  def toBool(v : KaggleLabel.Value) : Boolean = {
-    v.equals(TRUE)
-  }
+//  /** Returns the value of a label as a boolean */
+//  def toBool(v : KaggleLabel.Value) : Boolean = {
+//    v.equals(TRUE)
+//  }
 }
 
 /** Unioned data type of data gotten from kaggle.
@@ -289,7 +289,7 @@ class KaggleData(val id : String, override val label : KaggleLabel.Value, overri
   /** Returns a string representing this dat that shows the keys of the attributes as strings */
   def toDescriptiveString : String = {
     
-    vals.toList.sortWith((a, b) => a._1 < b._1).foldLeft(if(KaggleLabel.toBool(label)) "Funded " else "Not Funded ")(
+    vals.toList.sortWith((a, b) => a._1 < b._1).foldLeft("")(
         (a, b) => a + KaggleData.indexName(b._1) + ":" + b._2 + " ") + " # " + id
   }
   
