@@ -46,8 +46,8 @@ class Instance():
         if b != None:
             prefix += '_b_' + str(b).replace('.','-')
         self.model = prefix + '.model'
-        self.prediction = prefix + '.prediction'
-        self.classify_out = prefix +'_classify.out'
+        self.prediction = prefix + '_dat_'+ str(test_dat_num) + '.prediction'
+        self.classify_out = prefix+ '_dat_'+ str(test_dat_num)  +'_classify.out'
         self.kernel = None
         self.accuracy = None
         self.fp = None
