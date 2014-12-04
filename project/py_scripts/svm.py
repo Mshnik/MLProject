@@ -1,14 +1,9 @@
 import csv
-import math
-import numpy as np
 import os
-from random import shuffle
-import re
 import subprocess
 import scipy.sparse.linalg
-from sklearn.datasets import load_svmlight_file, dump_svmlight_file
+from sklearn.datasets import load_svmlight_file
 import tempfile
-import texttable
 import time
 
 START = time.time()
@@ -199,11 +194,11 @@ def run(train_test_pairs, j_vals=[None], c_vals=[None], t_vals=[None], b=None, h
 
 DAT_NUMS = range(1,11) #TODO zero index the data files
 
-J_VALS = [.7]
-C_VALS = [100]
+J_VALS = [.7,.8]
+C_VALS = [100,500,1000]
 T_VALS = [1]
 B_VALS = [0,None]
 pairs = [(2,9,i) for i in DAT_NUMS[2:]]
 
 
-run(pairs,c_vals=C_VALS,j_vals=J_VALS,t_vals=T_VALS, b=0,bin=True)
+run(pairs,c_vals=C_VALS,j_vals=J_VALS,t_vals=T_VALS, b=0,binary=True)
