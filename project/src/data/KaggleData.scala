@@ -183,20 +183,20 @@ object KaggleData{
     new KaggleData(id, KaggleLabel.fromInt(vals(labelIndex).toInt), vals.filter(a => ! a._2.equals(0.0)) - labelIndex - idIndex )
   }
   
-  /** Return a new list of data that has each attribute normalized (minus mean, div std dev) */
-  def normalize(data : List[KaggleData]) : List[KaggleData] = {
-    val m = Data.mean(data)
-    val s = Data.stDev(data, m)
-    data.map(a => initNormalized(a.id, a.label, a.vals, m, s))
-  }
-  
-  /** Initializes a new KaggleData instance from the given map and id, and
-   *  normalizes each value with the given map of means and standard deviations
-   */
-  private def initNormalized(id : String, l : KaggleLabel.Value, vals : Map[Int, Double], 
-     means : Map[Int, Double], stDev : Map[Int, Double]) : KaggleData = {
-     new KaggleData(id, l, vals.map(a => (a._1, (a._2 - means(a._1))/stDev(a._1) )))
-  }
+//  /** Return a new list of data that has each attribute normalized (minus mean, div std dev) */
+//  def normalize(data : List[KaggleData]) : List[KaggleData] = {
+//    val m = Data.mean(data)
+//    val s = Data.stDev(data, m)
+//    data.map(a => initNormalized(a.id, a.label, a.vals, m, s))
+//  }
+//  
+//  /** Initializes a new KaggleData instance from the given map and id, and
+//   *  normalizes each value with the given map of means and standard deviations
+//   */
+//  private def initNormalized(id : String, l : KaggleLabel.Value, vals : Map[Int, Double], 
+//     means : Map[Int, Double], stDev : Map[Int, Double]) : KaggleData = {
+//     new KaggleData(id, l, vals.map(a => (a._1, (a._2 - means(a._1))/stDev(a._1) )))
+//  }
   
    /** For the given KaggleData, expands enum fields into their boolean counterparts.
    *  For a enum field at index n, splits into n0<vals> */
@@ -220,6 +220,7 @@ object KaggleData{
     val m = enumIndices.foldLeft(elm.vals)(f)
     new KaggleData(elm.id, elm.label, m)
   }
+  
 }
 
 /** Possible labelings for a KaggleData - multi class, not multi label */
