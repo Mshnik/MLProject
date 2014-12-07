@@ -49,13 +49,13 @@ dat_2.txt
 dat_3.txt
 dat_4.txt
 dat_5.txt
-dat_6.txt
+dat_6.txt9
 dat_7.txt
 dat_8.txt
 dat_9.txt
 dat_10.txt Alter to run whichever routine is necessary */
   def main(args : Array[String]) : Unit = {
-    val wholeDat = readRaw(sourceData)
+    val wholeDat = readRaw(sourceData).reverse
     System.setOut(new PrintStream(new BufferedOutputStream(new FileOutputStream(sourceSVM))))
     
     for(e <- wholeDat){
