@@ -127,18 +127,6 @@ dat_10.txt Alter to run whichever routine is necessary */
     }
   }
   
-  /** Scales each of the raw data files in data/svm_raw/dat_* to data/svm_scaled/dat_* as scaled svm data */
-  def scale() : Unit = {
-    for(i <- 1 to numbFiles){
-      println("Reading unscaled svm data " + i)
-      val dat = readSVMData(svmRawFile(i), KaggleLabel.stringToLabelMap, 0)
-      println("Scaling data")
-      val sData = KaggleData.normalize(dat)
-      println("Writing to scaled svm data " + i)
-      writeSVM(sData, svmScaledFile(i))
-    }
-  }
-  
   /** Checks the raw and converted data for equality after both are read into memory
    *  If everything checks out, does nothing 
    */
