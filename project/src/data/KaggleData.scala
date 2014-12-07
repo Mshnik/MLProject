@@ -39,38 +39,43 @@ object KaggleData{
   /** index in input data that represents the id */
   val idIndex = 0
   
-  /** Tentatively: fully_funded */
-  val labelIndex = 37
+  /** fully_funded */
+  val labelIndex = 40
   
   /** Indices in combined_*.csv that are already numbers */
-  val numericIndices = List(4, 5, 29, 30, 31)
+  val numericIndices = List(4, 5, 28, 29, 31, 32, 36, 37, 49, 50)
   
   /** Indices that are boolean values - either t or f */
-  val booleanIndices = List(12, 13, 14, 15, 16, 17, 19, 20, 32, 33, 37)
+  val booleanIndices = List(12, 13, 14, 15, 16, 17, 19, 20, 33, 34, 40)
   
   /** Indices that are enum values - finite list of possible values */
   val enumIndices = List(9, 18, 21, 22, 23, 24, 25, 26, 27)
   
   /** Indices that require special parsing as dates */
-  val dateIndices = List(34)
+  val dateIndices = List(35)
   
   /** Indices to ignore (give value 0 no matter what input) */
-  val ignoreIndices = List(0, 1, 2, 3, 6, 7, 8, 10, 11, 28, 35, 36, 38, 39, 40, 41, 42, 43, 44, 45)
+  val ignoreIndices = List(0, 1, 2, 3, 6, 7, 8, 10, 11, 30, 38, 39, 41, 42, 43, 44, 45, 46, 47, 48)
   
   /** All indices contatinated together and sorted. Should be perfect range [0, 45]. Use for testing. */
   val allIndices = (numericIndices ++ booleanIndices ++ enumIndices ++ dateIndices ++ ignoreIndices).sortWith((a, b) => a < b)
 
   /** Use to translate index into meaning in combined_*.csv */
-  val indexName = Map(0 -> "ID", 4 -> "Latitude", 5 -> "Longitude", 9 -> "School Metro", 12 -> "School Charter",
-                      13 -> "School Magnet", 14 -> "School Year Round", 15 -> "School Nlns", 16 -> "School Kipp",
-                      17 -> "School Charter Ready Promise", 18 -> "Teacher Prefix", 19 -> "Teach For America",
-                      20 -> "Teacher NY Teaching Fellow", 21 -> "Primary Focus Subject", 22 -> "Primary Focus Area",
+  val indexName = Map(0 -> "ID", 1 -> "Teacher ID", 2 -> "School Id", 3 -> "School ncesID", 4 -> "Latitude", 5 -> "Longitude", 
+		  			  6 -> "School City", 7 -> "School State", 8 -> "School Zip", 9 -> "School Metro", 10 -> "School District",
+		  			  11 -> "School County", 12 -> "School Charter", 13 -> "School Magnet", 14 -> "School Year Round", 
+		  			  15 -> "School Nlns", 16 -> "School Kipp", 17 -> "School Charter Ready Promise", 18 -> "Teacher Prefix", 
+		  			  19 -> "Teach For America", 20 -> "Teacher NY Teaching Fellow", 21 -> "Primary Focus Subject", 22 -> "Primary Focus Area",
                       23 -> "Secondary Focus Subject", 24 -> "Secondary Focus Area", 25 -> "Resource Type",
-                      26 -> "Poverty Level", 27 -> "Grade Level", 29 -> "Total Price", 30 -> "Total Price Plus Opt",
-                      31 -> "Students Reached", 32 -> "Eligible For Double Your Impact", 33 -> "Eligible Almost Home Match",
-                      34 -> "Date Posted", 37 -> "Is Fully Funded")
+                      26 -> "Poverty Level", 27 -> "Grade Level", 28 -> "Fulfillment Labor Materials",
+                      29 -> "Total Price", 30 -> "Total Price Plus Opt", 31 -> "Optional Support",
+                      32 -> "Students Reached", 33 -> "Eligible For Double Your Impact", 34 -> "Eligible Almost Home Match",
+                      35 -> "Date Posted", 36 -> "Year Posted", 37 -> "Month Posted", 38 -> "Is Exciting", 39 -> "At Least 1 Teacher Ref Donor",
+                      40 -> "Fully Funded", 41 -> "Green Donation", 42 -> "Great Chat", 43 -> "3+ non referred donors", 44 -> "Donor Give 100+",
+                      45 -> "Thoughtful Donation", 46 -> "Great Messages Proportion", 47 -> "Teacher Referred Count", 48 -> "Non-Teacher Ref Count",
+                      49 -> "Prev Projects By Teacher", 50 -> "Prev Project By School")
   
-  if(! allIndices.zip(0 to 45).foldLeft(true)((acc, e) => acc && e._1.equals(e._2))){
+  if(! allIndices.zip(0 to 50).foldLeft(true)((acc, e) => acc && e._1.equals(e._2))){
     println("Error with all Indices for KaggleData reading")
   }
   
@@ -137,7 +142,7 @@ object KaggleData{
   val enumMap : Map[Int, List[String]] ={
     val m = Map(
         9 -> List("rural", "suburban", "urban"), 
-       18 -> List("Mr.", "Ms.", "Mrs.", "Dr."),
+       18 -> List("Ms.", "Mrs.", "Mr.", "Dr."),
        21 -> List("Performing Arts", "Health & Life Science", "Applied Sciences", "Sports", "Other", "Music", 
                   "Early Development", "Mathematics", "Character Education", "Social Sciences", "Nutrition", 
                   "Environmental Science", "Health & Wellness", "Parent Involvement", "Gym & Fitness", 

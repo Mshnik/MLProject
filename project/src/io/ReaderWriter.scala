@@ -5,6 +5,11 @@ import data.Data
 import data.KaggleLabel
 import data.KaggleData
 import scala.util.Random
+import java.io.File
+import java.io.PrintWriter
+import java.io.PrintStream
+import java.io.BufferedOutputStream
+import java.io.FileOutputStream
 
 /** Object to handle reading data from kaggle, assembling into Data objects */
 object ReaderWriter {
@@ -15,6 +20,9 @@ object ReaderWriter {
   private val projectsFile = "data/projects.csv"
   private val resourcesFile = "data/resources.csv"
     
+    
+  private val sourceData = "data/full/source.csv"
+  private val sourceSVM = "data/full/svm_source.txt"
   private val rawData = "data/raw/combined_" //Add # for which file
   private val csvData = "data/csv/dat_"
   private val rawExtension = ".csv"
@@ -47,7 +55,12 @@ dat_8.txt
 dat_9.txt
 dat_10.txt Alter to run whichever routine is necessary */
   def main(args : Array[String]) : Unit = {
-    CSVize(svmRawFile, csvFile)
+    val wholeDat = readRaw(sourceData)
+    System.setOut(new PrintStream(new BufferedOutputStream(new FileOutputStream(sourceSVM))))
+    
+    for(e <- wholeDat){
+      System.out.println(e.toSVMString)
+    }
   }
   
   /** Returns a string representing rawDataFile i */
@@ -202,10 +215,8 @@ dat_10.txt Alter to run whichever routine is necessary */
    *  outputs as a list of KaggleData
    */
   def readRaw(fName : String) : List[KaggleData] = {
-    val iterator = Source.fromFile(fName).getLines.drop(1) //Get iterator for data, drop header line
-    
+    val iterator = Source.fromFile(fName).getLines.drop(2) //Get iterator for data, drop two header lines
     def f(acc : List[KaggleData], e : String) : List[KaggleData] = {  
-      
       //See http://stackoverflow.com/questions/2700953/a-regex-to-match-a-comma-that-isnt-surrounded-by-quotes
       val arr = e.split(",\\s*(?=([^\"]*\"[^\"]*\")*[^\"]*$)") 
       val id = arr(KaggleData.idIndex)
