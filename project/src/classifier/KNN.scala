@@ -13,11 +13,11 @@ object KNN {
   
   /** Basic run - train on combined_train, test on combined_test, with max depth d */
   def trainTest(train : Int, test : Int, k : Int) : Unit = {
-    val trainList = ReaderWriter.readSVMData(ReaderWriter.svmScaledFile(train), KaggleLabel.stringToLabelMap, 0)
-    println("Read data from " + train)
-    val knn = new KNN(trainList, k)
-    val a = knn.test(ReaderWriter.readSVMData(ReaderWriter.svmScaledFile(test), KaggleLabel.stringToLabelMap, 0))
-    println("Tested on " + test + " : " + a + " accuracy = " + ((a._1 + a._4).toDouble/(a._1 + a._2 + a._3 + a._4).toDouble) + "\n")
+//    val trainList = ReaderWriter.readSVMData(ReaderWriter.svmScaledFile(train), KaggleLabel.stringToLabelMap, 0)
+//    println("Read data from " + train)
+//    val knn = new KNN(trainList, k)
+//    val a = knn.test(ReaderWriter.readSVMData(ReaderWriter.svmScaledFile(test), KaggleLabel.stringToLabelMap, 0))
+//    println("Tested on " + test + " : " + a + " accuracy = " + ((a._1 + a._4).toDouble/(a._1 + a._2 + a._3 + a._4).toDouble) + "\n")
   }
 }
 

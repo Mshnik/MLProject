@@ -9,9 +9,9 @@ import java.io.File
 /** Holder for decision tree algorithms */
 object DTNode{
   val m = KaggleLabel.stringToLabelMap
-  var trainList = ReaderWriter.readSVMData(ReaderWriter.svmFiftyFiftyFile(7), m, 0)
-  var validationList = ReaderWriter.readSVMData(ReaderWriter.svmFiftyFiftyFile(8), m, 0)
-  var testList = ReaderWriter.readSVMData(ReaderWriter.svmFiftyFiftyFile(9), m, 0)
+  var trainList : List[KaggleData] = List()
+  var validationList  : List[KaggleData] = List()
+  var testList  : List[KaggleData] = List()
   
   /** Do runnings of the id3 algorithm here. */
   def main(args : Array[String]) : Unit = {
@@ -20,32 +20,20 @@ object DTNode{
     val o = System.out  
     System.setOut(new PrintStream(new File(out)))
       
-    trainList = ReaderWriter.readSVMData(ReaderWriter.svmRawFile(7), m, 0)
-    validationList = ReaderWriter.readSVMData(ReaderWriter.svmRawFile(8), m, 0)
-    testList = ReaderWriter.readSVMData(ReaderWriter.svmRawFile(9), m, 0)
     System.out.println("\nSkewed-Skewed")
     o.println("Test 1")
     trainValidateTest()
     
     System.out.println("\nEqual-Equal")
-    trainList = ReaderWriter.readSVMData(ReaderWriter.svmFiftyFiftyFile(7), m, 0)
-    validationList = ReaderWriter.readSVMData(ReaderWriter.svmFiftyFiftyFile(8), m, 0)
-    testList = ReaderWriter.readSVMData(ReaderWriter.svmFiftyFiftyFile(9), m, 0)
         o.println("Test 2")
     trainValidateTest()
     
     System.out.println("\nSkewed-Equal")
-    trainList = ReaderWriter.readSVMData(ReaderWriter.svmRawFile(7), m, 0)
-    validationList = ReaderWriter.readSVMData(ReaderWriter.svmRawFile(8), m, 0)
-    testList = ReaderWriter.readSVMData(ReaderWriter.svmFiftyFiftyFile(9), m, 0)
         o.println("Test 3")
 
     trainValidateTest()
     
     System.out.println("\nEqual-Skewed")
-    trainList = ReaderWriter.readSVMData(ReaderWriter.svmFiftyFiftyFile(7), m, 0)
-    validationList = ReaderWriter.readSVMData(ReaderWriter.svmFiftyFiftyFile(8), m, 0)
-    testList = ReaderWriter.readSVMData(ReaderWriter.svmRawFile(9), m, 0)
         o.println("Test 4")
 
     trainValidateTest()

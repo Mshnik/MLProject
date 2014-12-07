@@ -21,17 +21,13 @@ object ReaderWriter {
   private val resourcesFile = "data/resources.csv"
     
     
-  private val sourceData = "data/full/source.csv"
+  val sourceData = "data/full/source.csv"
   private val sourceSVM = "data/full/svm_source.txt"
-  private val rawData = "data/raw/combined_" //Add # for which file
-  private val csvData = "data/csv/dat_"
-  private val rawExtension = ".csv"
-  private val svmRawData = "data/svm_raw/dat_"
-  private val svmScaledData = "data/svm_norm/dat_"  
-  private val svmFiftyFifty = "data/svm_fiftyfifty/dat_"
-  private val svmBinData = "data/svm_bin/dat_"
-  private val svmFiftyFiftyBinData = "data/svm_fiftyfifty_bin/data_"
-  private val svmExtension = ".txt"
+  private val splitSVM = "data/svm_data/data_"
+  private val splitSVMFF = "data/svm_data_ff/data_"
+  private val sourceSVMBin = "data/full/svm_bin_source.txt"  
+  private val splitSVMBin = "data/svm_bin_data/data_"
+  private val splitSVMBinFF = "data/svm_bin_data_ff/data_"
     
   val numbFiles = 10 //Number of data files, both raw and converted. data indexs should be [1 .. this]
   
@@ -55,6 +51,36 @@ dat_8.txt
 dat_9.txt
 dat_10.txt Alter to run whichever routine is necessary */
   def main(args : Array[String]) : Unit = {
+    shave(splitSVM, splitSVMFF)
+    shave(splitSVMBin, splitSVMBinFF)
+  }
+  
+  /** Splits the given source file and writes to 10 seperate files */
+  def split(elms : List[KaggleData], out : String) : Unit = {
+    var file = 0 
+    def write(e : List[KaggleData]) = {
+      file += 1
+      System.setOut(new PrintStream(new BufferedOutputStream(new FileOutputStream(out + file + ".txt"))))
+      for(elm <- e){
+    	  System.out.println(elm.toSVMString)
+      }
+    }
+    
+    elms.grouped(elms.length/numbFiles).foreach(write)
+  }
+  
+  /** Binerizes source to svm bin source */
+  def binerizeSource() = {
+    val wholeDat = readRaw(sourceData).map(a => KaggleData.binerate(a)).reverse
+    System.setOut(new PrintStream(new BufferedOutputStream(new FileOutputStream(sourceSVMBin))))
+    
+    for(e <- wholeDat){
+      System.out.println(e.toSVMString)
+    }
+  }
+  
+  /** Converts raw source to svm source */
+  def convertSource() = {
     val wholeDat = readRaw(sourceData).reverse
     System.setOut(new PrintStream(new BufferedOutputStream(new FileOutputStream(sourceSVM))))
     
@@ -63,46 +89,11 @@ dat_10.txt Alter to run whichever routine is necessary */
     }
   }
   
-  /** Returns a string representing rawDataFile i */
-  def rawFile(i : Int) : String = {
-    rawData + i + rawExtension
-  }
-  
-  /** Returns a string representing csv file i */
-  def csvFile(i : Int) : String = {
-    csvData + i + rawExtension
-  }
-  
-  /** Returns a string representing svmRawData file i */
-  def svmRawFile(i : Int) : String = {
-    svmRawData + i + svmExtension
-  }
-  
-    /** Returns a string representing svmFiftyFifty file i */
-  def svmFiftyFiftyFile(i : Int) : String = {
-    svmFiftyFifty + i + svmExtension
-  }
-  
-  /** Returns a string representing svmScaled file i */
-  def svmScaledFile(i : Int) : String = {
-    svmScaledData + i + svmExtension
-  }
-  
-  /** Returns a string representing svmBinData file i */
-  def svmBinFile(i : Int) : String = {
-    svmBinData + i + svmExtension
-  }
-  
-  /** Returns a string representing svmFiftyFiftyBinData file i */
-  def svmFiftyFiftyBinFile(i : Int) : String = {
-    svmFiftyFiftyBinData + i + svmExtension
-  }
-  
   /** CSV-izes each of the data in the given path to the given output path */
   def CSVize(in: Int => String, out : Int => String) : Unit = {
     for(i <- 1 to numbFiles){
       println("Processing file " + i)
-      val dat = readSVMData(in(i), KaggleLabel.stringToLabelMap, 0)
+      val dat = readSVMData(in(i))
       println("Read data")
       writeCSV(dat, out(i))
       println("Wrote to file")
@@ -113,7 +104,7 @@ dat_10.txt Alter to run whichever routine is necessary */
   def binerize(in : Int => String, out : Int => String) : Unit = {
     for(i <- 1 to numbFiles){
       println("Processing file " + i)
-      val dat = readSVMData(in(i), KaggleLabel.stringToLabelMap, 0)
+      val dat = readSVMData(in(i))
       println("Read data")
       val bined = dat.map(a => KaggleData.binerate(a))
       println("Binned Data")
@@ -121,95 +112,94 @@ dat_10.txt Alter to run whichever routine is necessary */
       println("Wrote to file")
     }
   }
-  
+ 
   /** Shaves each svm data in data/svm/dat_* to data/svm_fiftyfifty/dat_* */
-  def shave() : Unit = {
+  def shave(baseIn : String, baseOut : String) : Unit = {
     for(i <- 1 to numbFiles){
-      println("Processing file " + i)
-      shaveFileToFile(svmRawFile(i), svmFiftyFiftyFile(i))
+      shaveFileToFile(baseIn + i + ".txt", baseOut + i + ".txt")
     }
   }
+//  
+//  /** Converts raw data in data/raw/combined_* to data/svm_raw/dat_* as svm data */
+//  def convert() : Unit = {
+//    for(i <- 1 to numbFiles){
+//      println("Reading raw data " + i)
+//      val dat = readRaw(rawFile(i))
+//      println("Writing to svm data " + i)
+//      writeSVM(dat, svmRawFile(i))
+//    }
+//  }
   
-  /** Converts raw data in data/raw/combined_* to data/svm_raw/dat_* as svm data */
-  def convert() : Unit = {
-    for(i <- 1 to numbFiles){
-      println("Reading raw data " + i)
-      val dat = readRaw(rawFile(i))
-      println("Writing to svm data " + i)
-      writeSVM(dat, svmRawFile(i))
-    }
-  }
+//  /** Checks the raw and converted data for equality after both are read into memory
+//   *  If everything checks out, does nothing 
+//   */
+//  @throws[RuntimeException]
+//  def checkEquality() : Unit = {
+//    for(i <- 1 to numbFiles){
+//      def s(a : KaggleData, b : KaggleData) : Boolean = a.id < b.id
+//      
+//      val dat1 = readRaw(rawFile(i)).sortWith(s)
+//      val dat2 = readSVMData(svmRawFile(i), KaggleLabel.stringToLabelMap, 0).sortWith(s)
+//      
+//      def eq(a : Boolean, e : (KaggleData, KaggleData)) : Boolean = {
+//        a && e._1.id.equals(e._2.id) && e._1.label.equals(e._2.label) && e._1.vals.equals(e._2.vals)  
+//      }
+//      
+//      val ok = dat1.zip(dat2).foldLeft(true)(eq)
+//      
+//      if(! ok){
+//        throw new RuntimeException("Unequal lists after reading from memory")
+//      }
+//      println("File " + i + " ok")
+//    }
+//  }
   
-  /** Checks the raw and converted data for equality after both are read into memory
-   *  If everything checks out, does nothing 
-   */
-  @throws[RuntimeException]
-  def checkEquality() : Unit = {
-    for(i <- 1 to numbFiles){
-      def s(a : KaggleData, b : KaggleData) : Boolean = a.id < b.id
-      
-      val dat1 = readRaw(rawFile(i)).sortWith(s)
-      val dat2 = readSVMData(svmRawFile(i), KaggleLabel.stringToLabelMap, 0).sortWith(s)
-      
-      def eq(a : Boolean, e : (KaggleData, KaggleData)) : Boolean = {
-        a && e._1.id.equals(e._2.id) && e._1.label.equals(e._2.label) && e._1.vals.equals(e._2.vals)  
-      }
-      
-      val ok = dat1.zip(dat2).foldLeft(true)(eq)
-      
-      if(! ok){
-        throw new RuntimeException("Unequal lists after reading from memory")
-      }
-      println("File " + i + " ok")
-    }
-  }
-  
-  /** Reads from projects and outcomes files, then writes unioned data to new data files.
-   *  Assumes projects and outcomes files are both sorted by their projectID field.
-   *  Each file written to memory has n rows in it, plus the header row. Writes m files.
-   *  
-   *  Move project and outcome files into innner data folder to use this method.
-   */  
-  def combineAndSplit(n : Int, m : Int) : Unit = {
-    val projectsIterator = Source.fromFile(projectsFile).getLines
-    val outcomesIterator = Source.fromFile(outcomesFile).getLines
-
-    val projectsHeader = projectsIterator.next
-    val outcomesHeader = outcomesIterator.next
-    
-    //Unioned header that doesn't repeat the projectID field
-    val header = projectsHeader + "," + outcomesHeader.substring(outcomesHeader.indexOf(',') + 1)
-    
-    /** Writes the given list of Strings to the given filepath */
-    def write(elms : List[String], path : String) : Unit = {
-      val s = elms.foldLeft("")((acc, e) => acc + e + "\n")
-      val pw = new java.io.PrintWriter(new java.io.File(path))
-      try pw.write(s) 
-      finally pw.close()
-    }
-    
-    for(i <- (0 until m)){
-      println("Creating file " + (i+1))
-      var lst : List[(String, String)] = List()
-      while(lst.size < n){
-        
-        //Loop until we find a outcome and project with the same projectID.
-        //Assumes outcomes are a subset of projects.
-        
-        val outcome = outcomesIterator.next
-        var project = ""
-        do{
-          project = projectsIterator.next
-        }while(! outcome.substring(0, outcome.indexOf(',')).equals(project.substring(0, project.indexOf(','))))
-        
-        val outcomeWithoutID = outcome.substring(outcome.indexOf(',') + 1)  
-          
-        lst = (project, "," + outcomeWithoutID) :: lst  
-      }
-      
-      write(header :: lst.map(a => a._1 + a._2), rawData + (i+1) + rawExtension)
-    }
-  }  
+//  /** Reads from projects and outcomes files, then writes unioned data to new data files.
+//   *  Assumes projects and outcomes files are both sorted by their projectID field.
+//   *  Each file written to memory has n rows in it, plus the header row. Writes m files.
+//   *  
+//   *  Move project and outcome files into innner data folder to use this method.
+//   */  
+//  def combineAndSplit(n : Int, m : Int) : Unit = {
+//    val projectsIterator = Source.fromFile(projectsFile).getLines
+//    val outcomesIterator = Source.fromFile(outcomesFile).getLines
+//
+//    val projectsHeader = projectsIterator.next
+//    val outcomesHeader = outcomesIterator.next
+//    
+//    //Unioned header that doesn't repeat the projectID field
+//    val header = projectsHeader + "," + outcomesHeader.substring(outcomesHeader.indexOf(',') + 1)
+//    
+//    /** Writes the given list of Strings to the given filepath */
+//    def write(elms : List[String], path : String) : Unit = {
+//      val s = elms.foldLeft("")((acc, e) => acc + e + "\n")
+//      val pw = new java.io.PrintWriter(new java.io.File(path))
+//      try pw.write(s) 
+//      finally pw.close()
+//    }
+//    
+//    for(i <- (0 until m)){
+//      println("Creating file " + (i+1))
+//      var lst : List[(String, String)] = List()
+//      while(lst.size < n){
+//        
+//        //Loop until we find a outcome and project with the same projectID.
+//        //Assumes outcomes are a subset of projects.
+//        
+//        val outcome = outcomesIterator.next
+//        var project = ""
+//        do{
+//          project = projectsIterator.next
+//        }while(! outcome.substring(0, outcome.indexOf(',')).equals(project.substring(0, project.indexOf(','))))
+//        
+//        val outcomeWithoutID = outcome.substring(outcome.indexOf(',') + 1)  
+//          
+//        lst = (project, "," + outcomeWithoutID) :: lst  
+//      }
+//      
+//      write(header :: lst.map(a => a._1 + a._2), rawData + (i+1) + rawExtension)
+//    }
+//  }  
   
   /** Reads the entries in the given file (in combine_*.csv format), 
    *  outputs as a list of KaggleData
@@ -232,8 +222,11 @@ dat_10.txt Alter to run whichever routine is necessary */
     iterator.foldLeft(lst)(f)
   }
   
+  implicit val labelDictionary = KaggleLabel.stringToLabelMap
+  implicit val skipLines = 0
+  
   /** Reads an SVM Data file */
-  def readSVMData(filePath : String, labelDictionary : Map[String, KaggleLabel.Value], skipLines : Int) : List[KaggleData] = {
+  def readSVMData(filePath : String)(implicit labelDictionary : Map[String, KaggleLabel.Value], skipLines : Int) : List[KaggleData] = {
     val lst : List[KaggleData] = List()
     
     def f(lst : List[KaggleData], line : String) : List[KaggleData] = {
@@ -267,7 +260,7 @@ dat_10.txt Alter to run whichever routine is necessary */
    */
   @throws[Exception]
   def shaveFileToFile(inPath : String, outPath : String) : Unit = {
-    val data = readSVMData(inPath, KaggleLabel.stringToLabelMap, 0)
+    val data = readSVMData(inPath)
     val splitData = Data.splitByLabel(data)
     val plusData = Random.shuffle(splitData(KaggleLabel.TRUE))
     val minData = Random.shuffle(splitData(KaggleLabel.FALSE))
@@ -278,7 +271,10 @@ dat_10.txt Alter to run whichever routine is necessary */
       throw new Exception("Shaved lists not of same length: " + plusShaved.length + ", " + minShaved.length)
     }
     val shaved = Random.shuffle(plusShaved ::: minShaved)
-    writeSVM(shaved.map(a => a.asInstanceOf[KaggleData]), outPath)
+    System.setOut(new PrintStream(new BufferedOutputStream(new FileOutputStream(outPath))))
+    for(elm <- shaved){
+      System.out.println(elm.asInstanceOf[KaggleData].toSVMString)
+    }
   }
   
   

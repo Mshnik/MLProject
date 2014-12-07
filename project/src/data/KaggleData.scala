@@ -8,16 +8,7 @@ import scala.collection.immutable.HashMap
 object KaggleData{
   
   def main(args : Array[String]) : Unit = {
-    val dat = ReaderWriter.readRaw(ReaderWriter.rawFile(1)) :::
-    		  ReaderWriter.readRaw(ReaderWriter.rawFile(2)) :::
-    		  ReaderWriter.readRaw(ReaderWriter.rawFile(3)) :::
-    		  ReaderWriter.readRaw(ReaderWriter.rawFile(4)) :::
-    		  ReaderWriter.readRaw(ReaderWriter.rawFile(5)) :::
-    		  ReaderWriter.readRaw(ReaderWriter.rawFile(6)) :::
-    		  ReaderWriter.readRaw(ReaderWriter.rawFile(7)) :::
-    		  ReaderWriter.readRaw(ReaderWriter.rawFile(8)) :::
-    		  ReaderWriter.readRaw(ReaderWriter.rawFile(9)) :::
-    		  ReaderWriter.readRaw(ReaderWriter.rawFile(10))
+    val dat = ReaderWriter.readRaw(ReaderWriter.sourceData)
     
     val field1 = 5 //longitude
     val field2 = 4 // latitude
