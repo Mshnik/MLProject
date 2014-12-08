@@ -30,8 +30,9 @@ object DTNode{
     val testFil = 3
 //    val argsList = (for(n <- 3 to 11 by 2; p <- 2 to 5; d <- 1 to 10) 
 //      yield ((n, 1.0/p.toDouble, d, (1.0,1.0), attributeSplits))).toList
-    val argsList = (for(n <- 101 to 501 by 100; s <- 5 to 25 by 5; d <- List(Integer.MAX_VALUE.toInt)) 
-      yield ((n, 1.0/n.toDouble, d, (1.0,1.0), 1.0/s.toDouble))).toList
+    val argsList = (for(n <- 101 to 501 by 100; p <- 1 to 3; w <- List(1.0); 
+    						s <- 1 to 5; d <- List(Integer.MAX_VALUE.toInt)) 
+      yield ((n, p.toDouble/n.toDouble, d, (1.0,w), 1.0/s.toDouble))).toList
       
     val o = System.out
     System.setOut(new PrintStream(new File(out)))
