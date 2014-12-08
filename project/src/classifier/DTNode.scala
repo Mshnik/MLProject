@@ -24,14 +24,14 @@ object DTNode{
   
   /** A test of the random forest algorithm */
   def tryForest() = {
-    val out = "data/DT_out/forest.txt"
+    val out = "data/DT_out/forest_large_manyargs.txt"
     val trainFil = 1
     val validateFil = 2
     val testFil = 3
 //    val argsList = (for(n <- 3 to 11 by 2; p <- 2 to 5; d <- 1 to 10) 
 //      yield ((n, 1.0/p.toDouble, d, (1.0,1.0), attributeSplits))).toList
-    val argsList = (for(n <- 3 to 10 by 2; p <- 3 to 5; d <- 1 to 10) 
-      yield ((n, 1.0/p.toDouble, d, (1.0,1.0), attributeSplits))).toList
+    val argsList = (for(n <- 101 to 501 by 100; s <- 5 to 25 by 5; d <- List(Integer.MAX_VALUE.toInt)) 
+      yield ((n, 1.0/n.toDouble, d, (1.0,1.0), 1.0/s.toDouble))).toList
       
     val o = System.out
     System.setOut(new PrintStream(new File(out)))
@@ -108,12 +108,13 @@ object DTNode{
    *  		percent of pick for each tree, 
    *    	maxDepth for each tree, 
    *     	betas for each tree,
-   *     	valid splits) */
-  def forestTrainer(elms : List[KaggleData], arg : (Int, Double, Int, (Double, Double), List[Int])) : Forest = {
+   *     	percent of valid splits) */
+  def forestTrainer(elms : List[KaggleData], arg : (Int, Double, Int, (Double, Double), Double)) : Forest = {
     // Creates tree #i
     def tree(i : Int) : DTNode = {
       val elmsSubset = Random.shuffle(elms).take((elms.length * arg._2).toInt)
-      id3(arg._5, combinedSplits, arg._3, arg._4)(elmsSubset, 0, null)
+      val splitsSubset = Random.shuffle(attributeSplits).take((elms.length * arg._5).toInt)
+      id3(splitsSubset, combinedSplits, arg._3, arg._4)(elmsSubset, 0, null)
     } 
     
     val trees = (for(i <- 0 until arg._1) yield tree(i)).toList
@@ -343,7 +344,7 @@ class Forest(val trees : List[DTNode], override val description : String) extend
   }
   
   override def toString : String = {
-    trees.foldLeft("")((acc, a) => acc + a.toStringLim(3) + "\n\n")
+    ""
   }
 }
 
