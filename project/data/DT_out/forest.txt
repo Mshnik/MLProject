@@ -1,24 +1,1250 @@
 
 Skewed-Skewed
-Best Accuracy: (5,0.3333333333333333,2,(1.0,1.0),List(9, 18, 21, 22, 23, 24, 25, 26, 27, 35, 4, 5, 29, 31, 32, 36, 37, 49, 50, 12, 13, 14, 15, 16, 17, 19, 20, 33, 34)) (TP, FN, FP, TN)(6896,73,2939,83)
-classifier.Forest@2417bcb9
-Test : (6897,86,2942,66)
-  Accuracy = 0.69692723451106
-  Recall = 0.9876843763425461
-  Precision = 0.7009858725480231
-  F1 = 0.8199976221614552
-  F0.5 = 0.7441895595502708
+Best Accuracy: (5,0.25,2,(1.0,1.0),List(9, 18, 21, 22, 23, 24, 25, 26, 27, 35, 4, 5, 29, 31, 32, 36, 37, 49, 50, 12, 13, 14, 15, 16, 17, 19, 20, 33, 34)) (TP, FN, FP, TN)(6932,37,2967,55)
+data(Optional Support)>50.0
+--Data(Secondary Focus Subject) = Performing Arts
+----TRUE
+--Data(Secondary Focus Subject) = Literature & Writing
+----TRUE
+--Data(Secondary Focus Subject) = Social Sciences
+----TRUE
+--Data(Secondary Focus Subject) = Environmental Science
+----TRUE
+--Data(Secondary Focus Subject) = Character Education
+----TRUE
+--Data(Secondary Focus Subject) = Nutrition
+----FALSE
+--Data(Secondary Focus Subject) = ESL
+----TRUE
+--Data(Secondary Focus Subject) = Other
+----FALSE
+--Data(Secondary Focus Subject) = Literacy
+----TRUE
+--Data(Secondary Focus Subject) = Foreign Languages
+----FALSE
+--Data(Secondary Focus Subject) = Visual Arts
+----TRUE
+--Data(Secondary Focus Subject) = Mathematics
+----TRUE
+--Data(Secondary Focus Subject) = Gym & Fitness
+----TRUE
+--Data(Secondary Focus Subject) = Parent Involvement
+----FALSE
+--Data(Secondary Focus Subject) = History & Geography
+----TRUE
+--Data(Secondary Focus Subject) = Sports
+----TRUE
+--Data(Secondary Focus Subject) = Early Development
+----TRUE
+--Data(Secondary Focus Subject) = College & Career Prep
+----FALSE
+--Data(Secondary Focus Subject) = Not Provided
+----TRUE
+--Data(Secondary Focus Subject) = Extracurricular
+----TRUE
+--Data(Secondary Focus Subject) = Health & Wellness
+----TRUE
+--Data(Secondary Focus Subject) = Music
+----TRUE
+--Data(Secondary Focus Subject) = Economics
+----TRUE
+--Data(Secondary Focus Subject) = Civics & Government
+----TRUE
+--Data(Secondary Focus Subject) = Special Needs
+----TRUE
+--Data(Secondary Focus Subject) = Community Service
+----TRUE
+--Data(Secondary Focus Subject) = Applied Sciences
+----TRUE
+--Data(Secondary Focus Subject) = Health & Life Science
+----TRUE
+data(Optional Support)<=50.0
+--Data(Secondary Focus Subject) = Parent Involvement
+----TRUE
+--Data(Secondary Focus Subject) = Health & Wellness
+----TRUE
+--Data(Secondary Focus Subject) = Sports
+----TRUE
+--Data(Secondary Focus Subject) = Special Needs
+----TRUE
+--Data(Secondary Focus Subject) = Applied Sciences
+----TRUE
+--Data(Secondary Focus Subject) = ESL
+----TRUE
+--Data(Secondary Focus Subject) = Civics & Government
+----TRUE
+--Data(Secondary Focus Subject) = Community Service
+----TRUE
+--Data(Secondary Focus Subject) = Music
+----TRUE
+--Data(Secondary Focus Subject) = Gym & Fitness
+----TRUE
+--Data(Secondary Focus Subject) = College & Career Prep
+----TRUE
+--Data(Secondary Focus Subject) = Early Development
+----TRUE
+--Data(Secondary Focus Subject) = Literature & Writing
+----TRUE
+--Data(Secondary Focus Subject) = Health & Life Science
+----TRUE
+--Data(Secondary Focus Subject) = Performing Arts
+----TRUE
+--Data(Secondary Focus Subject) = Economics
+----TRUE
+--Data(Secondary Focus Subject) = Nutrition
+----TRUE
+--Data(Secondary Focus Subject) = Literacy
+----TRUE
+--Data(Secondary Focus Subject) = Character Education
+----TRUE
+--Data(Secondary Focus Subject) = Mathematics
+----TRUE
+--Data(Secondary Focus Subject) = Social Sciences
+----TRUE
+--Data(Secondary Focus Subject) = History & Geography
+----TRUE
+--Data(Secondary Focus Subject) = Environmental Science
+----TRUE
+--Data(Secondary Focus Subject) = Foreign Languages
+----TRUE
+--Data(Secondary Focus Subject) = Other
+----TRUE
+--Data(Secondary Focus Subject) = Visual Arts
+----TRUE
+--Data(Secondary Focus Subject) = Extracurricular
+----TRUE
+--Data(Secondary Focus Subject) = Not Provided
+----TRUE
+
+data(Total Price)>275.0
+--data(Optional Support)>150.0
+----FALSE
+--data(Optional Support)<=150.0
+----TRUE
+data(Total Price)<=275.0
+--Data(Secondary Focus Subject) = Music
+----TRUE
+--Data(Secondary Focus Subject) = Character Education
+----TRUE
+--Data(Secondary Focus Subject) = Special Needs
+----TRUE
+--Data(Secondary Focus Subject) = Community Service
+----TRUE
+--Data(Secondary Focus Subject) = Nutrition
+----TRUE
+--Data(Secondary Focus Subject) = Literature & Writing
+----TRUE
+--Data(Secondary Focus Subject) = Sports
+----TRUE
+--Data(Secondary Focus Subject) = ESL
+----TRUE
+--Data(Secondary Focus Subject) = Health & Life Science
+----TRUE
+--Data(Secondary Focus Subject) = Other
+----TRUE
+--Data(Secondary Focus Subject) = Performing Arts
+----TRUE
+--Data(Secondary Focus Subject) = Literacy
+----TRUE
+--Data(Secondary Focus Subject) = Visual Arts
+----TRUE
+--Data(Secondary Focus Subject) = History & Geography
+----TRUE
+--Data(Secondary Focus Subject) = Economics
+----TRUE
+--Data(Secondary Focus Subject) = Parent Involvement
+----TRUE
+--Data(Secondary Focus Subject) = Mathematics
+----TRUE
+--Data(Secondary Focus Subject) = College & Career Prep
+----TRUE
+--Data(Secondary Focus Subject) = Environmental Science
+----TRUE
+--Data(Secondary Focus Subject) = Health & Wellness
+----TRUE
+--Data(Secondary Focus Subject) = Not Provided
+----TRUE
+--Data(Secondary Focus Subject) = Civics & Government
+----TRUE
+--Data(Secondary Focus Subject) = Applied Sciences
+----TRUE
+--Data(Secondary Focus Subject) = Early Development
+----TRUE
+--Data(Secondary Focus Subject) = Extracurricular
+----TRUE
+--Data(Secondary Focus Subject) = Social Sciences
+----TRUE
+--Data(Secondary Focus Subject) = Gym & Fitness
+----TRUE
+
+data(Total Price)>350.0
+--Data(Primary Focus Subject) = Extracurricular
+----TRUE
+--Data(Primary Focus Subject) = Economics
+----TRUE
+--Data(Primary Focus Subject) = Other
+----FALSE
+--Data(Primary Focus Subject) = History & Geography
+----TRUE
+--Data(Primary Focus Subject) = Gym & Fitness
+----FALSE
+--Data(Primary Focus Subject) = Parent Involvement
+----FALSE
+--Data(Primary Focus Subject) = Music
+----TRUE
+--Data(Primary Focus Subject) = Health & Life Science
+----TRUE
+--Data(Primary Focus Subject) = Sports
+----TRUE
+--Data(Primary Focus Subject) = Performing Arts
+----TRUE
+--Data(Primary Focus Subject) = College & Career Prep
+----TRUE
+--Data(Primary Focus Subject) = Social Sciences
+----TRUE
+--Data(Primary Focus Subject) = Mathematics
+----TRUE
+--Data(Primary Focus Subject) = Character Education
+----TRUE
+--Data(Primary Focus Subject) = Environmental Science
+----TRUE
+--Data(Primary Focus Subject) = Nutrition
+----FALSE
+--Data(Primary Focus Subject) = Early Development
+----FALSE
+--Data(Primary Focus Subject) = Foreign Languages
+----TRUE
+--Data(Primary Focus Subject) = Health & Wellness
+----TRUE
+--Data(Primary Focus Subject) = ESL
+----TRUE
+--Data(Primary Focus Subject) = Community Service
+----FALSE
+--Data(Primary Focus Subject) = Applied Sciences
+----TRUE
+--Data(Primary Focus Subject) = Special Needs
+----TRUE
+--Data(Primary Focus Subject) = Visual Arts
+----TRUE
+--Data(Primary Focus Subject) = Literature & Writing
+----TRUE
+--Data(Primary Focus Subject) = Literacy
+----TRUE
+--Data(Primary Focus Subject) = Civics & Government
+----FALSE
+data(Total Price)<=350.0
+--Data(Secondary Focus Subject) = Other
+----TRUE
+--Data(Secondary Focus Subject) = Gym & Fitness
+----TRUE
+--Data(Secondary Focus Subject) = Civics & Government
+----TRUE
+--Data(Secondary Focus Subject) = Literacy
+----TRUE
+--Data(Secondary Focus Subject) = History & Geography
+----TRUE
+--Data(Secondary Focus Subject) = Early Development
+----TRUE
+--Data(Secondary Focus Subject) = Extracurricular
+----TRUE
+--Data(Secondary Focus Subject) = Performing Arts
+----TRUE
+--Data(Secondary Focus Subject) = Not Provided
+----TRUE
+--Data(Secondary Focus Subject) = Parent Involvement
+----TRUE
+--Data(Secondary Focus Subject) = Literature & Writing
+----TRUE
+--Data(Secondary Focus Subject) = Special Needs
+----TRUE
+--Data(Secondary Focus Subject) = College & Career Prep
+----TRUE
+--Data(Secondary Focus Subject) = Applied Sciences
+----TRUE
+--Data(Secondary Focus Subject) = Community Service
+----TRUE
+--Data(Secondary Focus Subject) = Visual Arts
+----TRUE
+--Data(Secondary Focus Subject) = Environmental Science
+----TRUE
+--Data(Secondary Focus Subject) = Health & Life Science
+----TRUE
+--Data(Secondary Focus Subject) = Economics
+----TRUE
+--Data(Secondary Focus Subject) = Health & Wellness
+----TRUE
+--Data(Secondary Focus Subject) = Character Education
+----TRUE
+--Data(Secondary Focus Subject) = Sports
+----FALSE
+--Data(Secondary Focus Subject) = Social Sciences
+----TRUE
+--Data(Secondary Focus Subject) = Music
+----TRUE
+--Data(Secondary Focus Subject) = Mathematics
+----TRUE
+--Data(Secondary Focus Subject) = ESL
+----TRUE
+
+data(Total Price)>350.0
+--Data(Primary Focus Subject) = Performing Arts
+----TRUE
+--Data(Primary Focus Subject) = Special Needs
+----TRUE
+--Data(Primary Focus Subject) = Gym & Fitness
+----TRUE
+--Data(Primary Focus Subject) = Other
+----FALSE
+--Data(Primary Focus Subject) = Literacy
+----TRUE
+--Data(Primary Focus Subject) = Character Education
+----FALSE
+--Data(Primary Focus Subject) = Early Development
+----TRUE
+--Data(Primary Focus Subject) = Health & Life Science
+----TRUE
+--Data(Primary Focus Subject) = Mathematics
+----TRUE
+--Data(Primary Focus Subject) = College & Career Prep
+----TRUE
+--Data(Primary Focus Subject) = Visual Arts
+----TRUE
+--Data(Primary Focus Subject) = Economics
+----TRUE
+--Data(Primary Focus Subject) = Music
+----TRUE
+--Data(Primary Focus Subject) = Sports
+----FALSE
+--Data(Primary Focus Subject) = Foreign Languages
+----FALSE
+--Data(Primary Focus Subject) = Community Service
+----TRUE
+--Data(Primary Focus Subject) = Social Sciences
+----TRUE
+--Data(Primary Focus Subject) = Applied Sciences
+----TRUE
+--Data(Primary Focus Subject) = Literature & Writing
+----TRUE
+--Data(Primary Focus Subject) = Nutrition
+----TRUE
+--Data(Primary Focus Subject) = ESL
+----TRUE
+--Data(Primary Focus Subject) = Parent Involvement
+----TRUE
+--Data(Primary Focus Subject) = Environmental Science
+----TRUE
+--Data(Primary Focus Subject) = History & Geography
+----TRUE
+--Data(Primary Focus Subject) = Civics & Government
+----FALSE
+--Data(Primary Focus Subject) = Health & Wellness
+----TRUE
+--Data(Primary Focus Subject) = Extracurricular
+----TRUE
+data(Total Price)<=350.0
+--data(Total Price)>175.0
+----TRUE
+--data(Total Price)<=175.0
+----TRUE
+
+data(Total Price)>325.0
+--Data(School Metro) = urban
+----TRUE
+--Data(School Metro) = suburban
+----TRUE
+--Data(School Metro) = rural
+----FALSE
+--Data(School Metro) = Not Provided
+----TRUE
+data(Total Price)<=325.0
+--Data(Primary Focus Subject) = Special Needs
+----TRUE
+--Data(Primary Focus Subject) = Other
+----TRUE
+--Data(Primary Focus Subject) = Literacy
+----TRUE
+--Data(Primary Focus Subject) = Parent Involvement
+----TRUE
+--Data(Primary Focus Subject) = ESL
+----TRUE
+--Data(Primary Focus Subject) = Music
+----TRUE
+--Data(Primary Focus Subject) = Character Education
+----TRUE
+--Data(Primary Focus Subject) = Visual Arts
+----TRUE
+--Data(Primary Focus Subject) = Health & Wellness
+----TRUE
+--Data(Primary Focus Subject) = Applied Sciences
+----TRUE
+--Data(Primary Focus Subject) = College & Career Prep
+----TRUE
+--Data(Primary Focus Subject) = Performing Arts
+----TRUE
+--Data(Primary Focus Subject) = Gym & Fitness
+----TRUE
+--Data(Primary Focus Subject) = Foreign Languages
+----TRUE
+--Data(Primary Focus Subject) = Environmental Science
+----TRUE
+--Data(Primary Focus Subject) = History & Geography
+----TRUE
+--Data(Primary Focus Subject) = Literature & Writing
+----TRUE
+--Data(Primary Focus Subject) = Community Service
+----TRUE
+--Data(Primary Focus Subject) = Early Development
+----TRUE
+--Data(Primary Focus Subject) = Health & Life Science
+----TRUE
+--Data(Primary Focus Subject) = Extracurricular
+----TRUE
+--Data(Primary Focus Subject) = Civics & Government
+----TRUE
+--Data(Primary Focus Subject) = Mathematics
+----TRUE
+--Data(Primary Focus Subject) = Sports
+----TRUE
+--Data(Primary Focus Subject) = Social Sciences
+----TRUE
+
+
+Test : (6949,34,2956,52)
+  Accuracy = 0.7007306575918326
+  Recall = 0.9951310325075182
+  Precision = 0.7015648662291771
+  F1 = 0.8229512079583136
+  F0.5 = 0.7455528614037724
 --------------------------------------------
 --------------------------------------------
 
 Equal-Equal
-Best Accuracy: (5,0.3333333333333333,1,(1.0,1.0),List(9, 18, 21, 22, 23, 24, 25, 26, 27, 35, 4, 5, 29, 31, 32, 36, 37, 49, 50, 12, 13, 14, 15, 16, 17, 19, 20, 33, 34)) (TP, FN, FP, TN)(1404,1618,666,2355)
-classifier.Forest@65cb5512
-Test : (1381,1626,678,2328)
-  Accuracy = 0.6168302012306669
-  Recall = 0.45926172264715664
-  Precision = 0.6707139388052452
-  F1 = 0.5452033162258192
-  F0.5 = 0.6141599217290757
+Best Accuracy: (9,0.3333333333333333,2,(1.0,1.0),List(9, 18, 21, 22, 23, 24, 25, 26, 27, 35, 4, 5, 29, 31, 32, 36, 37, 49, 50, 12, 13, 14, 15, 16, 17, 19, 20, 33, 34)) (TP, FN, FP, TN)(1531,1491,784,2237)
+data(Total Price)>250.0
+--Data(School Metro) = urban
+----TRUE
+--Data(School Metro) = suburban
+----FALSE
+--Data(School Metro) = rural
+----FALSE
+--Data(School Metro) = Not Provided
+----FALSE
+data(Total Price)<=250.0
+--Data(Secondary Focus Subject) = Literacy
+----TRUE
+--Data(Secondary Focus Subject) = Sports
+----TRUE
+--Data(Secondary Focus Subject) = Nutrition
+----TRUE
+--Data(Secondary Focus Subject) = Health & Wellness
+----TRUE
+--Data(Secondary Focus Subject) = Parent Involvement
+----TRUE
+--Data(Secondary Focus Subject) = Social Sciences
+----TRUE
+--Data(Secondary Focus Subject) = Character Education
+----TRUE
+--Data(Secondary Focus Subject) = History & Geography
+----TRUE
+--Data(Secondary Focus Subject) = Music
+----TRUE
+--Data(Secondary Focus Subject) = College & Career Prep
+----TRUE
+--Data(Secondary Focus Subject) = Not Provided
+----TRUE
+--Data(Secondary Focus Subject) = Other
+----TRUE
+--Data(Secondary Focus Subject) = Visual Arts
+----TRUE
+--Data(Secondary Focus Subject) = Special Needs
+----TRUE
+--Data(Secondary Focus Subject) = Mathematics
+----TRUE
+--Data(Secondary Focus Subject) = Environmental Science
+----TRUE
+--Data(Secondary Focus Subject) = Health & Life Science
+----TRUE
+--Data(Secondary Focus Subject) = Performing Arts
+----TRUE
+--Data(Secondary Focus Subject) = Literature & Writing
+----TRUE
+--Data(Secondary Focus Subject) = Gym & Fitness
+----TRUE
+--Data(Secondary Focus Subject) = ESL
+----TRUE
+--Data(Secondary Focus Subject) = Early Development
+----TRUE
+--Data(Secondary Focus Subject) = Civics & Government
+----TRUE
+--Data(Secondary Focus Subject) = Applied Sciences
+----TRUE
+--Data(Secondary Focus Subject) = Community Service
+----TRUE
+
+data(Total Price)>275.0
+--Data(Primary Focus Subject) = Civics & Government
+----FALSE
+--Data(Primary Focus Subject) = Economics
+----TRUE
+--Data(Primary Focus Subject) = Parent Involvement
+----FALSE
+--Data(Primary Focus Subject) = Community Service
+----TRUE
+--Data(Primary Focus Subject) = Early Development
+----FALSE
+--Data(Primary Focus Subject) = Visual Arts
+----FALSE
+--Data(Primary Focus Subject) = Literacy
+----FALSE
+--Data(Primary Focus Subject) = Applied Sciences
+----TRUE
+--Data(Primary Focus Subject) = Health & Wellness
+----FALSE
+--Data(Primary Focus Subject) = ESL
+----FALSE
+--Data(Primary Focus Subject) = Mathematics
+----FALSE
+--Data(Primary Focus Subject) = Literature & Writing
+----FALSE
+--Data(Primary Focus Subject) = Music
+----TRUE
+--Data(Primary Focus Subject) = Health & Life Science
+----FALSE
+--Data(Primary Focus Subject) = Sports
+----FALSE
+--Data(Primary Focus Subject) = College & Career Prep
+----FALSE
+--Data(Primary Focus Subject) = Environmental Science
+----TRUE
+--Data(Primary Focus Subject) = Extracurricular
+----FALSE
+--Data(Primary Focus Subject) = Character Education
+----FALSE
+--Data(Primary Focus Subject) = History & Geography
+----TRUE
+--Data(Primary Focus Subject) = Gym & Fitness
+----FALSE
+--Data(Primary Focus Subject) = Special Needs
+----FALSE
+--Data(Primary Focus Subject) = Performing Arts
+----FALSE
+--Data(Primary Focus Subject) = Social Sciences
+----TRUE
+--Data(Primary Focus Subject) = Other
+----FALSE
+--Data(Primary Focus Subject) = Foreign Languages
+----FALSE
+data(Total Price)<=275.0
+--Data(Primary Focus Subject) = Literature & Writing
+----TRUE
+--Data(Primary Focus Subject) = Extracurricular
+----TRUE
+--Data(Primary Focus Subject) = Community Service
+----TRUE
+--Data(Primary Focus Subject) = Literacy
+----TRUE
+--Data(Primary Focus Subject) = Foreign Languages
+----FALSE
+--Data(Primary Focus Subject) = ESL
+----TRUE
+--Data(Primary Focus Subject) = Character Education
+----TRUE
+--Data(Primary Focus Subject) = History & Geography
+----TRUE
+--Data(Primary Focus Subject) = Health & Life Science
+----TRUE
+--Data(Primary Focus Subject) = College & Career Prep
+----TRUE
+--Data(Primary Focus Subject) = Performing Arts
+----TRUE
+--Data(Primary Focus Subject) = Civics & Government
+----TRUE
+--Data(Primary Focus Subject) = Parent Involvement
+----TRUE
+--Data(Primary Focus Subject) = Nutrition
+----TRUE
+--Data(Primary Focus Subject) = Sports
+----TRUE
+--Data(Primary Focus Subject) = Gym & Fitness
+----TRUE
+--Data(Primary Focus Subject) = Other
+----TRUE
+--Data(Primary Focus Subject) = Environmental Science
+----TRUE
+--Data(Primary Focus Subject) = Mathematics
+----TRUE
+--Data(Primary Focus Subject) = Health & Wellness
+----TRUE
+--Data(Primary Focus Subject) = Special Needs
+----TRUE
+--Data(Primary Focus Subject) = Music
+----TRUE
+--Data(Primary Focus Subject) = Early Development
+----TRUE
+--Data(Primary Focus Subject) = Applied Sciences
+----TRUE
+--Data(Primary Focus Subject) = Visual Arts
+----TRUE
+--Data(Primary Focus Subject) = Social Sciences
+----TRUE
+
+data(Total Price)>275.0
+--Data(Secondary Focus Subject) = Extracurricular
+----FALSE
+--Data(Secondary Focus Subject) = Mathematics
+----FALSE
+--Data(Secondary Focus Subject) = Visual Arts
+----TRUE
+--Data(Secondary Focus Subject) = Other
+----FALSE
+--Data(Secondary Focus Subject) = Social Sciences
+----TRUE
+--Data(Secondary Focus Subject) = Not Provided
+----FALSE
+--Data(Secondary Focus Subject) = Health & Life Science
+----FALSE
+--Data(Secondary Focus Subject) = Civics & Government
+----FALSE
+--Data(Secondary Focus Subject) = Parent Involvement
+----FALSE
+--Data(Secondary Focus Subject) = Music
+----FALSE
+--Data(Secondary Focus Subject) = Early Development
+----FALSE
+--Data(Secondary Focus Subject) = Nutrition
+----FALSE
+--Data(Secondary Focus Subject) = Literature & Writing
+----FALSE
+--Data(Secondary Focus Subject) = Applied Sciences
+----FALSE
+--Data(Secondary Focus Subject) = Literacy
+----FALSE
+--Data(Secondary Focus Subject) = Community Service
+----TRUE
+--Data(Secondary Focus Subject) = Gym & Fitness
+----TRUE
+--Data(Secondary Focus Subject) = ESL
+----FALSE
+--Data(Secondary Focus Subject) = Foreign Languages
+----FALSE
+--Data(Secondary Focus Subject) = Health & Wellness
+----FALSE
+--Data(Secondary Focus Subject) = Environmental Science
+----TRUE
+--Data(Secondary Focus Subject) = Special Needs
+----FALSE
+--Data(Secondary Focus Subject) = History & Geography
+----FALSE
+--Data(Secondary Focus Subject) = Sports
+----TRUE
+--Data(Secondary Focus Subject) = Performing Arts
+----FALSE
+--Data(Secondary Focus Subject) = Economics
+----FALSE
+--Data(Secondary Focus Subject) = College & Career Prep
+----FALSE
+--Data(Secondary Focus Subject) = Character Education
+----TRUE
+data(Total Price)<=275.0
+--Data(Primary Focus Subject) = Visual Arts
+----TRUE
+--Data(Primary Focus Subject) = Gym & Fitness
+----TRUE
+--Data(Primary Focus Subject) = Literature & Writing
+----TRUE
+--Data(Primary Focus Subject) = Foreign Languages
+----FALSE
+--Data(Primary Focus Subject) = Early Development
+----FALSE
+--Data(Primary Focus Subject) = Mathematics
+----TRUE
+--Data(Primary Focus Subject) = ESL
+----TRUE
+--Data(Primary Focus Subject) = Performing Arts
+----TRUE
+--Data(Primary Focus Subject) = Character Education
+----TRUE
+--Data(Primary Focus Subject) = Community Service
+----TRUE
+--Data(Primary Focus Subject) = College & Career Prep
+----TRUE
+--Data(Primary Focus Subject) = Special Needs
+----TRUE
+--Data(Primary Focus Subject) = Other
+----TRUE
+--Data(Primary Focus Subject) = Health & Wellness
+----TRUE
+--Data(Primary Focus Subject) = Literacy
+----TRUE
+--Data(Primary Focus Subject) = Environmental Science
+----TRUE
+--Data(Primary Focus Subject) = Nutrition
+----TRUE
+--Data(Primary Focus Subject) = Health & Life Science
+----FALSE
+--Data(Primary Focus Subject) = Applied Sciences
+----TRUE
+--Data(Primary Focus Subject) = Social Sciences
+----TRUE
+--Data(Primary Focus Subject) = Civics & Government
+----TRUE
+--Data(Primary Focus Subject) = Music
+----TRUE
+--Data(Primary Focus Subject) = History & Geography
+----TRUE
+--Data(Primary Focus Subject) = Sports
+----TRUE
+--Data(Primary Focus Subject) = Extracurricular
+----TRUE
+
+data(Total Price)>275.0
+--data(Total Price)>475.0
+----FALSE
+--data(Total Price)<=475.0
+----TRUE
+data(Total Price)<=275.0
+--Data(Primary Focus Subject) = Foreign Languages
+----FALSE
+--Data(Primary Focus Subject) = Applied Sciences
+----TRUE
+--Data(Primary Focus Subject) = Early Development
+----FALSE
+--Data(Primary Focus Subject) = College & Career Prep
+----TRUE
+--Data(Primary Focus Subject) = Mathematics
+----TRUE
+--Data(Primary Focus Subject) = Community Service
+----TRUE
+--Data(Primary Focus Subject) = Performing Arts
+----TRUE
+--Data(Primary Focus Subject) = Literacy
+----TRUE
+--Data(Primary Focus Subject) = Other
+----TRUE
+--Data(Primary Focus Subject) = Health & Life Science
+----TRUE
+--Data(Primary Focus Subject) = Gym & Fitness
+----TRUE
+--Data(Primary Focus Subject) = History & Geography
+----TRUE
+--Data(Primary Focus Subject) = Environmental Science
+----TRUE
+--Data(Primary Focus Subject) = Literature & Writing
+----TRUE
+--Data(Primary Focus Subject) = Extracurricular
+----TRUE
+--Data(Primary Focus Subject) = Character Education
+----TRUE
+--Data(Primary Focus Subject) = Special Needs
+----TRUE
+--Data(Primary Focus Subject) = Civics & Government
+----TRUE
+--Data(Primary Focus Subject) = ESL
+----TRUE
+--Data(Primary Focus Subject) = Sports
+----TRUE
+--Data(Primary Focus Subject) = Health & Wellness
+----FALSE
+--Data(Primary Focus Subject) = Visual Arts
+----TRUE
+--Data(Primary Focus Subject) = Social Sciences
+----TRUE
+--Data(Primary Focus Subject) = Music
+----TRUE
+
+data(Total Price)>225.0
+--data(Optional Support)>100.0
+----FALSE
+--data(Optional Support)<=100.0
+----TRUE
+data(Total Price)<=225.0
+--Data(Secondary Focus Subject) = Early Development
+----TRUE
+--Data(Secondary Focus Subject) = Social Sciences
+----TRUE
+--Data(Secondary Focus Subject) = Health & Wellness
+----TRUE
+--Data(Secondary Focus Subject) = Visual Arts
+----TRUE
+--Data(Secondary Focus Subject) = Applied Sciences
+----TRUE
+--Data(Secondary Focus Subject) = Not Provided
+----TRUE
+--Data(Secondary Focus Subject) = ESL
+----TRUE
+--Data(Secondary Focus Subject) = Gym & Fitness
+----TRUE
+--Data(Secondary Focus Subject) = Performing Arts
+----FALSE
+--Data(Secondary Focus Subject) = Sports
+----TRUE
+--Data(Secondary Focus Subject) = Other
+----TRUE
+--Data(Secondary Focus Subject) = History & Geography
+----TRUE
+--Data(Secondary Focus Subject) = Parent Involvement
+----FALSE
+--Data(Secondary Focus Subject) = Music
+----TRUE
+--Data(Secondary Focus Subject) = Environmental Science
+----TRUE
+--Data(Secondary Focus Subject) = College & Career Prep
+----TRUE
+--Data(Secondary Focus Subject) = Character Education
+----TRUE
+--Data(Secondary Focus Subject) = Literature & Writing
+----TRUE
+--Data(Secondary Focus Subject) = Nutrition
+----TRUE
+--Data(Secondary Focus Subject) = Special Needs
+----TRUE
+--Data(Secondary Focus Subject) = Mathematics
+----TRUE
+--Data(Secondary Focus Subject) = Community Service
+----TRUE
+--Data(Secondary Focus Subject) = Health & Life Science
+----TRUE
+--Data(Secondary Focus Subject) = Extracurricular
+----TRUE
+--Data(Secondary Focus Subject) = Literacy
+----TRUE
+
+data(Total Price)>350.0
+--Data(Primary Focus Subject) = Performing Arts
+----TRUE
+--Data(Primary Focus Subject) = Environmental Science
+----FALSE
+--Data(Primary Focus Subject) = Music
+----TRUE
+--Data(Primary Focus Subject) = Visual Arts
+----FALSE
+--Data(Primary Focus Subject) = Character Education
+----FALSE
+--Data(Primary Focus Subject) = Economics
+----FALSE
+--Data(Primary Focus Subject) = Gym & Fitness
+----FALSE
+--Data(Primary Focus Subject) = College & Career Prep
+----FALSE
+--Data(Primary Focus Subject) = Foreign Languages
+----FALSE
+--Data(Primary Focus Subject) = Applied Sciences
+----FALSE
+--Data(Primary Focus Subject) = Other
+----FALSE
+--Data(Primary Focus Subject) = Extracurricular
+----FALSE
+--Data(Primary Focus Subject) = Special Needs
+----FALSE
+--Data(Primary Focus Subject) = Mathematics
+----FALSE
+--Data(Primary Focus Subject) = Parent Involvement
+----FALSE
+--Data(Primary Focus Subject) = History & Geography
+----TRUE
+--Data(Primary Focus Subject) = ESL
+----FALSE
+--Data(Primary Focus Subject) = Early Development
+----FALSE
+--Data(Primary Focus Subject) = Literacy
+----FALSE
+--Data(Primary Focus Subject) = Community Service
+----TRUE
+--Data(Primary Focus Subject) = Health & Life Science
+----FALSE
+--Data(Primary Focus Subject) = Civics & Government
+----FALSE
+--Data(Primary Focus Subject) = Literature & Writing
+----FALSE
+--Data(Primary Focus Subject) = Sports
+----FALSE
+--Data(Primary Focus Subject) = Social Sciences
+----TRUE
+--Data(Primary Focus Subject) = Health & Wellness
+----FALSE
+data(Total Price)<=350.0
+--Data(Secondary Focus Subject) = Early Development
+----TRUE
+--Data(Secondary Focus Subject) = Literature & Writing
+----TRUE
+--Data(Secondary Focus Subject) = Sports
+----TRUE
+--Data(Secondary Focus Subject) = Other
+----TRUE
+--Data(Secondary Focus Subject) = ESL
+----TRUE
+--Data(Secondary Focus Subject) = Social Sciences
+----TRUE
+--Data(Secondary Focus Subject) = Health & Wellness
+----TRUE
+--Data(Secondary Focus Subject) = Visual Arts
+----TRUE
+--Data(Secondary Focus Subject) = History & Geography
+----TRUE
+--Data(Secondary Focus Subject) = Applied Sciences
+----TRUE
+--Data(Secondary Focus Subject) = Performing Arts
+----FALSE
+--Data(Secondary Focus Subject) = Foreign Languages
+----TRUE
+--Data(Secondary Focus Subject) = Extracurricular
+----TRUE
+--Data(Secondary Focus Subject) = Character Education
+----TRUE
+--Data(Secondary Focus Subject) = Environmental Science
+----TRUE
+--Data(Secondary Focus Subject) = Music
+----TRUE
+--Data(Secondary Focus Subject) = Special Needs
+----TRUE
+--Data(Secondary Focus Subject) = Parent Involvement
+----FALSE
+--Data(Secondary Focus Subject) = Literacy
+----TRUE
+--Data(Secondary Focus Subject) = Health & Life Science
+----TRUE
+--Data(Secondary Focus Subject) = Mathematics
+----TRUE
+--Data(Secondary Focus Subject) = Community Service
+----TRUE
+--Data(Secondary Focus Subject) = Civics & Government
+----FALSE
+--Data(Secondary Focus Subject) = Nutrition
+----FALSE
+--Data(Secondary Focus Subject) = Not Provided
+----TRUE
+--Data(Secondary Focus Subject) = Gym & Fitness
+----TRUE
+--Data(Secondary Focus Subject) = College & Career Prep
+----TRUE
+
+data(Total Price)>250.0
+--Data(Primary Focus Subject) = Mathematics
+----FALSE
+--Data(Primary Focus Subject) = History & Geography
+----TRUE
+--Data(Primary Focus Subject) = Music
+----FALSE
+--Data(Primary Focus Subject) = Social Sciences
+----FALSE
+--Data(Primary Focus Subject) = Parent Involvement
+----FALSE
+--Data(Primary Focus Subject) = Gym & Fitness
+----FALSE
+--Data(Primary Focus Subject) = Character Education
+----FALSE
+--Data(Primary Focus Subject) = Economics
+----FALSE
+--Data(Primary Focus Subject) = Special Needs
+----FALSE
+--Data(Primary Focus Subject) = Literature & Writing
+----FALSE
+--Data(Primary Focus Subject) = ESL
+----FALSE
+--Data(Primary Focus Subject) = Early Development
+----FALSE
+--Data(Primary Focus Subject) = Civics & Government
+----FALSE
+--Data(Primary Focus Subject) = Literacy
+----FALSE
+--Data(Primary Focus Subject) = Other
+----FALSE
+--Data(Primary Focus Subject) = Applied Sciences
+----TRUE
+--Data(Primary Focus Subject) = Health & Life Science
+----TRUE
+--Data(Primary Focus Subject) = Performing Arts
+----TRUE
+--Data(Primary Focus Subject) = Extracurricular
+----FALSE
+--Data(Primary Focus Subject) = College & Career Prep
+----FALSE
+--Data(Primary Focus Subject) = Visual Arts
+----FALSE
+--Data(Primary Focus Subject) = Environmental Science
+----FALSE
+--Data(Primary Focus Subject) = Community Service
+----TRUE
+--Data(Primary Focus Subject) = Health & Wellness
+----FALSE
+--Data(Primary Focus Subject) = Foreign Languages
+----TRUE
+--Data(Primary Focus Subject) = Sports
+----TRUE
+data(Total Price)<=250.0
+--Data(Primary Focus Subject) = Social Sciences
+----TRUE
+--Data(Primary Focus Subject) = Community Service
+----TRUE
+--Data(Primary Focus Subject) = Literature & Writing
+----TRUE
+--Data(Primary Focus Subject) = Visual Arts
+----TRUE
+--Data(Primary Focus Subject) = Health & Life Science
+----TRUE
+--Data(Primary Focus Subject) = Health & Wellness
+----TRUE
+--Data(Primary Focus Subject) = Character Education
+----TRUE
+--Data(Primary Focus Subject) = Nutrition
+----TRUE
+--Data(Primary Focus Subject) = Applied Sciences
+----TRUE
+--Data(Primary Focus Subject) = Environmental Science
+----TRUE
+--Data(Primary Focus Subject) = College & Career Prep
+----TRUE
+--Data(Primary Focus Subject) = Special Needs
+----TRUE
+--Data(Primary Focus Subject) = ESL
+----TRUE
+--Data(Primary Focus Subject) = Music
+----TRUE
+--Data(Primary Focus Subject) = Early Development
+----FALSE
+--Data(Primary Focus Subject) = Mathematics
+----TRUE
+--Data(Primary Focus Subject) = Gym & Fitness
+----TRUE
+--Data(Primary Focus Subject) = Parent Involvement
+----TRUE
+--Data(Primary Focus Subject) = Other
+----TRUE
+--Data(Primary Focus Subject) = Performing Arts
+----TRUE
+--Data(Primary Focus Subject) = Literacy
+----TRUE
+--Data(Primary Focus Subject) = Civics & Government
+----TRUE
+--Data(Primary Focus Subject) = Extracurricular
+----TRUE
+--Data(Primary Focus Subject) = History & Geography
+----TRUE
+
+data(Total Price)>350.0
+--Data(Secondary Focus Subject) = Performing Arts
+----FALSE
+--Data(Secondary Focus Subject) = Literature & Writing
+----FALSE
+--Data(Secondary Focus Subject) = Civics & Government
+----FALSE
+--Data(Secondary Focus Subject) = Nutrition
+----FALSE
+--Data(Secondary Focus Subject) = Early Development
+----FALSE
+--Data(Secondary Focus Subject) = Music
+----FALSE
+--Data(Secondary Focus Subject) = Health & Wellness
+----FALSE
+--Data(Secondary Focus Subject) = Health & Life Science
+----FALSE
+--Data(Secondary Focus Subject) = Not Provided
+----FALSE
+--Data(Secondary Focus Subject) = Visual Arts
+----FALSE
+--Data(Secondary Focus Subject) = Foreign Languages
+----TRUE
+--Data(Secondary Focus Subject) = ESL
+----FALSE
+--Data(Secondary Focus Subject) = History & Geography
+----FALSE
+--Data(Secondary Focus Subject) = Extracurricular
+----FALSE
+--Data(Secondary Focus Subject) = Parent Involvement
+----FALSE
+--Data(Secondary Focus Subject) = Character Education
+----FALSE
+--Data(Secondary Focus Subject) = Environmental Science
+----FALSE
+--Data(Secondary Focus Subject) = Applied Sciences
+----TRUE
+--Data(Secondary Focus Subject) = Other
+----FALSE
+--Data(Secondary Focus Subject) = Special Needs
+----FALSE
+--Data(Secondary Focus Subject) = Social Sciences
+----FALSE
+--Data(Secondary Focus Subject) = Gym & Fitness
+----FALSE
+--Data(Secondary Focus Subject) = Literacy
+----FALSE
+--Data(Secondary Focus Subject) = Sports
+----TRUE
+--Data(Secondary Focus Subject) = College & Career Prep
+----FALSE
+--Data(Secondary Focus Subject) = Economics
+----FALSE
+--Data(Secondary Focus Subject) = Community Service
+----TRUE
+--Data(Secondary Focus Subject) = Mathematics
+----FALSE
+data(Total Price)<=350.0
+--Data(Primary Focus Subject) = Mathematics
+----TRUE
+--Data(Primary Focus Subject) = Applied Sciences
+----TRUE
+--Data(Primary Focus Subject) = Early Development
+----FALSE
+--Data(Primary Focus Subject) = Character Education
+----TRUE
+--Data(Primary Focus Subject) = Nutrition
+----TRUE
+--Data(Primary Focus Subject) = Visual Arts
+----TRUE
+--Data(Primary Focus Subject) = Health & Wellness
+----TRUE
+--Data(Primary Focus Subject) = Extracurricular
+----TRUE
+--Data(Primary Focus Subject) = Environmental Science
+----TRUE
+--Data(Primary Focus Subject) = Special Needs
+----TRUE
+--Data(Primary Focus Subject) = Music
+----TRUE
+--Data(Primary Focus Subject) = Health & Life Science
+----TRUE
+--Data(Primary Focus Subject) = Sports
+----TRUE
+--Data(Primary Focus Subject) = Other
+----TRUE
+--Data(Primary Focus Subject) = Literacy
+----TRUE
+--Data(Primary Focus Subject) = History & Geography
+----TRUE
+--Data(Primary Focus Subject) = Performing Arts
+----TRUE
+--Data(Primary Focus Subject) = Foreign Languages
+----FALSE
+--Data(Primary Focus Subject) = ESL
+----TRUE
+--Data(Primary Focus Subject) = Gym & Fitness
+----TRUE
+--Data(Primary Focus Subject) = Parent Involvement
+----TRUE
+--Data(Primary Focus Subject) = College & Career Prep
+----TRUE
+--Data(Primary Focus Subject) = Civics & Government
+----TRUE
+--Data(Primary Focus Subject) = Literature & Writing
+----TRUE
+--Data(Primary Focus Subject) = Social Sciences
+----TRUE
+
+data(Total Price)>350.0
+--Data(Secondary Focus Subject) = Economics
+----FALSE
+--Data(Secondary Focus Subject) = Gym & Fitness
+----FALSE
+--Data(Secondary Focus Subject) = History & Geography
+----FALSE
+--Data(Secondary Focus Subject) = Health & Life Science
+----FALSE
+--Data(Secondary Focus Subject) = Social Sciences
+----FALSE
+--Data(Secondary Focus Subject) = Special Needs
+----FALSE
+--Data(Secondary Focus Subject) = Other
+----FALSE
+--Data(Secondary Focus Subject) = Literature & Writing
+----FALSE
+--Data(Secondary Focus Subject) = Mathematics
+----FALSE
+--Data(Secondary Focus Subject) = Performing Arts
+----FALSE
+--Data(Secondary Focus Subject) = Visual Arts
+----TRUE
+--Data(Secondary Focus Subject) = Character Education
+----FALSE
+--Data(Secondary Focus Subject) = Community Service
+----TRUE
+--Data(Secondary Focus Subject) = Civics & Government
+----FALSE
+--Data(Secondary Focus Subject) = Literacy
+----FALSE
+--Data(Secondary Focus Subject) = Foreign Languages
+----TRUE
+--Data(Secondary Focus Subject) = Parent Involvement
+----FALSE
+--Data(Secondary Focus Subject) = Music
+----TRUE
+--Data(Secondary Focus Subject) = Early Development
+----FALSE
+--Data(Secondary Focus Subject) = Environmental Science
+----TRUE
+--Data(Secondary Focus Subject) = Health & Wellness
+----FALSE
+--Data(Secondary Focus Subject) = ESL
+----FALSE
+--Data(Secondary Focus Subject) = Nutrition
+----FALSE
+--Data(Secondary Focus Subject) = Extracurricular
+----FALSE
+--Data(Secondary Focus Subject) = Applied Sciences
+----TRUE
+--Data(Secondary Focus Subject) = College & Career Prep
+----FALSE
+--Data(Secondary Focus Subject) = Not Provided
+----FALSE
+--Data(Secondary Focus Subject) = Sports
+----TRUE
+data(Total Price)<=350.0
+--Data(Primary Focus Subject) = Mathematics
+----TRUE
+--Data(Primary Focus Subject) = Music
+----TRUE
+--Data(Primary Focus Subject) = Sports
+----TRUE
+--Data(Primary Focus Subject) = Literacy
+----TRUE
+--Data(Primary Focus Subject) = Special Needs
+----TRUE
+--Data(Primary Focus Subject) = Other
+----TRUE
+--Data(Primary Focus Subject) = Parent Involvement
+----FALSE
+--Data(Primary Focus Subject) = Character Education
+----FALSE
+--Data(Primary Focus Subject) = Applied Sciences
+----TRUE
+--Data(Primary Focus Subject) = Literature & Writing
+----TRUE
+--Data(Primary Focus Subject) = College & Career Prep
+----FALSE
+--Data(Primary Focus Subject) = Health & Wellness
+----TRUE
+--Data(Primary Focus Subject) = Extracurricular
+----TRUE
+--Data(Primary Focus Subject) = History & Geography
+----TRUE
+--Data(Primary Focus Subject) = Environmental Science
+----TRUE
+--Data(Primary Focus Subject) = Visual Arts
+----TRUE
+--Data(Primary Focus Subject) = Social Sciences
+----TRUE
+--Data(Primary Focus Subject) = Community Service
+----TRUE
+--Data(Primary Focus Subject) = Civics & Government
+----TRUE
+--Data(Primary Focus Subject) = Health & Life Science
+----TRUE
+--Data(Primary Focus Subject) = Early Development
+----TRUE
+--Data(Primary Focus Subject) = Gym & Fitness
+----TRUE
+--Data(Primary Focus Subject) = Foreign Languages
+----FALSE
+--Data(Primary Focus Subject) = ESL
+----TRUE
+--Data(Primary Focus Subject) = Performing Arts
+----TRUE
+
+
+Test : (1501,1506,761,2245)
+  Accuracy = 0.6229835356727091
+  Recall = 0.49916860658463585
+  Precision = 0.6635720601237842
+  F1 = 0.5697475801859935
+  F0.5 = 0.6225632517627541
 --------------------------------------------
 --------------------------------------------

@@ -30,10 +30,10 @@ object DTNode{
     val testFil = 3
 //    val argsList = (for(n <- 3 to 11 by 2; p <- 2 to 5; d <- 1 to 10) 
 //      yield ((n, 1.0/p.toDouble, d, (1.0,1.0), attributeSplits))).toList
-    val argsList = (for(n <- 5 to 5 by 2; p <- 3 to 3; d <- 1 to 10) 
+    val argsList = (for(n <- 3 to 10 by 2; p <- 3 to 5; d <- 1 to 10) 
       yield ((n, 1.0/p.toDouble, d, (1.0,1.0), attributeSplits))).toList
       
-    val o = System.out  
+    val o = System.out
     System.setOut(new PrintStream(new File(out)))
     
     System.out.println("\nSkewed-Skewed")
@@ -41,7 +41,7 @@ object DTNode{
     trainList = ReaderWriter.readSVMData(ReaderWriter.svmFile(trainFil))
     validationList =  ReaderWriter.readSVMData(ReaderWriter.svmFile(validateFil))
     testList = ReaderWriter.readSVMData(ReaderWriter.svmFile(testFil))
-    AbsClassifier.trainValidateTest("Accuracy", AbsClassifier.accuracy, 
+    AbsClassifier.trainValidateTest(o)("Accuracy", AbsClassifier.accuracy, 
         trainList, validationList, testList, forestTrainer, argsList)
         
     System.out.println("\nEqual-Equal")
@@ -49,7 +49,7 @@ object DTNode{
     trainList = ReaderWriter.readSVMData(ReaderWriter.svm_FF_File(trainFil))
     validationList =  ReaderWriter.readSVMData(ReaderWriter.svm_FF_File(validateFil))
     testList = ReaderWriter.readSVMData(ReaderWriter.svm_FF_File(testFil))
-    AbsClassifier.trainValidateTest("Accuracy", AbsClassifier.accuracy, 
+    AbsClassifier.trainValidateTest(o)("Accuracy", AbsClassifier.accuracy, 
         trainList, validationList, testList, forestTrainer, argsList)
   }
   
@@ -70,7 +70,7 @@ object DTNode{
     trainList = ReaderWriter.readSVMData(ReaderWriter.svmFile(trainFil))
     validationList =  ReaderWriter.readSVMData(ReaderWriter.svmFile(validateFil))
     testList = ReaderWriter.readSVMData(ReaderWriter.svmFile(testFil))
-    AbsClassifier.trainValidateTest("Accuracy", AbsClassifier.accuracy, 
+    AbsClassifier.trainValidateTest(o)("Accuracy", AbsClassifier.accuracy, 
         trainList, validationList, testList, treeTrainer, argsList)
  
     System.out.println("\nSkewed-Equal")
@@ -78,7 +78,7 @@ object DTNode{
     trainList = ReaderWriter.readSVMData(ReaderWriter.svmFile(trainFil))
     validationList =  ReaderWriter.readSVMData(ReaderWriter.svmFile(validateFil))
     testList = ReaderWriter.readSVMData(ReaderWriter.svm_FF_File(testFil))
-    AbsClassifier.trainValidateTest("Accuracy", AbsClassifier.accuracy, 
+    AbsClassifier.trainValidateTest(o)("Accuracy", AbsClassifier.accuracy, 
         trainList, validationList, testList, treeTrainer, argsList)
     
     System.out.println("\nEqual-Skewed")
@@ -86,7 +86,7 @@ object DTNode{
     trainList = ReaderWriter.readSVMData(ReaderWriter.svm_FF_File(trainFil))
     validationList =  ReaderWriter.readSVMData(ReaderWriter.svm_FF_File(validateFil))
     testList = ReaderWriter.readSVMData(ReaderWriter.svmFile(testFil))
-    AbsClassifier.trainValidateTest("Accuracy", AbsClassifier.accuracy, 
+    AbsClassifier.trainValidateTest(o)("Accuracy", AbsClassifier.accuracy, 
         trainList, validationList, testList, treeTrainer, argsList)
     
     System.out.println("\nEqual-Equal")
@@ -94,7 +94,7 @@ object DTNode{
     trainList = ReaderWriter.readSVMData(ReaderWriter.svm_FF_File(trainFil))
     validationList =  ReaderWriter.readSVMData(ReaderWriter.svm_FF_File(validateFil))
     testList = ReaderWriter.readSVMData(ReaderWriter.svm_FF_File(testFil))
-    AbsClassifier.trainValidateTest("Accuracy", AbsClassifier.accuracy, 
+    AbsClassifier.trainValidateTest(o)("Accuracy", AbsClassifier.accuracy, 
         trainList, validationList, testList, treeTrainer, argsList)
   }
   
@@ -343,7 +343,7 @@ class Forest(val trees : List[DTNode], override val description : String) extend
   }
   
   override def toString : String = {
-    trees.foldLeft("")((acc, a) => acc + a.toStringLim(3) + "\n")
+    trees.foldLeft("")((acc, a) => acc + a.toStringLim(3) + "\n\n")
   }
 }
 
