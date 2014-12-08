@@ -13,6 +13,9 @@ object DTNode{
   var validationList  : List[KaggleData] = List()
   var testList  : List[KaggleData] = List()
   
+  implicit val labelMap = ReaderWriter.labelDictionary
+  implicit val skipLines = ReaderWriter.skipLines
+  
   /** Do runnings of the id3 algorithm here. */
   def main(args : Array[String]) : Unit = {
     val out = "data/DT_out/comp.txt"
@@ -22,20 +25,30 @@ object DTNode{
       
     System.out.println("\nSkewed-Skewed")
     o.println("Test 1")
+    trainList = ReaderWriter.readSVMData(ReaderWriter.svmFile(1))
+    validationList =  ReaderWriter.readSVMData(ReaderWriter.svmFile(2))
+    testList = ReaderWriter.readSVMData(ReaderWriter.svmFile(3))
     trainValidateTest()
-    
-    System.out.println("\nEqual-Equal")
-        o.println("Test 2")
-    trainValidateTest()
-    
+ 
     System.out.println("\nSkewed-Equal")
-        o.println("Test 3")
-
+    o.println("Test 2")
+    trainList = ReaderWriter.readSVMData(ReaderWriter.svmFile(1))
+    validationList =  ReaderWriter.readSVMData(ReaderWriter.svmFile(2))
+    testList = ReaderWriter.readSVMData(ReaderWriter.svm_FF_File(3))
     trainValidateTest()
     
     System.out.println("\nEqual-Skewed")
-        o.println("Test 4")
-
+    o.println("Test 3")
+    trainList = ReaderWriter.readSVMData(ReaderWriter.svm_FF_File(1))
+    validationList =  ReaderWriter.readSVMData(ReaderWriter.svm_FF_File(2))
+    testList = ReaderWriter.readSVMData(ReaderWriter.svmFile(3))
+    trainValidateTest()
+    
+    System.out.println("\nEqual-Equal")
+    o.println("Test 4")
+    trainList = ReaderWriter.readSVMData(ReaderWriter.svm_FF_File(1))
+    validationList =  ReaderWriter.readSVMData(ReaderWriter.svm_FF_File(2))
+    testList = ReaderWriter.readSVMData(ReaderWriter.svm_FF_File(3))
     trainValidateTest()
   }
   
@@ -74,7 +87,7 @@ object DTNode{
     System.out.println("--------------------------------------------")
     System.out.println("--------------------------------------------")
     val tester = test(testList, "Tested", true)_
-    val depth = 3
+    val depth = 2
     
     System.out.println("Best Accuracy: Depth " + best(0)._2 + " Betas : " + best(0)._3 + " (TP, FN, FP, TN)" + best(0)._4)
     System.out.println(best(0)._1.toStringLim(depth))
@@ -143,9 +156,13 @@ object DTNode{
     4 -> doubleSplits(30, 40, 1),
     5 -> doubleSplits(-110, -76, 2),
     29 -> doubleSplits(25, 1000, 25),
-    30 -> doubleSplits(50, 1500, 50),
-    31 -> doubleSplits(10, 200, 10),
-    34 -> doubleSplits(2000, 6000, 100)
+    31 -> doubleSplits(0, 1000, 50),
+    32 -> doubleSplits(10, 200, 10),
+    35 -> doubleSplits(2000, 6000, 100),
+    36 -> doubleSplits(0,14,1),
+    37 -> doubleSplits(1,11,1),
+    49 -> (1.0::2.0::3.0::doubleSplits(4,20,2)),
+    50 -> (1.0::2.0::3.0::4.0::5.0::doubleSplits(6,40,3))
   )
   
   

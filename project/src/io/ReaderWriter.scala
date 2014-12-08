@@ -22,12 +22,24 @@ object ReaderWriter {
     
     
   val sourceData = "data/full/source.csv"
-  private val sourceSVM = "data/full/svm_source.txt"
+  val sourceSVM = "data/full/svm_source.txt"
+    
+  private def fil(path : String)(num : Int) = path + num + ".txt"  
+    
   private val splitSVM = "data/svm_data/data_"
+  def svmFile = fil(splitSVM)_  
+    
   private val splitSVMFF = "data/svm_data_ff/data_"
+  def svm_FF_File = fil(splitSVMFF)_  
+    
   private val sourceSVMBin = "data/full/svm_bin_source.txt"  
+    
   private val splitSVMBin = "data/svm_bin_data/data_"
+  def svmBinFile = fil(splitSVMBin)_  
+
   private val splitSVMBinFF = "data/svm_bin_data_ff/data_"
+  def svmBin_FF_File = fil(splitSVMBinFF)_  
+
     
   val numbFiles = 10 //Number of data files, both raw and converted. data indexs should be [1 .. this]
   
