@@ -23,7 +23,7 @@ object KNN {
 
 /** Creates a KNN classifier with the given training data and k value.
  *  Make sure the input set is normalized or some attributes will get more attention. */
-class KNN(val training: List[KaggleData], val k: Int) extends AbsClassifier {
+class KNN(val training: List[KaggleData], val k: Int) extends AbsClassifier("K=" + k) {
 
   var count = 0
   

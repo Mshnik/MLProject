@@ -41,12 +41,64 @@ object AbsClassifier{
   
   /** Returns the value of the fOne score, the harmonic mean of precision and recall */
   def fOne = f(1.0)_
+  
+  /** Trains, validates, and tests. Whoo!
+   *  Criteria - a string describing what the evaluation criteria is
+   *  eval - a function that takes (TP, FN, FP, TN) and returns a double of how good this is
+   *  trainList - a list of kaggleData to train on
+   *  validateList - a list of kaggleData to validate on
+   *  testList - a list of kaggleData to test on.
+   *  trainer - a function that given an arg and a list of data returns a classifier
+   *  argsList - a list of args to try the trainer on.  */
+  def trainValidateTest[T](criteria : String, eval : ((Int, Int, Int, Int)) => Double,
+		  				trainList : List[KaggleData], validateList : List[KaggleData],
+		  				testList : List[KaggleData], 
+		  				trainer : (List[KaggleData], T) => AbsClassifier,
+		  				argsList : List[T]) : Unit = {
+    
+    // Create validate and testing functions
+    def validate = check(validateList, "Validate", false)_
+    def test = check(testList, "Test", true)_
+    
+    
+    var best : (AbsClassifier, (Int, Int, Int, Int)) = null
+    
+    for(arg <- argsList){
+      val n : AbsClassifier = trainer(trainList, arg)
+      val v = validate(n)
+      if(best == null || eval(best._2) < eval(v)){
+        best = (n, v)
+      }
+    }
+    val depth = 2
+    
+    System.out.println("Best " + criteria + ": " + best._1.description + " (TP, FN, FP, TN)" + best._2)
+    System.out.println(best._1.toString)
+    test(best._1)
+    System.out.println("--------------------------------------------")
+    System.out.println("--------------------------------------------")
+  }
+  
+  /** validates or tests the classifier on the given test set. Returns tuple of (TP, FN, FP, TN) */
+  private def check(lst : List[KaggleData], msg : String, print : Boolean)(classifier : AbsClassifier) : (Int, Int, Int, Int) = {
+    val a = classifier.test(lst)
+    if(print){
+	    System.out.println(msg + " : " + a)
+	    System.out.println("  Accuracy = " + AbsClassifier.accuracy(a))
+	    System.out.println("  Recall = " + AbsClassifier.recall(a))
+	    System.out.println("  Precision = " + AbsClassifier.precision(a))
+	    val f1 = AbsClassifier.fOne(a._1, a._2, a._3, a._4)
+	    System.out.println("  F1 = " + f1)
+	    System.out.println("  F0.5 = " + AbsClassifier.f(0.5)(a._1, a._2, a._3, a._4))
+    }
+    a
+  }
 }
 
 /** Parent of all classifiers.
  *  Signifies the ability to test a list of data.
  */
-abstract class AbsClassifier {
+abstract class AbsClassifier(val description : String) {
   
    /** Classifies each element in the input set, outputs (TP, FN, FP, TN). */
   @throws[RuntimeException]

@@ -23,6 +23,7 @@ object DTNode{
     val trainFil = 1
     val validateFil = 2
     val testFil = 3
+    val argsList = (for(d <- 1 to 10; i <- List(0.6, 0.8, 1.0)) yield ((d, (1.0,i)))).toList
       
     val o = System.out  
     System.setOut(new PrintStream(new File(out)))
@@ -32,121 +33,38 @@ object DTNode{
     trainList = ReaderWriter.readSVMData(ReaderWriter.svmFile(trainFil))
     validationList =  ReaderWriter.readSVMData(ReaderWriter.svmFile(validateFil))
     testList = ReaderWriter.readSVMData(ReaderWriter.svmFile(testFil))
-    trainValidateTest()
+    AbsClassifier.trainValidateTest("Accuracy", AbsClassifier.accuracy, 
+        trainList, validationList, testList, trainer, argsList)
  
     System.out.println("\nSkewed-Equal")
     o.println("Test 2")
     trainList = ReaderWriter.readSVMData(ReaderWriter.svmFile(trainFil))
     validationList =  ReaderWriter.readSVMData(ReaderWriter.svmFile(validateFil))
     testList = ReaderWriter.readSVMData(ReaderWriter.svm_FF_File(testFil))
-    trainValidateTest()
+    AbsClassifier.trainValidateTest("Accuracy", AbsClassifier.accuracy, 
+        trainList, validationList, testList, trainer, argsList)
     
     System.out.println("\nEqual-Skewed")
     o.println("Test 3")
     trainList = ReaderWriter.readSVMData(ReaderWriter.svm_FF_File(trainFil))
     validationList =  ReaderWriter.readSVMData(ReaderWriter.svm_FF_File(validateFil))
     testList = ReaderWriter.readSVMData(ReaderWriter.svmFile(testFil))
-    trainValidateTest()
+    AbsClassifier.trainValidateTest("Accuracy", AbsClassifier.accuracy, 
+        trainList, validationList, testList, trainer, argsList)
     
     System.out.println("\nEqual-Equal")
     o.println("Test 4")
     trainList = ReaderWriter.readSVMData(ReaderWriter.svm_FF_File(trainFil))
     validationList =  ReaderWriter.readSVMData(ReaderWriter.svm_FF_File(validateFil))
     testList = ReaderWriter.readSVMData(ReaderWriter.svm_FF_File(testFil))
-    trainValidateTest()
+    AbsClassifier.trainValidateTest("Accuracy", AbsClassifier.accuracy, 
+        trainList, validationList, testList, trainer, argsList)
   }
   
-  def trainValidateTest() : Unit = {
-    val l = 4
-    var best : Array[(DTNode, Int, (Double, Double), (Int, Int, Int, Int))] = Array.ofDim(l)
-    for(i <- 0 until l){
-      best(i) = (null, 0, (0,0), (0, 0, 0, 0))
-    }
-    
-    for(d <- 1 to 9; i <- List(0.6, 0.8, 1.0)){
-      val n = trainValidate(d, (1, i))
-      //First tree encountered
-      if(best(0)._1 == null){
-        for(z <- 0 until l) best(z) = n
-      } else{
-        if(AbsClassifier.accuracy(best(0)._4) < AbsClassifier.accuracy(n._4)){
-          best(0) = n
-        }
-        if(AbsClassifier.precision(best(1)._4) < AbsClassifier.precision(n._4)){
-          best(1) = n
-        }
-        if(AbsClassifier.fOne(best(2)._4._1, best(2)._4._2, best(2)._4._3, best(2)._4._4) <
-           AbsClassifier.fOne(n._4._1, n._4._2, n._4._3, n._4._4)){
-          best(2) = n
-        }
-        
-        val fP5 = AbsClassifier.f(0.5)_
-        if(fP5(best(3)._4._1, best(3)._4._2, best(3)._4._3, best(3)._4._4) <
-           fP5(n._4._1, n._4._2, n._4._3, n._4._4)){
-          best(3) = n
-        } 
-      }
-    }
-    System.out.println("--------------------------------------------")
-    System.out.println("--------------------------------------------")
-    System.out.println("--------------------------------------------")
-    val tester = test(testList, "Tested", true)_
-    val depth = 2
-    
-    System.out.println("Best Accuracy: Depth " + best(0)._2 + " Betas : " + best(0)._3 + " (TP, FN, FP, TN)" + best(0)._4)
-    System.out.println(best(0)._1.toStringLim(depth))
-    tester(best(0)._1)
-    System.out.println("--------------------------------------------")
-    System.out.println("--------------------------------------------")
-    
-    System.out.println("Best Precision: Depth " + best(1)._2 + " Betas : " + best(1)._3 + " (TP, FN, FP, TN)" + best(1)._4)
-    System.out.println(best(1)._1.toStringLim(depth))
-    tester(best(1)._1)
-    System.out.println("--------------------------------------------")
-    System.out.println("--------------------------------------------")
-    
-    System.out.println("Best F1: Depth " + best(2)._2 + " Betas : " + best(2)._3 + " (TP, FN, FP, TN)" + best(2)._4)
-    System.out.println(best(2)._1.toStringLim(depth))
-    tester(best(2)._1)
-
-//    System.out.print("--------------------------------------------")
-//    System.out.print("--------------------------------------------")
-//    System.out.print("Best F0.5: Depth " + best(3)._2 + " Betas : " + best(3)._3 + " (TP, FN, FP, TN)" + best(3)._4)
-//    System.out.print(best(3)._1.toStringLim(depth))
-//    tester(best(3)._1)
-
+  /** A trainer for creating decision trees */
+  def trainer(elms : List[KaggleData], arg : (Int, (Double, Double))) : DTNode = {
+    id3(attributeSplits, combinedSplits, arg._1, arg._2)(elms, 0, null)
   }
-  
-  /** Creates a decision tree with the given attributes */
-  def createTree(depth : Int, betas : (Double, Double)) : DTNode = {
-    id3(attributeSplits, combinedSplits, depth, betas)(trainList, 0, null)
-  }
-  
-  /** Tests the tree on the given test set */
-  def test(lst : List[KaggleData], msg : String, print : Boolean)(tree : DTNode)  : (Int, Int, Int, Int) = {
-    val a = tree.test(lst)
-    if(print){
-	    System.out.println(msg + " : " + a)
-	    System.out.println("  Accuracy = " + AbsClassifier.accuracy(a))
-	    System.out.println("  Recall = " + AbsClassifier.recall(a))
-	    System.out.println("  Precision = " + AbsClassifier.precision(a))
-	    val f1 = AbsClassifier.fOne(a._1, a._2, a._3, a._4)
-	    System.out.println("  F1 = " + f1)
-	    System.out.println("  F0.5 = " + AbsClassifier.f(0.5)(a._1, a._2, a._3, a._4))
-    }
-    a
-  }
-  
-  /** Basic run - train on combined_train, test on combined_test, with max depth d
-   *  Returns a tuple of the tree and the F1 score. */
-  def trainValidate(depth : Int, betas : (Double, Double)) : (DTNode, Int, (Double, Double), (Int, Int, Int, Int)) = {
-    val tree = createTree(depth, betas)
-//    System.out.print("Created tree of depth: " + depth + " with betas " + betas)
-    val a = test(validationList, "Validated ", false)(tree)
-    (tree, depth, betas, a)
-  }
-  
-  
   
   /** List of attributes that can be split on */
   val attributeSplits : List[Int] =
@@ -195,11 +113,13 @@ object DTNode{
     //First base case - no elms. Returns null
     if (elms.isEmpty) return null
     
+    val description = "Max Depth: " + maxDepth + ", betas: " + betas
+    
     //Check for base case - if all elms share a classification, create and return leaf node
     val labels = List(KaggleLabel.FALSE, KaggleLabel.TRUE) //Possible (legal) labelings of elements in elms
     for(l <- labels)
       if (elms.forall(a =>a.label.equals(l)))
-    	return new DTLeafNode(funToHere, l, elms)
+    	return new DTLeafNode(funToHere, l, elms, description)
     
     //Find most common label among elements - break ties with earlier occuring enum
     val labelCount = Data.labelCount(elms).toList
@@ -212,7 +132,7 @@ object DTNode{
       }
     }
     if(currentDepth == maxDepth){ //Can't go any further - make the best leaf we can
-      return new DTLeafNode(funToHere, labels(k), elms)
+      return new DTLeafNode(funToHere, labels(k), elms, description)
     }
     
     //Non-base case. Try to gain some information by splitting elms
@@ -304,10 +224,10 @@ object DTNode{
       
       //Create and return this attribute node for the given criteria
       val m = children.map(a => (a, a.f)).toMap
-      return new DTAttributeNode(funToHere, m, labels(k), elms)
+      return new DTAttributeNode(funToHere, m, labels(k), elms, description)
     } else{
       
-      return new DTLeafNode(funToHere, labels(k), elms)
+      return new DTLeafNode(funToHere, labels(k), elms, description)
     }
   }
   
@@ -348,6 +268,16 @@ object DTNode{
   }
 }
 
+/** Represents a forest of Decision trees */
+class Forest(val trees : List[DTNode], override val description : String) extends AbsClassifier(description){
+  
+  /** Classifies elm by the majority of the trees in this forest */
+  def classify(elm : KaggleData) : KaggleLabel.Value = {
+    val count = trees.foldLeft(Map(KaggleLabel.TRUE -> 0, KaggleLabel.FALSE -> 0))((acc, a) => acc)
+    count.toList.maxBy(a => a._2)._1
+  }
+}
+
 /** Abstract node class that represents a Decision tree.
  *  May be asked to classify a given data to a label (KaggleLabel.Value),
  *  and may maintain a list of children of the node.
@@ -358,7 +288,8 @@ object DTNode{
  *  
  *  f is the function that got to here. Null only for the root node
  */
-abstract class DTNode(val f : AttributeFunction, val elms : List[KaggleData]) extends AbsClassifier {
+abstract class DTNode(val f : AttributeFunction, val elms : List[KaggleData], override val description : String) 
+	extends AbsClassifier(description) {
 
   /** Classifies the given data using this node as the root of the tree.*/
   def classify (data : KaggleData) : KaggleLabel.Value
@@ -422,8 +353,8 @@ abstract class DTNode(val f : AttributeFunction, val elms : List[KaggleData]) ex
  *  and classifies all incomming data to that label.
  *  No children - returns an empty hashmap.
  */
-class DTLeafNode(override val f : AttributeFunction, val label : KaggleLabel.Value, override val elms : List[KaggleData]) 
-    extends DTNode(f, elms){
+class DTLeafNode(override val f : AttributeFunction, val label : KaggleLabel.Value, override val elms : List[KaggleData],
+    override val description : String) extends DTNode(f, elms, description){
   
   val emptyMap : Map[DTNode, AttributeFunction] = Map()
   
@@ -492,7 +423,8 @@ class AttributeFunction(f : (KaggleData => Boolean), s : String){
  *  were the tree to end here.
  */
 class DTAttributeNode(override val f : AttributeFunction, val m : Map[DTNode, AttributeFunction], 
-    val label : KaggleLabel.Value, override val elms : List[KaggleData]) extends DTNode(f, elms){
+    val label : KaggleLabel.Value, override val elms : List[KaggleData], override val description : String) 
+    extends DTNode(f, elms, description){
   
   /** Passes control to child for classification. Iterates over all children
    *  and checks if any is matched with a function that accepts data.

@@ -1,0 +1,84 @@
+
+Skewed-Skewed
+Best Accuracy: Depth 2 Betas : (1.0,1.0) (TP, FN, FP, TN)(6393,576,2439,583)
+data(Total Price)>350.0
+--data(Optional Support)>150.0
+----FALSE
+--data(Optional Support)<=150.0
+----TRUE
+data(Total Price)<=350.0
+--data(Total Price)>175.0
+----TRUE
+--data(Total Price)<=175.0
+----TRUE
+Tested : (6406,577,2442,566)
+  Accuracy = 0.6978280452407166
+  Recall = 0.9173707575540598
+  Precision = 0.724005424954792
+  F1 = 0.8092982123681385
+  F0.5 = 0.7558702064896755
+--------------------------------------------
+--------------------------------------------
+
+Skewed-Equal
+Best Accuracy: Depth 2 Betas : (1.0,1.0) (TP, FN, FP, TN)(6393,576,2439,583)
+data(Total Price)>350.0
+--data(Optional Support)>150.0
+----FALSE
+--data(Optional Support)<=150.0
+----TRUE
+data(Total Price)<=350.0
+--data(Total Price)>175.0
+----TRUE
+--data(Total Price)<=175.0
+----TRUE
+Tested : (2729,278,2440,566)
+  Accuracy = 0.5479793780143023
+  Recall = 0.9075490522115065
+  Precision = 0.5279551170439156
+  F1 = 0.6675636007827789
+  F0.5 = 0.5761516699742432
+--------------------------------------------
+--------------------------------------------
+
+Equal-Skewed
+Best Accuracy: Depth 5 Betas : (1.0,0.6) (TP, FN, FP, TN)(1713,1309,882,2139)
+Data(Teach For America) = t
+--data(Total Price)>400.0
+----...
+--data(Total Price)<=400.0
+----...
+Data(Teach For America) = f
+--data(Total Price)>350.0
+----...
+--data(Total Price)<=350.0
+----...
+Tested : (3825,3158,887,2121)
+  Accuracy = 0.5951356220598538
+  Recall = 0.5477588429041959
+  Precision = 0.8117572156196944
+  F1 = 0.6541256947413423
+  F0.5 = 0.7403894545313771
+--------------------------------------------
+--------------------------------------------
+
+Equal-Equal
+Best Accuracy: Depth 5 Betas : (1.0,0.6) (TP, FN, FP, TN)(1713,1309,882,2139)
+Data(Teach For America) = t
+--data(Total Price)>400.0
+----...
+--data(Total Price)<=400.0
+----...
+Data(Teach For America) = f
+--data(Total Price)>350.0
+----...
+--data(Total Price)<=350.0
+----...
+Tested : (1684,1323,886,2120)
+  Accuracy = 0.632629303176451
+  Recall = 0.5600266045892917
+  Precision = 0.6552529182879377
+  F1 = 0.6039089116012193
+  F0.5 = 0.6337021148491007
+--------------------------------------------
+--------------------------------------------
