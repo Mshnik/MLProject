@@ -5,6 +5,7 @@ import data.Data._
 import io._
 import java.io.PrintStream
 import java.io.File
+import scala.util.Random
 
 /** Holder for decision tree algorithms */
 object DTNode{
@@ -18,6 +19,42 @@ object DTNode{
   
   /** Do runnings of the id3 algorithm here. */
   def main(args : Array[String]) : Unit = {
+    tryForest()
+  }
+  
+  /** A test of the random forest algorithm */
+  def tryForest() = {
+    val out = "data/DT_out/forest.txt"
+    val trainFil = 1
+    val validateFil = 2
+    val testFil = 3
+//    val argsList = (for(n <- 3 to 11 by 2; p <- 2 to 5; d <- 1 to 10) 
+//      yield ((n, 1.0/p.toDouble, d, (1.0,1.0), attributeSplits))).toList
+    val argsList = (for(n <- 5 to 5 by 2; p <- 3 to 3; d <- 1 to 10) 
+      yield ((n, 1.0/p.toDouble, d, (1.0,1.0), attributeSplits))).toList
+      
+    val o = System.out  
+    System.setOut(new PrintStream(new File(out)))
+    
+    System.out.println("\nSkewed-Skewed")
+    o.println("Test 1")
+    trainList = ReaderWriter.readSVMData(ReaderWriter.svmFile(trainFil))
+    validationList =  ReaderWriter.readSVMData(ReaderWriter.svmFile(validateFil))
+    testList = ReaderWriter.readSVMData(ReaderWriter.svmFile(testFil))
+    AbsClassifier.trainValidateTest("Accuracy", AbsClassifier.accuracy, 
+        trainList, validationList, testList, forestTrainer, argsList)
+        
+    System.out.println("\nEqual-Equal")
+    o.println("Test 4")
+    trainList = ReaderWriter.readSVMData(ReaderWriter.svm_FF_File(trainFil))
+    validationList =  ReaderWriter.readSVMData(ReaderWriter.svm_FF_File(validateFil))
+    testList = ReaderWriter.readSVMData(ReaderWriter.svm_FF_File(testFil))
+    AbsClassifier.trainValidateTest("Accuracy", AbsClassifier.accuracy, 
+        trainList, validationList, testList, forestTrainer, argsList)
+  }
+  
+  /** A routine to run for comparing split to equal */
+  def compSplitEq() = {
     val out = "data/DT_out/comp.txt"
      
     val trainFil = 1
@@ -34,7 +71,7 @@ object DTNode{
     validationList =  ReaderWriter.readSVMData(ReaderWriter.svmFile(validateFil))
     testList = ReaderWriter.readSVMData(ReaderWriter.svmFile(testFil))
     AbsClassifier.trainValidateTest("Accuracy", AbsClassifier.accuracy, 
-        trainList, validationList, testList, trainer, argsList)
+        trainList, validationList, testList, treeTrainer, argsList)
  
     System.out.println("\nSkewed-Equal")
     o.println("Test 2")
@@ -42,7 +79,7 @@ object DTNode{
     validationList =  ReaderWriter.readSVMData(ReaderWriter.svmFile(validateFil))
     testList = ReaderWriter.readSVMData(ReaderWriter.svm_FF_File(testFil))
     AbsClassifier.trainValidateTest("Accuracy", AbsClassifier.accuracy, 
-        trainList, validationList, testList, trainer, argsList)
+        trainList, validationList, testList, treeTrainer, argsList)
     
     System.out.println("\nEqual-Skewed")
     o.println("Test 3")
@@ -50,7 +87,7 @@ object DTNode{
     validationList =  ReaderWriter.readSVMData(ReaderWriter.svm_FF_File(validateFil))
     testList = ReaderWriter.readSVMData(ReaderWriter.svmFile(testFil))
     AbsClassifier.trainValidateTest("Accuracy", AbsClassifier.accuracy, 
-        trainList, validationList, testList, trainer, argsList)
+        trainList, validationList, testList, treeTrainer, argsList)
     
     System.out.println("\nEqual-Equal")
     o.println("Test 4")
@@ -58,12 +95,30 @@ object DTNode{
     validationList =  ReaderWriter.readSVMData(ReaderWriter.svm_FF_File(validateFil))
     testList = ReaderWriter.readSVMData(ReaderWriter.svm_FF_File(testFil))
     AbsClassifier.trainValidateTest("Accuracy", AbsClassifier.accuracy, 
-        trainList, validationList, testList, trainer, argsList)
+        trainList, validationList, testList, treeTrainer, argsList)
   }
   
   /** A trainer for creating decision trees */
-  def trainer(elms : List[KaggleData], arg : (Int, (Double, Double))) : DTNode = {
+  def treeTrainer(elms : List[KaggleData], arg : (Int, (Double, Double))) : DTNode = {
     id3(attributeSplits, combinedSplits, arg._1, arg._2)(elms, 0, null)
+  }
+  
+  /** A trainer for creating random forests.
+   *  Arg : (num of trees, 
+   *  		percent of pick for each tree, 
+   *    	maxDepth for each tree, 
+   *     	betas for each tree,
+   *     	valid splits) */
+  def forestTrainer(elms : List[KaggleData], arg : (Int, Double, Int, (Double, Double), List[Int])) : Forest = {
+    // Creates tree #i
+    def tree(i : Int) : DTNode = {
+      val elmsSubset = Random.shuffle(elms).take((elms.length * arg._2).toInt)
+      id3(arg._5, combinedSplits, arg._3, arg._4)(elmsSubset, 0, null)
+    } 
+    
+    val trees = (for(i <- 0 until arg._1) yield tree(i)).toList
+    
+    new Forest(trees, "" + arg)
   }
   
   /** List of attributes that can be split on */
@@ -273,8 +328,22 @@ class Forest(val trees : List[DTNode], override val description : String) extend
   
   /** Classifies elm by the majority of the trees in this forest */
   def classify(elm : KaggleData) : KaggleLabel.Value = {
-    val count = trees.foldLeft(Map(KaggleLabel.TRUE -> 0, KaggleLabel.FALSE -> 0))((acc, a) => acc)
-    count.toList.maxBy(a => a._2)._1
+    
+    def clz(acc : Map[KaggleLabel.Value, Int], a : DTNode) : Map[KaggleLabel.Value, Int] = {
+      val lbl = a.classify(elm)
+      val other = lbl match{
+        case KaggleLabel.TRUE => KaggleLabel.FALSE 
+        case _ => KaggleLabel.TRUE
+      }
+      Map[KaggleLabel.Value, Int](lbl -> (acc.getOrElse(lbl, 0) + 1), other -> acc.getOrElse(other, 0))
+    }
+    
+    val count = trees.foldLeft(Map(KaggleLabel.TRUE -> 0, KaggleLabel.FALSE -> 0))(clz)
+    count.toList.maxBy(_._2)._1
+  }
+  
+  override def toString : String = {
+    trees.foldLeft("")((acc, a) => acc + a.toStringLim(3) + "\n")
   }
 }
 

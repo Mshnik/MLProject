@@ -1,6 +1,6 @@
 
 Skewed-Skewed
-Best Accuracy: Depth 2 Betas : (1.0,1.0) (TP, FN, FP, TN)(6393,576,2439,583)
+Best Accuracy: Max Depth: 2, betas: (1.0,1.0) (TP, FN, FP, TN)(6393,576,2439,583)
 data(Total Price)>350.0
 --data(Optional Support)>150.0
 ----FALSE
@@ -11,7 +11,7 @@ data(Total Price)<=350.0
 ----TRUE
 --data(Total Price)<=175.0
 ----TRUE
-Tested : (6406,577,2442,566)
+Test : (6406,577,2442,566)
   Accuracy = 0.6978280452407166
   Recall = 0.9173707575540598
   Precision = 0.724005424954792
@@ -21,7 +21,7 @@ Tested : (6406,577,2442,566)
 --------------------------------------------
 
 Skewed-Equal
-Best Accuracy: Depth 2 Betas : (1.0,1.0) (TP, FN, FP, TN)(6393,576,2439,583)
+Best Accuracy: Max Depth: 2, betas: (1.0,1.0) (TP, FN, FP, TN)(6393,576,2439,583)
 data(Total Price)>350.0
 --data(Optional Support)>150.0
 ----FALSE
@@ -32,7 +32,7 @@ data(Total Price)<=350.0
 ----TRUE
 --data(Total Price)<=175.0
 ----TRUE
-Tested : (2729,278,2440,566)
+Test : (2729,278,2440,566)
   Accuracy = 0.5479793780143023
   Recall = 0.9075490522115065
   Precision = 0.5279551170439156
@@ -42,18 +42,366 @@ Tested : (2729,278,2440,566)
 --------------------------------------------
 
 Equal-Skewed
-Best Accuracy: Depth 5 Betas : (1.0,0.6) (TP, FN, FP, TN)(1713,1309,882,2139)
+Best Accuracy: Max Depth: 5, betas: (1.0,0.6) (TP, FN, FP, TN)(1713,1309,882,2139)
 Data(Teach For America) = t
 --data(Total Price)>400.0
-----...
+----data(Month Posted)>8.0
+------data(Prev Projects By Teacher)>6.0
+--------FALSE
+------data(Prev Projects By Teacher)<=6.0
+--------data(Prev Project By School)>30.0
+----------FALSE
+--------data(Prev Project By School)<=30.0
+----------TRUE
+----data(Month Posted)<=8.0
+------Data(Primary Focus Subject) = Health & Life Science
+--------Data(Secondary Focus Subject) = History & Geography
+----------FALSE
+--------Data(Secondary Focus Subject) = Environmental Science
+----------TRUE
+--------Data(Secondary Focus Subject) = Applied Sciences
+----------TRUE
+--------Data(Secondary Focus Subject) = Not Provided
+----------FALSE
+------Data(Primary Focus Subject) = Other
+--------FALSE
+------Data(Primary Focus Subject) = Sports
+--------FALSE
+------Data(Primary Focus Subject) = Applied Sciences
+--------Data(Teacher Prefix) = Mr.
+----------FALSE
+--------Data(Teacher Prefix) = Ms.
+----------TRUE
+------Data(Primary Focus Subject) = ESL
+--------TRUE
+------Data(Primary Focus Subject) = Early Development
+--------FALSE
+------Data(Primary Focus Subject) = Character Education
+--------TRUE
+------Data(Primary Focus Subject) = Visual Arts
+--------FALSE
+------Data(Primary Focus Subject) = College & Career Prep
+--------TRUE
+------Data(Primary Focus Subject) = Literacy
+--------Data(School Metro) = urban
+----------FALSE
+--------Data(School Metro) = suburban
+----------FALSE
+--------Data(School Metro) = rural
+----------TRUE
+--------Data(School Metro) = Not Provided
+----------TRUE
+------Data(Primary Focus Subject) = Social Sciences
+--------FALSE
+------Data(Primary Focus Subject) = Environmental Science
+--------Data(School Metro) = urban
+----------TRUE
+--------Data(School Metro) = suburban
+----------FALSE
+------Data(Primary Focus Subject) = History & Geography
+--------Data(Teacher Prefix) = Mr.
+----------FALSE
+--------Data(Teacher Prefix) = Ms.
+----------TRUE
+------Data(Primary Focus Subject) = Foreign Languages
+--------Data(Secondary Focus Subject) = Community Service
+----------FALSE
+--------Data(Secondary Focus Subject) = Literacy
+----------FALSE
+--------Data(Secondary Focus Subject) = History & Geography
+----------FALSE
+--------Data(Secondary Focus Subject) = Not Provided
+----------TRUE
+------Data(Primary Focus Subject) = Special Needs
+--------Data(Teacher Prefix) = Mr.
+----------FALSE
+--------Data(Teacher Prefix) = Mrs.
+----------FALSE
+--------Data(Teacher Prefix) = Ms.
+----------TRUE
+------Data(Primary Focus Subject) = Civics & Government
+--------Data(Secondary Focus Subject) = History & Geography
+----------TRUE
+--------Data(Secondary Focus Subject) = Character Education
+----------FALSE
+------Data(Primary Focus Subject) = Music
+--------TRUE
+------Data(Primary Focus Subject) = Extracurricular
+--------FALSE
+------Data(Primary Focus Subject) = Mathematics
+--------Data(Grade Level) = Grades 9-12
+----------TRUE
+--------Data(Grade Level) = Grades 6-8
+----------FALSE
+--------Data(Grade Level) = Grades 3-5
+----------FALSE
+--------Data(Grade Level) = Grades PreK-2
+----------FALSE
+------Data(Primary Focus Subject) = Literature & Writing
+--------Data(Teacher Prefix) = Mr.
+----------TRUE
+--------Data(Teacher Prefix) = Mrs.
+----------TRUE
+--------Data(Teacher Prefix) = Ms.
+----------FALSE
+------Data(Primary Focus Subject) = Gym & Fitness
+--------FALSE
 --data(Total Price)<=400.0
-----...
+----Data(Secondary Focus Subject) = Performing Arts
+------Data(Teacher Prefix) = Mr.
+--------FALSE
+------Data(Teacher Prefix) = Ms.
+--------TRUE
+----Data(Secondary Focus Subject) = Mathematics
+------TRUE
+----Data(Secondary Focus Subject) = Special Needs
+------TRUE
+----Data(Secondary Focus Subject) = Health & Wellness
+------TRUE
+----Data(Secondary Focus Subject) = Character Education
+------TRUE
+----Data(Secondary Focus Subject) = Applied Sciences
+------Data(Grade Level) = Grades 3-5
+--------FALSE
+------Data(Grade Level) = Grades PreK-2
+--------TRUE
+----Data(Secondary Focus Subject) = Sports
+------TRUE
+----Data(Secondary Focus Subject) = Social Sciences
+------TRUE
+----Data(Secondary Focus Subject) = Environmental Science
+------Data(Primary Focus Subject) = Literature & Writing
+--------TRUE
+------Data(Primary Focus Subject) = Mathematics
+--------TRUE
+------Data(Primary Focus Subject) = Health & Life Science
+--------FALSE
+------Data(Primary Focus Subject) = Performing Arts
+--------TRUE
+----Data(Secondary Focus Subject) = Literature & Writing
+------Data(Resource Type) = Other
+--------TRUE
+------Data(Resource Type) = Technology
+--------Data(Poverty Level) = highest poverty
+----------FALSE
+--------Data(Poverty Level) = low poverty
+----------TRUE
+------Data(Resource Type) = Supplies
+--------TRUE
+------Data(Resource Type) = Books
+--------data(Month Posted)>7.0
+----------TRUE
+--------data(Month Posted)<=7.0
+----------TRUE
+----Data(Secondary Focus Subject) = Parent Involvement
+------FALSE
+----Data(Secondary Focus Subject) = Visual Arts
+------Data(Resource Type) = Supplies
+--------FALSE
+------Data(Resource Type) = Books
+--------TRUE
+----Data(Secondary Focus Subject) = Extracurricular
+------TRUE
+----Data(Secondary Focus Subject) = Other
+------Data(School Metro) = urban
+--------TRUE
+------Data(School Metro) = Not Provided
+--------FALSE
+----Data(Secondary Focus Subject) = College & Career Prep
+------TRUE
+----Data(Secondary Focus Subject) = Literacy
+------Data(Primary Focus Subject) = ESL
+--------TRUE
+------Data(Primary Focus Subject) = Literature & Writing
+--------TRUE
+------Data(Primary Focus Subject) = Literacy
+--------TRUE
+------Data(Primary Focus Subject) = Special Needs
+--------Data(School Metro) = urban
+----------TRUE
+--------Data(School Metro) = suburban
+----------FALSE
+------Data(Primary Focus Subject) = Health & Life Science
+--------TRUE
+------Data(Primary Focus Subject) = Civics & Government
+--------FALSE
+------Data(Primary Focus Subject) = Mathematics
+--------Data(Resource Type) = Supplies
+----------FALSE
+--------Data(Resource Type) = Books
+----------TRUE
+------Data(Primary Focus Subject) = History & Geography
+--------TRUE
+----Data(Secondary Focus Subject) = Early Development
+------Data(School Metro) = urban
+--------TRUE
+------Data(School Metro) = suburban
+--------FALSE
+----Data(Secondary Focus Subject) = Not Provided
+------Data(School Year Round) = t
+--------Data(School Metro) = urban
+----------FALSE
+--------Data(School Metro) = suburban
+----------TRUE
+--------Data(School Metro) = Not Provided
+----------FALSE
+------Data(School Year Round) = f
+--------data(Latitude)>40.0
+----------TRUE
+--------data(Latitude)<=40.0
+----------TRUE
+----Data(Secondary Focus Subject) = Health & Life Science
+------Data(School Metro) = urban
+--------TRUE
+------Data(School Metro) = suburban
+--------TRUE
+------Data(School Metro) = rural
+--------FALSE
+----Data(Secondary Focus Subject) = Music
+------Data(Primary Focus Subject) = Literacy
+--------TRUE
+------Data(Primary Focus Subject) = Music
+--------FALSE
+----Data(Secondary Focus Subject) = History & Geography
+------Data(Teacher Prefix) = Mrs.
+--------FALSE
+------Data(Teacher Prefix) = Ms.
+--------TRUE
+----Data(Secondary Focus Subject) = ESL
+------Data(Poverty Level) = highest poverty
+--------TRUE
+------Data(Poverty Level) = high poverty
+--------FALSE
+----Data(Secondary Focus Subject) = Civics & Government
+------TRUE
 Data(Teach For America) = f
 --data(Total Price)>350.0
-----...
+----Data(School Metro) = urban
+------data(Total Price)>475.0
+--------data(Date Posted)>3200.0
+----------FALSE
+--------data(Date Posted)<=3200.0
+----------FALSE
+------data(Total Price)<=475.0
+--------data(Month Posted)>7.0
+----------TRUE
+--------data(Month Posted)<=7.0
+----------FALSE
+----Data(School Metro) = suburban
+------data(Prev Project By School)>21.0
+--------data(Prev Projects By Teacher)>12.0
+----------FALSE
+--------data(Prev Projects By Teacher)<=12.0
+----------TRUE
+------data(Prev Project By School)<=21.0
+--------data(Year Posted)>9.0
+----------FALSE
+--------data(Year Posted)<=9.0
+----------FALSE
+----Data(School Metro) = rural
+------Data(Eligible Almost Home Match) = t
+--------Data(Primary Focus Subject) = Environmental Science
+----------TRUE
+--------Data(Primary Focus Subject) = Visual Arts
+----------FALSE
+--------Data(Primary Focus Subject) = Social Sciences
+----------FALSE
+--------Data(Primary Focus Subject) = College & Career Prep
+----------FALSE
+--------Data(Primary Focus Subject) = Health & Life Science
+----------TRUE
+--------Data(Primary Focus Subject) = Mathematics
+----------FALSE
+--------Data(Primary Focus Subject) = Special Needs
+----------TRUE
+--------Data(Primary Focus Subject) = Character Education
+----------TRUE
+--------Data(Primary Focus Subject) = Literature & Writing
+----------FALSE
+--------Data(Primary Focus Subject) = Applied Sciences
+----------FALSE
+--------Data(Primary Focus Subject) = Literacy
+----------TRUE
+------Data(Eligible Almost Home Match) = f
+--------data(Date Posted)>4800.0
+----------FALSE
+--------data(Date Posted)<=4800.0
+----------FALSE
+----Data(School Metro) = Not Provided
+------data(Total Price)>675.0
+--------Data(Secondary Focus Subject) = History & Geography
+----------FALSE
+--------Data(Secondary Focus Subject) = Literacy
+----------FALSE
+--------Data(Secondary Focus Subject) = Health & Wellness
+----------FALSE
+--------Data(Secondary Focus Subject) = Social Sciences
+----------FALSE
+--------Data(Secondary Focus Subject) = Civics & Government
+----------FALSE
+--------Data(Secondary Focus Subject) = Not Provided
+----------FALSE
+--------Data(Secondary Focus Subject) = Visual Arts
+----------FALSE
+--------Data(Secondary Focus Subject) = Economics
+----------FALSE
+--------Data(Secondary Focus Subject) = Gym & Fitness
+----------FALSE
+--------Data(Secondary Focus Subject) = Environmental Science
+----------FALSE
+--------Data(Secondary Focus Subject) = ESL
+----------FALSE
+--------Data(Secondary Focus Subject) = Literature & Writing
+----------FALSE
+--------Data(Secondary Focus Subject) = Mathematics
+----------FALSE
+--------Data(Secondary Focus Subject) = Sports
+----------TRUE
+--------Data(Secondary Focus Subject) = Parent Involvement
+----------FALSE
+--------Data(Secondary Focus Subject) = College & Career Prep
+----------FALSE
+--------Data(Secondary Focus Subject) = Applied Sciences
+----------FALSE
+--------Data(Secondary Focus Subject) = Other
+----------FALSE
+--------Data(Secondary Focus Subject) = Health & Life Science
+----------FALSE
+--------Data(Secondary Focus Subject) = Performing Arts
+----------FALSE
+--------Data(Secondary Focus Subject) = Special Needs
+----------FALSE
+--------Data(Secondary Focus Subject) = Character Education
+----------FALSE
+------data(Total Price)<=675.0
+--------data(Longitude)>-82.0
+----------FALSE
+--------data(Longitude)<=-82.0
+----------FALSE
 --data(Total Price)<=350.0
-----...
-Tested : (3825,3158,887,2121)
+----data(Month Posted)>5.0
+------data(Total Price)>300.0
+--------data(Prev Project By School)>33.0
+----------FALSE
+--------data(Prev Project By School)<=33.0
+----------TRUE
+------data(Total Price)<=300.0
+--------data(Total Price)>25.0
+----------TRUE
+--------data(Total Price)<=25.0
+----------FALSE
+----data(Month Posted)<=5.0
+------data(Total Price)>225.0
+--------data(Date Posted)>3000.0
+----------TRUE
+--------data(Date Posted)<=3000.0
+----------FALSE
+------data(Total Price)<=225.0
+--------data(Total Price)>50.0
+----------TRUE
+--------data(Total Price)<=50.0
+----------FALSE
+Test : (3825,3158,887,2121)
   Accuracy = 0.5951356220598538
   Recall = 0.5477588429041959
   Precision = 0.8117572156196944
@@ -63,18 +411,366 @@ Tested : (3825,3158,887,2121)
 --------------------------------------------
 
 Equal-Equal
-Best Accuracy: Depth 5 Betas : (1.0,0.6) (TP, FN, FP, TN)(1713,1309,882,2139)
+Best Accuracy: Max Depth: 5, betas: (1.0,0.6) (TP, FN, FP, TN)(1713,1309,882,2139)
 Data(Teach For America) = t
 --data(Total Price)>400.0
-----...
+----data(Month Posted)>8.0
+------data(Prev Projects By Teacher)>6.0
+--------FALSE
+------data(Prev Projects By Teacher)<=6.0
+--------data(Prev Project By School)>30.0
+----------FALSE
+--------data(Prev Project By School)<=30.0
+----------TRUE
+----data(Month Posted)<=8.0
+------Data(Primary Focus Subject) = Visual Arts
+--------FALSE
+------Data(Primary Focus Subject) = Literacy
+--------Data(School Metro) = urban
+----------FALSE
+--------Data(School Metro) = suburban
+----------FALSE
+--------Data(School Metro) = rural
+----------TRUE
+--------Data(School Metro) = Not Provided
+----------TRUE
+------Data(Primary Focus Subject) = History & Geography
+--------Data(Teacher Prefix) = Mr.
+----------FALSE
+--------Data(Teacher Prefix) = Ms.
+----------TRUE
+------Data(Primary Focus Subject) = Mathematics
+--------Data(Grade Level) = Grades 9-12
+----------TRUE
+--------Data(Grade Level) = Grades 6-8
+----------FALSE
+--------Data(Grade Level) = Grades 3-5
+----------FALSE
+--------Data(Grade Level) = Grades PreK-2
+----------FALSE
+------Data(Primary Focus Subject) = Literature & Writing
+--------Data(Teacher Prefix) = Mr.
+----------TRUE
+--------Data(Teacher Prefix) = Mrs.
+----------TRUE
+--------Data(Teacher Prefix) = Ms.
+----------FALSE
+------Data(Primary Focus Subject) = Foreign Languages
+--------Data(Secondary Focus Subject) = Community Service
+----------FALSE
+--------Data(Secondary Focus Subject) = Literacy
+----------FALSE
+--------Data(Secondary Focus Subject) = History & Geography
+----------FALSE
+--------Data(Secondary Focus Subject) = Not Provided
+----------TRUE
+------Data(Primary Focus Subject) = Gym & Fitness
+--------FALSE
+------Data(Primary Focus Subject) = Health & Life Science
+--------Data(Secondary Focus Subject) = History & Geography
+----------FALSE
+--------Data(Secondary Focus Subject) = Environmental Science
+----------TRUE
+--------Data(Secondary Focus Subject) = Applied Sciences
+----------TRUE
+--------Data(Secondary Focus Subject) = Not Provided
+----------FALSE
+------Data(Primary Focus Subject) = Music
+--------TRUE
+------Data(Primary Focus Subject) = Character Education
+--------TRUE
+------Data(Primary Focus Subject) = Civics & Government
+--------Data(Secondary Focus Subject) = History & Geography
+----------TRUE
+--------Data(Secondary Focus Subject) = Character Education
+----------FALSE
+------Data(Primary Focus Subject) = Other
+--------FALSE
+------Data(Primary Focus Subject) = ESL
+--------TRUE
+------Data(Primary Focus Subject) = Applied Sciences
+--------Data(Teacher Prefix) = Mr.
+----------FALSE
+--------Data(Teacher Prefix) = Ms.
+----------TRUE
+------Data(Primary Focus Subject) = Extracurricular
+--------FALSE
+------Data(Primary Focus Subject) = Early Development
+--------FALSE
+------Data(Primary Focus Subject) = College & Career Prep
+--------TRUE
+------Data(Primary Focus Subject) = Social Sciences
+--------FALSE
+------Data(Primary Focus Subject) = Sports
+--------FALSE
+------Data(Primary Focus Subject) = Environmental Science
+--------Data(School Metro) = urban
+----------TRUE
+--------Data(School Metro) = suburban
+----------FALSE
+------Data(Primary Focus Subject) = Special Needs
+--------Data(Teacher Prefix) = Mr.
+----------FALSE
+--------Data(Teacher Prefix) = Mrs.
+----------FALSE
+--------Data(Teacher Prefix) = Ms.
+----------TRUE
 --data(Total Price)<=400.0
-----...
+----Data(Secondary Focus Subject) = Music
+------Data(Primary Focus Subject) = Literacy
+--------TRUE
+------Data(Primary Focus Subject) = Music
+--------FALSE
+----Data(Secondary Focus Subject) = Literacy
+------Data(Primary Focus Subject) = Literacy
+--------TRUE
+------Data(Primary Focus Subject) = Literature & Writing
+--------TRUE
+------Data(Primary Focus Subject) = Health & Life Science
+--------TRUE
+------Data(Primary Focus Subject) = Civics & Government
+--------FALSE
+------Data(Primary Focus Subject) = Special Needs
+--------Data(School Metro) = urban
+----------TRUE
+--------Data(School Metro) = suburban
+----------FALSE
+------Data(Primary Focus Subject) = Mathematics
+--------Data(Resource Type) = Supplies
+----------FALSE
+--------Data(Resource Type) = Books
+----------TRUE
+------Data(Primary Focus Subject) = ESL
+--------TRUE
+------Data(Primary Focus Subject) = History & Geography
+--------TRUE
+----Data(Secondary Focus Subject) = Health & Life Science
+------Data(School Metro) = urban
+--------TRUE
+------Data(School Metro) = suburban
+--------TRUE
+------Data(School Metro) = rural
+--------FALSE
+----Data(Secondary Focus Subject) = Health & Wellness
+------TRUE
+----Data(Secondary Focus Subject) = Civics & Government
+------TRUE
+----Data(Secondary Focus Subject) = Early Development
+------Data(School Metro) = urban
+--------TRUE
+------Data(School Metro) = suburban
+--------FALSE
+----Data(Secondary Focus Subject) = Literature & Writing
+------Data(Resource Type) = Other
+--------TRUE
+------Data(Resource Type) = Technology
+--------Data(Poverty Level) = highest poverty
+----------FALSE
+--------Data(Poverty Level) = low poverty
+----------TRUE
+------Data(Resource Type) = Supplies
+--------TRUE
+------Data(Resource Type) = Books
+--------data(Month Posted)>7.0
+----------TRUE
+--------data(Month Posted)<=7.0
+----------TRUE
+----Data(Secondary Focus Subject) = Parent Involvement
+------FALSE
+----Data(Secondary Focus Subject) = Other
+------Data(School Metro) = urban
+--------TRUE
+------Data(School Metro) = Not Provided
+--------FALSE
+----Data(Secondary Focus Subject) = Sports
+------TRUE
+----Data(Secondary Focus Subject) = Mathematics
+------TRUE
+----Data(Secondary Focus Subject) = Extracurricular
+------TRUE
+----Data(Secondary Focus Subject) = Not Provided
+------Data(School Year Round) = t
+--------Data(School Metro) = urban
+----------FALSE
+--------Data(School Metro) = suburban
+----------TRUE
+--------Data(School Metro) = Not Provided
+----------FALSE
+------Data(School Year Round) = f
+--------data(Latitude)>40.0
+----------TRUE
+--------data(Latitude)<=40.0
+----------TRUE
+----Data(Secondary Focus Subject) = Visual Arts
+------Data(Resource Type) = Supplies
+--------FALSE
+------Data(Resource Type) = Books
+--------TRUE
+----Data(Secondary Focus Subject) = Character Education
+------TRUE
+----Data(Secondary Focus Subject) = ESL
+------Data(Poverty Level) = highest poverty
+--------TRUE
+------Data(Poverty Level) = high poverty
+--------FALSE
+----Data(Secondary Focus Subject) = Environmental Science
+------Data(Primary Focus Subject) = Literature & Writing
+--------TRUE
+------Data(Primary Focus Subject) = Mathematics
+--------TRUE
+------Data(Primary Focus Subject) = Health & Life Science
+--------FALSE
+------Data(Primary Focus Subject) = Performing Arts
+--------TRUE
+----Data(Secondary Focus Subject) = Social Sciences
+------TRUE
+----Data(Secondary Focus Subject) = College & Career Prep
+------TRUE
+----Data(Secondary Focus Subject) = Applied Sciences
+------Data(Grade Level) = Grades 3-5
+--------FALSE
+------Data(Grade Level) = Grades PreK-2
+--------TRUE
+----Data(Secondary Focus Subject) = Special Needs
+------TRUE
+----Data(Secondary Focus Subject) = History & Geography
+------Data(Teacher Prefix) = Mrs.
+--------FALSE
+------Data(Teacher Prefix) = Ms.
+--------TRUE
+----Data(Secondary Focus Subject) = Performing Arts
+------Data(Teacher Prefix) = Mr.
+--------FALSE
+------Data(Teacher Prefix) = Ms.
+--------TRUE
 Data(Teach For America) = f
 --data(Total Price)>350.0
-----...
+----Data(School Metro) = urban
+------data(Total Price)>475.0
+--------data(Date Posted)>3200.0
+----------FALSE
+--------data(Date Posted)<=3200.0
+----------FALSE
+------data(Total Price)<=475.0
+--------data(Month Posted)>7.0
+----------TRUE
+--------data(Month Posted)<=7.0
+----------FALSE
+----Data(School Metro) = suburban
+------data(Prev Project By School)>21.0
+--------data(Prev Projects By Teacher)>12.0
+----------FALSE
+--------data(Prev Projects By Teacher)<=12.0
+----------TRUE
+------data(Prev Project By School)<=21.0
+--------data(Year Posted)>9.0
+----------FALSE
+--------data(Year Posted)<=9.0
+----------FALSE
+----Data(School Metro) = rural
+------Data(Eligible Almost Home Match) = t
+--------Data(Primary Focus Subject) = Literacy
+----------TRUE
+--------Data(Primary Focus Subject) = Special Needs
+----------TRUE
+--------Data(Primary Focus Subject) = Character Education
+----------TRUE
+--------Data(Primary Focus Subject) = College & Career Prep
+----------FALSE
+--------Data(Primary Focus Subject) = Mathematics
+----------FALSE
+--------Data(Primary Focus Subject) = Literature & Writing
+----------FALSE
+--------Data(Primary Focus Subject) = Social Sciences
+----------FALSE
+--------Data(Primary Focus Subject) = Health & Life Science
+----------TRUE
+--------Data(Primary Focus Subject) = Applied Sciences
+----------FALSE
+--------Data(Primary Focus Subject) = Environmental Science
+----------TRUE
+--------Data(Primary Focus Subject) = Visual Arts
+----------FALSE
+------Data(Eligible Almost Home Match) = f
+--------data(Date Posted)>4800.0
+----------FALSE
+--------data(Date Posted)<=4800.0
+----------FALSE
+----Data(School Metro) = Not Provided
+------data(Total Price)>675.0
+--------Data(Secondary Focus Subject) = Sports
+----------TRUE
+--------Data(Secondary Focus Subject) = Not Provided
+----------FALSE
+--------Data(Secondary Focus Subject) = Other
+----------FALSE
+--------Data(Secondary Focus Subject) = ESL
+----------FALSE
+--------Data(Secondary Focus Subject) = Social Sciences
+----------FALSE
+--------Data(Secondary Focus Subject) = Gym & Fitness
+----------FALSE
+--------Data(Secondary Focus Subject) = Parent Involvement
+----------FALSE
+--------Data(Secondary Focus Subject) = Performing Arts
+----------FALSE
+--------Data(Secondary Focus Subject) = Economics
+----------FALSE
+--------Data(Secondary Focus Subject) = Literacy
+----------FALSE
+--------Data(Secondary Focus Subject) = Mathematics
+----------FALSE
+--------Data(Secondary Focus Subject) = College & Career Prep
+----------FALSE
+--------Data(Secondary Focus Subject) = Environmental Science
+----------FALSE
+--------Data(Secondary Focus Subject) = Visual Arts
+----------FALSE
+--------Data(Secondary Focus Subject) = Civics & Government
+----------FALSE
+--------Data(Secondary Focus Subject) = Health & Wellness
+----------FALSE
+--------Data(Secondary Focus Subject) = Health & Life Science
+----------FALSE
+--------Data(Secondary Focus Subject) = Character Education
+----------FALSE
+--------Data(Secondary Focus Subject) = Special Needs
+----------FALSE
+--------Data(Secondary Focus Subject) = History & Geography
+----------FALSE
+--------Data(Secondary Focus Subject) = Applied Sciences
+----------FALSE
+--------Data(Secondary Focus Subject) = Literature & Writing
+----------FALSE
+------data(Total Price)<=675.0
+--------data(Longitude)>-82.0
+----------FALSE
+--------data(Longitude)<=-82.0
+----------FALSE
 --data(Total Price)<=350.0
-----...
-Tested : (1684,1323,886,2120)
+----data(Month Posted)>5.0
+------data(Total Price)>300.0
+--------data(Prev Project By School)>33.0
+----------FALSE
+--------data(Prev Project By School)<=33.0
+----------TRUE
+------data(Total Price)<=300.0
+--------data(Total Price)>25.0
+----------TRUE
+--------data(Total Price)<=25.0
+----------FALSE
+----data(Month Posted)<=5.0
+------data(Total Price)>225.0
+--------data(Date Posted)>3000.0
+----------TRUE
+--------data(Date Posted)<=3000.0
+----------FALSE
+------data(Total Price)<=225.0
+--------data(Total Price)>50.0
+----------TRUE
+--------data(Total Price)<=50.0
+----------FALSE
+Test : (1684,1323,886,2120)
   Accuracy = 0.632629303176451
   Recall = 0.5600266045892917
   Precision = 0.6552529182879377
