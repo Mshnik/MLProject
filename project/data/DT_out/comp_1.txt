@@ -1,0 +1,224 @@
+
+Skewed-Skewed
+--------------------------------------------
+--------------------------------------------
+--------------------------------------------
+Best Accuracy: Depth 2 Betas : (1.0,1.0) (TP, FN, FP, TN)(6393,576,2439,583)
+data(Total Price)>350.0
+--data(Optional Support)>150.0
+----FALSE
+--data(Optional Support)<=150.0
+----TRUE
+data(Total Price)<=350.0
+--data(Total Price)>175.0
+----TRUE
+--data(Total Price)<=175.0
+----TRUE
+Tested : (6406,577,2442,566)
+  Accuracy = 0.6978280452407166
+  Recall = 0.9173707575540598
+  Precision = 0.724005424954792
+  F1 = 0.8092982123681385
+  F0.5 = 0.7558702064896755
+--------------------------------------------
+--------------------------------------------
+Best Precision: Depth 9 Betas : (1.0,1.0) (TP, FN, FP, TN)(5163,1806,1884,1138)
+data(Total Price)>350.0
+--data(Optional Support)>150.0
+----...
+--data(Optional Support)<=150.0
+----...
+data(Total Price)<=350.0
+--data(Total Price)>175.0
+----...
+--data(Total Price)<=175.0
+----...
+Tested : (5128,1855,1876,1132)
+  Accuracy = 0.626563907516765
+  Recall = 0.7343548618072462
+  Precision = 0.732153055396916
+  F1 = 0.7332523057124473
+  F0.5 = 0.732592359781708
+--------------------------------------------
+--------------------------------------------
+Best F1: Depth 1 Betas : (1.0,0.6) (TP, FN, FP, TN)(6969,0,3022,0)
+Data(Grade Level) = Grades 9-12
+--TRUE
+Data(Grade Level) = Grades 6-8
+--TRUE
+Data(Grade Level) = Grades 3-5
+--TRUE
+Data(Grade Level) = Grades PreK-2
+--TRUE
+Tested : (6983,0,3008,0)
+  Accuracy = 0.6989290361325192
+  Recall = 1.0
+  Precision = 0.6989290361325192
+  F1 = 0.8227877930953221
+  F0.5 = 0.7437109932477048
+
+Skewed-Equal
+--------------------------------------------
+--------------------------------------------
+--------------------------------------------
+Best Accuracy: Depth 2 Betas : (1.0,1.0) (TP, FN, FP, TN)(6393,576,2439,583)
+data(Total Price)>350.0
+--data(Optional Support)>150.0
+----FALSE
+--data(Optional Support)<=150.0
+----TRUE
+data(Total Price)<=350.0
+--data(Total Price)>175.0
+----TRUE
+--data(Total Price)<=175.0
+----TRUE
+Tested : (2729,278,2440,566)
+  Accuracy = 0.5479793780143023
+  Recall = 0.9075490522115065
+  Precision = 0.5279551170439156
+  F1 = 0.6675636007827789
+  F0.5 = 0.5761516699742432
+--------------------------------------------
+--------------------------------------------
+Best Precision: Depth 9 Betas : (1.0,1.0) (TP, FN, FP, TN)(5163,1806,1884,1138)
+data(Total Price)>350.0
+--data(Optional Support)>150.0
+----...
+--data(Optional Support)<=150.0
+----...
+data(Total Price)<=350.0
+--data(Total Price)>175.0
+----...
+--data(Total Price)<=175.0
+----...
+Tested : (2207,800,1875,1131)
+  Accuracy = 0.5551305504739731
+  Recall = 0.7339541070834719
+  Precision = 0.5406663400293974
+  F1 = 0.6226548173226125
+  F0.5 = 0.5707266614946988
+--------------------------------------------
+--------------------------------------------
+Best F1: Depth 1 Betas : (1.0,0.6) (TP, FN, FP, TN)(6969,0,3022,0)
+Data(Grade Level) = Grades 9-12
+--TRUE
+Data(Grade Level) = Grades 6-8
+--TRUE
+Data(Grade Level) = Grades 3-5
+--TRUE
+Data(Grade Level) = Grades PreK-2
+--TRUE
+Tested : (3007,0,3006,0)
+  Accuracy = 0.5000831531681357
+  Recall = 1.0
+  Precision = 0.5000831531681357
+  F1 = 0.6667405764966741
+  F0.5 = 0.5556376806238219
+
+Equal-Skewed
+--------------------------------------------
+--------------------------------------------
+--------------------------------------------
+Best Accuracy: Depth 5 Betas : (1.0,0.6) (TP, FN, FP, TN)(1713,1309,882,2139)
+Data(Teach For America) = t
+--data(Total Price)>400.0
+----...
+--data(Total Price)<=400.0
+----...
+Data(Teach For America) = f
+--data(Total Price)>350.0
+----...
+--data(Total Price)<=350.0
+----...
+Tested : (3825,3158,887,2121)
+  Accuracy = 0.5951356220598538
+  Recall = 0.5477588429041959
+  Precision = 0.8117572156196944
+  F1 = 0.6541256947413423
+  F0.5 = 0.7403894545313771
+--------------------------------------------
+--------------------------------------------
+Best Precision: Depth 1 Betas : (1.0,1.0) (TP, FN, FP, TN)(1404,1618,666,2355)
+data(Total Price)>350.0
+--FALSE
+data(Total Price)<=350.0
+--TRUE
+Tested : (3175,3808,679,2329)
+  Accuracy = 0.5508958062256031
+  Recall = 0.454675640842045
+  Precision = 0.82381940840685
+  F1 = 0.5859555227461475
+  F0.5 = 0.7087369971873746
+--------------------------------------------
+--------------------------------------------
+Best F1: Depth 4 Betas : (1.0,0.6) (TP, FN, FP, TN)(1889,1133,1090,1931)
+Data(Teach For America) = t
+--data(Total Price)>400.0
+----...
+--data(Total Price)<=400.0
+----...
+Data(Teach For America) = f
+--data(Total Price)>350.0
+----...
+--data(Total Price)<=350.0
+----...
+Tested : (4280,2703,1104,1904)
+  Accuracy = 0.6189570613552197
+  Recall = 0.6129170843477015
+  Precision = 0.7949479940564635
+  F1 = 0.6921646316810867
+  F0.5 = 0.7503769416879974
+
+Equal-Equal
+--------------------------------------------
+--------------------------------------------
+--------------------------------------------
+Best Accuracy: Depth 5 Betas : (1.0,0.6) (TP, FN, FP, TN)(1713,1309,882,2139)
+Data(Teach For America) = t
+--data(Total Price)>400.0
+----...
+--data(Total Price)<=400.0
+----...
+Data(Teach For America) = f
+--data(Total Price)>350.0
+----...
+--data(Total Price)<=350.0
+----...
+Tested : (1684,1323,886,2120)
+  Accuracy = 0.632629303176451
+  Recall = 0.5600266045892917
+  Precision = 0.6552529182879377
+  F1 = 0.6039089116012193
+  F0.5 = 0.6337021148491007
+--------------------------------------------
+--------------------------------------------
+Best Precision: Depth 1 Betas : (1.0,1.0) (TP, FN, FP, TN)(1404,1618,666,2355)
+data(Total Price)>350.0
+--FALSE
+data(Total Price)<=350.0
+--TRUE
+Tested : (1381,1626,678,2328)
+  Accuracy = 0.6168302012306669
+  Recall = 0.45926172264715664
+  Precision = 0.6707139388052452
+  F1 = 0.5452033162258192
+  F0.5 = 0.6141599217290757
+--------------------------------------------
+--------------------------------------------
+Best F1: Depth 4 Betas : (1.0,0.6) (TP, FN, FP, TN)(1889,1133,1090,1931)
+Data(Teach For America) = t
+--data(Total Price)>400.0
+----...
+--data(Total Price)<=400.0
+----...
+Data(Teach For America) = f
+--data(Total Price)>350.0
+----...
+--data(Total Price)<=350.0
+----...
+Tested : (1874,1133,1103,1903)
+  Accuracy = 0.6281390320971229
+  Recall = 0.623212504156967
+  Precision = 0.6294927779643937
+  F1 = 0.626336898395722
+  F0.5 = 0.628226617499162

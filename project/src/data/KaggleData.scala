@@ -34,7 +34,7 @@ object KaggleData{
   val labelIndex = 40
   
   /** Indices in combined_*.csv that are already numbers */
-  val numericIndices = List(4, 5, 28, 29, 31, 32, 36, 37, 49, 50)
+  val numericIndices = List(4, 5, 29, 31, 32, 36, 37, 49, 50)
   
   /** Indices that are boolean values - either t or f */
   val booleanIndices = List(12, 13, 14, 15, 16, 17, 19, 20, 33, 34, 40)
@@ -46,7 +46,7 @@ object KaggleData{
   val dateIndices = List(35)
   
   /** Indices to ignore (give value 0 no matter what input) */
-  val ignoreIndices = List(0, 1, 2, 3, 6, 7, 8, 10, 11, 30, 38, 39, 41, 42, 43, 44, 45, 46, 47, 48)
+  val ignoreIndices = List(0, 1, 2, 3, 6, 7, 8, 10, 11, 28, 30, 38, 39, 41, 42, 43, 44, 45, 46, 47, 48)
   
   /** All indices contatinated together and sorted. Should be perfect range [0, 45]. Use for testing. */
   val allIndices = (numericIndices ++ booleanIndices ++ enumIndices ++ dateIndices ++ ignoreIndices).sortWith((a, b) => a < b)

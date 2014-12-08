@@ -20,35 +20,39 @@ object DTNode{
   def main(args : Array[String]) : Unit = {
     val out = "data/DT_out/comp.txt"
      
+    val trainFil = 1
+    val validateFil = 2
+    val testFil = 3
+      
     val o = System.out  
     System.setOut(new PrintStream(new File(out)))
       
     System.out.println("\nSkewed-Skewed")
     o.println("Test 1")
-    trainList = ReaderWriter.readSVMData(ReaderWriter.svmFile(1))
-    validationList =  ReaderWriter.readSVMData(ReaderWriter.svmFile(2))
-    testList = ReaderWriter.readSVMData(ReaderWriter.svmFile(3))
+    trainList = ReaderWriter.readSVMData(ReaderWriter.svmFile(trainFil))
+    validationList =  ReaderWriter.readSVMData(ReaderWriter.svmFile(validateFil))
+    testList = ReaderWriter.readSVMData(ReaderWriter.svmFile(testFil))
     trainValidateTest()
  
     System.out.println("\nSkewed-Equal")
     o.println("Test 2")
-    trainList = ReaderWriter.readSVMData(ReaderWriter.svmFile(1))
-    validationList =  ReaderWriter.readSVMData(ReaderWriter.svmFile(2))
-    testList = ReaderWriter.readSVMData(ReaderWriter.svm_FF_File(3))
+    trainList = ReaderWriter.readSVMData(ReaderWriter.svmFile(trainFil))
+    validationList =  ReaderWriter.readSVMData(ReaderWriter.svmFile(validateFil))
+    testList = ReaderWriter.readSVMData(ReaderWriter.svm_FF_File(testFil))
     trainValidateTest()
     
     System.out.println("\nEqual-Skewed")
     o.println("Test 3")
-    trainList = ReaderWriter.readSVMData(ReaderWriter.svm_FF_File(1))
-    validationList =  ReaderWriter.readSVMData(ReaderWriter.svm_FF_File(2))
-    testList = ReaderWriter.readSVMData(ReaderWriter.svmFile(3))
+    trainList = ReaderWriter.readSVMData(ReaderWriter.svm_FF_File(trainFil))
+    validationList =  ReaderWriter.readSVMData(ReaderWriter.svm_FF_File(validateFil))
+    testList = ReaderWriter.readSVMData(ReaderWriter.svmFile(testFil))
     trainValidateTest()
     
     System.out.println("\nEqual-Equal")
     o.println("Test 4")
-    trainList = ReaderWriter.readSVMData(ReaderWriter.svm_FF_File(1))
-    validationList =  ReaderWriter.readSVMData(ReaderWriter.svm_FF_File(2))
-    testList = ReaderWriter.readSVMData(ReaderWriter.svm_FF_File(3))
+    trainList = ReaderWriter.readSVMData(ReaderWriter.svm_FF_File(trainFil))
+    validationList =  ReaderWriter.readSVMData(ReaderWriter.svm_FF_File(validateFil))
+    testList = ReaderWriter.readSVMData(ReaderWriter.svm_FF_File(testFil))
     trainValidateTest()
   }
   
@@ -155,6 +159,7 @@ object DTNode{
   val combinedSplits : Map[Int, List[Double]] = Map(
     4 -> doubleSplits(30, 40, 1),
     5 -> doubleSplits(-110, -76, 2),
+    28 -> doubleSplits(0, 100, 2),
     29 -> doubleSplits(25, 1000, 25),
     31 -> doubleSplits(0, 1000, 50),
     32 -> doubleSplits(10, 200, 10),
