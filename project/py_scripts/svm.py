@@ -46,10 +46,10 @@ class Instance():
         in_str = get_in_str(binary, ff)
         test_in_str = get_in_str(test_binary,test_ff)
         self.outfile = '../data/results/output' + in_str[:-1] + '.csv'
-        in_folder =  '../data/svm' + in_str + 'norm/dat_'
+        in_folder =  '../data/svm' + in_str + 'norm_data/dat_'
         self.train_file = in_folder + str(train_dat_num) +'.txt'
         self.val_file = in_folder + str(train_dat_num) +'.txt'
-        self.test_file = '../data/svm' + test_in_str + 'norm/dat_' + str(test_dat_num) +'.txt'
+        self.test_file = '../data/svm' + test_in_str + 'norm_data/dat_' + str(test_dat_num) +'.txt'
         out_folder =  '../data/svm'+ in_str +'out/dat_'
         prefix = out_folder  + str(train_dat_num)
         if c != None:
@@ -145,7 +145,7 @@ def find_w(instance):
     w = x_mat.matmat(y_data)
     instance.w = [i for i in w if i <> 0]
     sorted_w = sorted(range(len(w)), key=lambda x : w[x], reverse=True)
-    instance.sorted_w = sorted_w
+    instance.sorted_w = [i for i in sorted_w if w[i] <> 0]
 
 def find_results(instance):
     f = open(instance.prediction, 'r')
@@ -197,7 +197,7 @@ def logistical_regression(instance):
 
 DAT_NUMS = range(1,11) #TODO zero index the data files
 
-J_VALS = [.7,.75,.8,]
+J_VALS = [.75]
 C_VALS = [50,100,200]
 T_VALS = [1,2]
 B_VALS = [0,None]
@@ -205,3 +205,10 @@ pairs = [(i,9,j) for i in range(1,3) for j in range(8,11)]
 
 
 run(pairs,c_vals=C_VALS,j_vals=J_VALS,t_vals=T_VALS, b=0,binary=False, ONLY_EXISTING_MODELS=False)
+print "**************************************************************** A "
+run(pairs,c_vals=C_VALS,j_vals=J_VALS,t_vals=T_VALS, b=0,binary=True, ONLY_EXISTING_MODELS=False)
+print "**************************************************************** B "
+run(pairs,c_vals=C_VALS,j_vals=J_VALS,t_vals=T_VALS, b=0, binary=True, ff=True, ONLY_EXISTING_MODELS=False)
+print "**************************************************************** C "
+run(pairs,c_vals=C_VALS,j_vals=J_VALS,t_vals=T_VALS, b=0,ff=True, ONLY_EXISTING_MODELS=False)
+print "**************************************************************** D "
