@@ -12,30 +12,30 @@ def gettime():
     return format(now, '.2f') + "s"
 
 #TODO write this prettier but seriously doesnt matter at all so dont
-def get_in_str(binary,half):
-    if half and binary:
-        in_str = '_fiftyfifty_bin_'
-    elif half:
-        in_str = '_fiftyfifty_'
+def get_in_str(binary,ff):
+    if ff and binary:
+        in_str = '_bin_ff_'
+    elif ff:
+        in_str = '_ff_'
     elif binary:
         in_str = '_bin_'
     else:
         in_str = '_'
     return in_str
 
-def get_output(binary, half):
-    in_str = get_in_str(binary, half)
+def get_output(binary, ff):
+    in_str = get_in_str(binary, ff)
     outfile = '../data/results/output' + in_str[:-1] + '.csv'
     return outfile
 
 
 # TODO better name for class
 class Instance():
-    def __init__(self, train_dat_num, val_dat_num, test_dat_num, c=None,j=None, t=None, b=None, half=False, binary=False, test_half=None,test_binary=None):
+    def __init__(self, train_dat_num, val_dat_num, test_dat_num, c=None,j=None, t=None, b=None, ff=False, binary=False, test_ff=None,test_binary=None):
         if test_binary is None:
             self.test_binary = binary
-        if test_half is None:
-            self.test_half = half
+        if test_ff is None:
+            self.test_ff = ff
         self.train_data_num = train_dat_num
         self.test_data_num = test_dat_num
         self.val_dat_num = val_dat_num
@@ -43,8 +43,8 @@ class Instance():
         self.j = j
         self.t = t
         self.b = b
-        in_str = get_in_str(binary, half)
-        test_in_str = get_in_str(test_binary,test_half)
+        in_str = get_in_str(binary, ff)
+        test_in_str = get_in_str(test_binary,test_ff)
         self.outfile = '../data/results/output' + in_str[:-1] + '.csv'
         in_folder =  '../data/svm' + in_str + 'norm/dat_'
         self.train_file = in_folder + str(train_dat_num) +'.txt'
@@ -69,7 +69,7 @@ class Instance():
         self.np = None
         self.tp = None
         self.f1 = None
-        self.f_half = None
+        self.f_ff = None
         self.precision = None
         self.recall = None
         self.w = None
@@ -158,7 +158,7 @@ def find_results(instance):
     instance.precision = instance.tp / float(instance.tp+instance.fp)  if instance.tp + instance.fp <> 0 else -1#TODO prevent div by 0 errors
     instance.recall = instance.tp / float(instance.tp + instance.fn) if instance.tp + instance.fp <> 0 else -1
     instance.f1 = 2 * instance.precision * instance.recall / float(instance.precision + instance.recall) if instance.precision + instance.recall <> 0 else -1
-    instance.f_half = 1.25 * instance.precision * instance.recall / float(.25*instance.precision + instance.recall) if instance.precision + instance.recall <> 0 else -1
+    instance.f_ff = 1.25 * instance.precision * instance.recall / float(.25*instance.precision + instance.recall) if instance.precision + instance.recall <> 0 else -1
     f.close()
 
 def process(instance):
@@ -167,8 +167,8 @@ def process(instance):
     find_results(instance)
     find_w(instance)
 
-def run(train_test_pairs, j_vals=[None], c_vals=[None], t_vals=[None], b=None, half=False, binary=False, ONLY_EXISTING_MODELS=False):
-    output = open(get_output(binary,half), 'ab')
+def run(train_test_pairs, j_vals=[None], c_vals=[None], t_vals=[None], b=None, ff=False, binary=False, ONLY_EXISTING_MODELS=False):
+    output = open(get_output(binary,ff), 'ab')
     writer = csv.writer(output)
     for (train, val, test) in train_test_pairs:
         print "---------------------------------------------------------------------" + str(train) + "---------------" + str(test)
@@ -177,13 +177,21 @@ def run(train_test_pairs, j_vals=[None], c_vals=[None], t_vals=[None], b=None, h
                 print "j: " + str(j) + "\t" + gettime()
                 for c in c_vals:
                     print "c: " + str(c) + "\t" + gettime()
-                    instance = Instance(train, val, test, c=c, j=j, t=t, b=b, half=half,binary=binary)
+                    instance = Instance(train, val, test, c=c, j=j, t=t, b=b, ff=ff,binary=binary)
                     if ONLY_EXISTING_MODELS and not os.path.isfile(instance.model):
                         continue
                     process(instance)
-                    row = [instance.train_file, instance.test_file, instance.j, instance.c, instance.t, instance.b, instance.fn, instance.fp, instance.accuracy, instance.precision, instance.recall, instance.f1,instance.f_half, instance.w, instance.sorted_w]
+                    row = [instance.train_file, instance.test_file, instance.j, instance.c, instance.t, instance.b, instance.fn, instance.fp, instance.accuracy, instance.precision, instance.recall, instance.f1,instance.f_ff, instance.w, instance.sorted_w]
                     writer.writerow(row)
     output.close()
+
+
+def logistical_regression(instance):
+    x_data, y_data = load_svmlight_file(instance.train_file)
+    #TODO
+
+
+
 
 
 
