@@ -63,7 +63,7 @@ object DTNode{
     val o = System.out
     val trainFil = 1
     val validateFil = 2
-    val testFils = List(3,4,5,6,7)
+    val testFils = List(3)
     System.setOut(new PrintStream(new File(out)))
     trainList = ReaderWriter.readSVMData(ReaderWriter.svmFile(trainFil))
     validationList =  ReaderWriter.readSVMData(ReaderWriter.svmFile(validateFil))
