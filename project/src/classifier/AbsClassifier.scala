@@ -91,12 +91,9 @@ object AbsClassifier{
     val a = classifier.test(lst)
     if(print){
 	    System.out.println(msg + " : " + a)
-	    System.out.println("  Accuracy = " + AbsClassifier.accuracy(a))
-	    System.out.println("  Recall = " + AbsClassifier.recall(a))
-	    System.out.println("  Precision = " + AbsClassifier.precision(a))
 	    val f1 = AbsClassifier.fOne(a._1, a._2, a._3, a._4)
-	    System.out.println("  F1 = " + f1)
-	    System.out.println("  F0.5 = " + AbsClassifier.f(0.5)(a._1, a._2, a._3, a._4))
+	    System.out.println("Accuracy,Recall,Precision,F1")
+	    System.out.println(AbsClassifier.accuracy(a) + "," + AbsClassifier.recall(a) + "," + AbsClassifier.precision(a) + "," + f1)
     }
     a
   }

@@ -32,18 +32,26 @@ object DTNode{
 //      yield ((n, 1.0/p.toDouble, d, (1.0,1.0), attributeSplits))).toList
 
     
-    val out = "data/DT_out/forest_Base_attrtest.txt"
-    
+    val out = "data/DT_out/forest_bin_macnemar.txt"
     System.setOut(new PrintStream(new File(out)))
-    System.out.println("\nSquewed-Squewed Size of Forest Test")
-    trainList = ReaderWriter.readSVMData(ReaderWriter.svmFile(trainFil))
-    validationList =  ReaderWriter.readSVMData(ReaderWriter.svmFile(validateFil))
-	testList = ReaderWriter.readSVMData(ReaderWriter.svmFile(testFil))
-	val arg = (101, 1.0/101.0, Integer.MAX_VALUE.toInt, (1.0, 1.0), 1.0)
-	val classifier = AbsClassifier.trainValidateTest(o)("Accuracy", AbsClassifier.accuracy, 
+    System.out.println("\nSquewed-Squewed Bin Size of Forest Test")
+    trainList = ReaderWriter.readSVMData(ReaderWriter.svmBinFile(trainFil))
+    validationList =  ReaderWriter.readSVMData(ReaderWriter.svmBinFile(validateFil))
+	testList = ReaderWriter.readSVMData(ReaderWriter.svmBinFile(testFil))
+//	for(n <- List(301, 401, 501, 601)){
+//		val argsList = (for(w <- List(1.0); 
+//    				p <- List(0.5, 1.0, 2.0); s <- List(1, 2, 3); d <- List(Integer.MAX_VALUE.toInt))
+//			yield ((n, p.toDouble/n.toDouble, d, (1.0,w), 1.0/s.toDouble))).toList
+//      
+//	val classifier = AbsClassifier.trainValidateTest(o)("Accuracy", AbsClassifier.accuracy, 
+//	        trainList, validationList, testList, forestTrainer, argsList)
+//	}
+    val arg = (201,0.009950248756218905,2147483647,(1.0,1.0),0.3333333333333333)
+    val classifier = AbsClassifier.trainValidateTest(o)("Accuracy", AbsClassifier.accuracy, 
 	        trainList, validationList, testList, forestTrainer, List(arg))
-	val attrMap = classifier.asInstanceOf[Forest].attributeCount(1)
-	attrMap.toList.sortBy( a => -(a._2._1 + a._2._2)).foreach(a => System.out.println(a))
+	testList.foreach(e => System.out.println(e.toClassifiedString(classifier)))
+//	val attrMap = classifier.asInstanceOf[Forest].attributeCount(1)
+//	attrMap.toList.sortBy( a => -(Math.abs(a._2._1 - a._2._2))).foreach(a => System.out.println(a))
 //    for(p <- List(0.25, 0.5, 1.0, 2.0, 4.0)){
 //	    o.println("Testing... " + p)
 //	    val argsList = (for(n <- List(51, 101, 201); w <- List(1.0); 

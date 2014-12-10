@@ -52,8 +52,28 @@ object KaggleData{
   /** All indices contatinated together and sorted. Should be perfect range [0, 45]. Use for testing. */
   val allIndices = (numericIndices ++ booleanIndices ++ enumIndices ++ dateIndices ++ ignoreIndices).sortWith((a, b) => a < b)
 
+  val enumMap : Map[Int, List[String]] ={
+    val m = Map(
+        9 -> List("rural", "suburban", "urban"), 
+       18 -> List("Ms.", "Mrs.", "Mr.", "Dr."),
+       21 -> List("Performing Arts", "Health & Life Science", "Applied Sciences", "Sports", "Other", "Music", 
+                  "Early Development", "Mathematics", "Character Education", "Social Sciences", "Nutrition", 
+                  "Environmental Science", "Health & Wellness", "Parent Involvement", "Gym & Fitness", 
+                  "History & Geography", "Literacy", "Economics", "Community Service", "Extracurricular", 
+                  "Foreign Languages", "College & Career Prep", "ESL", "Visual Arts", "Literature & Writing", 
+                  "Special Needs", "Civics & Government"),
+       22 -> List("Special Needs", "Health & Sports", "Math & Science", "Music & The Arts", "History & Civics", 
+                  "Literacy & Language", "Applied Learning"),
+       25 -> List("Books", "Supplies", "Technology", "Trips", "Visitors", "Other"),
+       26 -> List("low poverty", "moderate poverty", "high poverty", "highest poverty"),
+       27 -> List("Grades PreK-2", "Grades 3-5", "Grades 6-8", "Grades 9-12")
+      )
+    m + ((23, m(21)), (24, m(22)))
+  } 
+  
   /** Use to translate index into meaning in combined_*.csv */
-  val indexName = Map(0 -> "ID", 1 -> "Teacher ID", 2 -> "School Id", 3 -> "School ncesID", 4 -> "Latitude", 5 -> "Longitude", 
+  val indexName ={ 
+    val m = Map(0 -> "ID", 1 -> "Teacher ID", 2 -> "School Id", 3 -> "School ncesID", 4 -> "Latitude", 5 -> "Longitude", 
 		  			  6 -> "School City", 7 -> "School State", 8 -> "School Zip", 9 -> "School Metro", 10 -> "School District",
 		  			  11 -> "School County", 12 -> "School Charter", 13 -> "School Magnet", 14 -> "School Year Round", 
 		  			  15 -> "School Nlns", 16 -> "School Kipp", 17 -> "School Charter Ready Promise", 18 -> "Teacher Prefix", 
@@ -66,6 +86,12 @@ object KaggleData{
                       40 -> "Fully Funded", 41 -> "Green Donation", 42 -> "Great Chat", 43 -> "3+ non referred donors", 44 -> "Donor Give 100+",
                       45 -> "Thoughtful Donation", 46 -> "Great Messages Proportion", 47 -> "Teacher Referred Count", 48 -> "Non-Teacher Ref Count",
                       49 -> "Prev Projects By Teacher", 50 -> "Prev Project By School")
+    val enums = enumMap.foldLeft(Map[Int, String]())(
+      (acc, a) => a._2.foldLeft(acc)((acc2, b) => acc2 + (((a._1 * 100 + parseEnum(a._1,b).toInt), m(a._1) + "=" + b))) 
+    )
+    m ++ enums
+  }
+                     
   
   if(! allIndices.zip(0 to 50).foldLeft(true)((acc, e) => acc && e._1.equals(e._2))){
     println("Error with all Indices for KaggleData reading")
@@ -130,25 +156,6 @@ object KaggleData{
       }
     }
   }
-  
-  val enumMap : Map[Int, List[String]] ={
-    val m = Map(
-        9 -> List("rural", "suburban", "urban"), 
-       18 -> List("Ms.", "Mrs.", "Mr.", "Dr."),
-       21 -> List("Performing Arts", "Health & Life Science", "Applied Sciences", "Sports", "Other", "Music", 
-                  "Early Development", "Mathematics", "Character Education", "Social Sciences", "Nutrition", 
-                  "Environmental Science", "Health & Wellness", "Parent Involvement", "Gym & Fitness", 
-                  "History & Geography", "Literacy", "Economics", "Community Service", "Extracurricular", 
-                  "Foreign Languages", "College & Career Prep", "ESL", "Visual Arts", "Literature & Writing", 
-                  "Special Needs", "Civics & Government"),
-       22 -> List("Special Needs", "Health & Sports", "Math & Science", "Music & The Arts", "History & Civics", 
-                  "Literacy & Language", "Applied Learning"),
-       25 -> List("Books", "Supplies", "Technology", "Trips", "Visitors", "Other"),
-       26 -> List("low poverty", "moderate poverty", "high poverty", "highest poverty"),
-       27 -> List("Grades PreK-2", "Grades 3-5", "Grades 6-8", "Grades 9-12")
-      )
-    m + ((23, m(21)), (24, m(22)))
-  } 
   
   /** Returns a double corresponding to the given string, for the given fieldIndex */
   @throws[RuntimeException]
