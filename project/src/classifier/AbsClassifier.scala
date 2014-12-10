@@ -50,13 +50,14 @@ object AbsClassifier{
    *  validateList - a list of kaggleData to validate on
    *  testList - a list of kaggleData to test on.
    *  trainer - a function that given an arg and a list of data returns a classifier
-   *  argsList - a list of args to try the trainer on.  */
+   *  argsList - a list of args to try the trainer on. 
+   *  Returns the optimal classifier found */
   def trainValidateTest[T](debugPrinter : PrintStream)
   						(criteria : String, eval : ((Int, Int, Int, Int)) => Double,
 		  				trainList : List[KaggleData], validateList : List[KaggleData],
 		  				testList : List[KaggleData], 
 		  				trainer : (List[KaggleData], T) => AbsClassifier,
-		  				argsList : List[T]) : Unit = {
+		  				argsList : List[T]) : AbsClassifier = {
     
     // Create validate and testing functions
     def validate = check(validateList, "Validate", false)_
@@ -66,7 +67,7 @@ object AbsClassifier{
     var best : (AbsClassifier, (Int, Int, Int, Int)) = null
     var i = 0
     for(arg <- argsList){
-      debugPrinter.println("Working Arg " + i + " of " + argsList.length)
+      debugPrinter.println("Working Arg " + i + " of " + argsList.length + ":" + arg)
       i += 1
       val n : AbsClassifier = trainer(trainList, arg)
       val v = validate(n)
@@ -82,6 +83,7 @@ object AbsClassifier{
     test(best._1)
     System.out.println("--------------------------------------------")
     System.out.println("--------------------------------------------")
+    best._1
   }
   
   /** validates or tests the classifier on the given test set. Returns tuple of (TP, FN, FP, TN) */

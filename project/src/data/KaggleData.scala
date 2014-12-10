@@ -3,6 +3,7 @@ package data
 import io.ReaderWriter
 import scala.collection.immutable.List
 import scala.collection.immutable.HashMap
+import classifier.AbsClassifier
 
 /** Companion object for classes implementing KaggleData */
 object KaggleData{
@@ -303,9 +304,16 @@ class KaggleData(val id : String, override val label : KaggleLabel.Value, overri
    *  at index 0 */
   def toCSVString : String = {
     KaggleLabel.toInt(label) + "," + 
-    (0 to 37).toList.foldLeft("")(
+    (0 to 50).toList.foldLeft("")(
       (a,b) => a + vals.getOrElse(b, 0.0) + ","    
     ) + "#" + id
+  }
+  
+  /** Returns a comma seperated string for this data, with first value as the true label, second 
+   *  the classified label
+   */
+  def toClassifiedString(a : AbsClassifier) : String = {
+    label + "," + a.classify(this);
   }
   
   /** Returns a string representing this data that can be put into SVM-Light */
