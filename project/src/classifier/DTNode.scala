@@ -13,6 +13,7 @@ object DTNode{
   var trainList : List[KaggleData] = List()
   var validationList  : List[KaggleData] = List()
   var testList  : List[KaggleData] = List()
+    val o = System.out
   
   implicit val labelMap = ReaderWriter.labelDictionary
   implicit val skipLines = ReaderWriter.skipLines
@@ -29,19 +30,23 @@ object DTNode{
     val testFil = 3
 //    val argsList = (for(n <- 3 to 11 by 2; p <- 2 to 5; d <- 1 to 10) 
 //      yield ((n, 1.0/p.toDouble, d, (1.0,1.0), attributeSplits))).toList
-    bigTest()
+
     
-//    val out = "data/DT_out/forest_sizecomp.txt"
-//    val o = System.out
-//    
-//    System.setOut(new PrintStream(new File(out)))
-//    System.out.println("\nEqual-Equal Size of Forest Test")
-//    trainList = ReaderWriter.readSVMData(ReaderWriter.svmFile(trainFil))
-//    validationList =  ReaderWriter.readSVMData(ReaderWriter.svmFile(validateFil))
-//	testList = ReaderWriter.readSVMData(ReaderWriter.svmFile(testFil))
-//    for(n <- List(1, 3, 7, 13, 21, 51, 101, 201, 301, 401, 501)){
-//	    o.println("Testing... " + n)
-//	    val argsList = (for(p <- List(1, 2, 3); w <- List(1.0); 
+    val out = "data/DT_out/forest_Base_attrtest.txt"
+    
+    System.setOut(new PrintStream(new File(out)))
+    System.out.println("\nSquewed-Squewed Size of Forest Test")
+    trainList = ReaderWriter.readSVMData(ReaderWriter.svmFile(trainFil))
+    validationList =  ReaderWriter.readSVMData(ReaderWriter.svmFile(validateFil))
+	testList = ReaderWriter.readSVMData(ReaderWriter.svmFile(testFil))
+	val arg = (101, 1.0/101.0, Integer.MAX_VALUE.toInt, (1.0, 1.0), 1.0)
+	val classifier = AbsClassifier.trainValidateTest(o)("Accuracy", AbsClassifier.accuracy, 
+	        trainList, validationList, testList, forestTrainer, List(arg))
+	val attrMap = classifier.asInstanceOf[Forest].attributeCount(1)
+	attrMap.toList.sortBy( a => -(a._2._1 + a._2._2)).foreach(a => System.out.println(a))
+//    for(p <- List(0.25, 0.5, 1.0, 2.0, 4.0)){
+//	    o.println("Testing... " + p)
+//	    val argsList = (for(n <- List(51, 101, 201); w <- List(1.0); 
 //    						s <- List(1, 2, 3); d <- List(Integer.MAX_VALUE.toInt)) 
 //	    			yield ((n, p.toDouble/n.toDouble, d, (1.0,w), 1.0/s.toDouble))).toList
 //	    val classifier = AbsClassifier.trainValidateTest(o)("Accuracy", AbsClassifier.accuracy, 
@@ -367,6 +372,37 @@ class Forest(val trees : List[DTNode], override val description : String) extend
     count.toList.maxBy(_._2)._1
   }
   
+  def attributeCount(depth : Int) : Map[String, (Int, Int)] = {
+    var count = 0
+    def folder(acc : Map[String, (Int, Int)], a : DTNode) ={
+      count += 1
+      DTNode.o.println("Working tree  " + count)
+      recF(List(a), 0)(acc)
+    } 
+    def recF(lst : List[DTNode], i : Int)(acc : Map[String, (Int, Int)]) : Map[String, (Int, Int)] = {
+	    def f(acc : Map[String, (Int, Int)], a : DTNode) : Map[String, (Int, Int)] = {
+	      val c = acc.getOrElse(a.f.toString(), (0,0))
+	      val c2 = a.label match{
+	        case KaggleLabel.TRUE => (c._1 + 1, c._2)
+	        case KaggleLabel.FALSE => (c._1, c._2 + 1)
+	        case _ => c
+	      }
+	      acc - a.f.toString() + ((a.f.toString(), c2))
+	    }
+	    if(i.equals(depth)){
+	          lst.foldLeft(acc)(f)
+	    } else{
+	      def splitter(acc : List[DTNode], a : DTNode) : List[DTNode] = {
+	        if(a.isInstanceOf[DTLeafNode]) acc
+	        else a.asInstanceOf[DTAttributeNode].children.toList.map(a => a._1) ::: acc
+	      }
+	      val children = lst.foldLeft(List[DTNode]())(splitter)
+	      recF(children, (i+1))(acc)
+	    }
+    }
+    trees.foldLeft(Map[String, (Int, Int)]())(folder)
+  }
+  
   override def toString : String = {
     ""
   }
@@ -382,8 +418,8 @@ class Forest(val trees : List[DTNode], override val description : String) extend
  *  
  *  f is the function that got to here. Null only for the root node
  */
-abstract class DTNode(val f : AttributeFunction, val elms : List[KaggleData], override val description : String) 
-	extends AbsClassifier(description) {
+abstract class DTNode(val f : AttributeFunction, val elms : List[KaggleData], val label : KaggleLabel.Value,
+    override val description : String) extends AbsClassifier(description) {
 
   /** Classifies the given data using this node as the root of the tree.*/
   def classify (data : KaggleData) : KaggleLabel.Value
@@ -447,8 +483,8 @@ abstract class DTNode(val f : AttributeFunction, val elms : List[KaggleData], ov
  *  and classifies all incomming data to that label.
  *  No children - returns an empty hashmap.
  */
-class DTLeafNode(override val f : AttributeFunction, val label : KaggleLabel.Value, override val elms : List[KaggleData],
-    override val description : String) extends DTNode(f, elms, description){
+class DTLeafNode(override val f : AttributeFunction, override val label : KaggleLabel.Value, override val elms : List[KaggleData],
+    override val description : String) extends DTNode(f, elms, label, description){
   
   val emptyMap : Map[DTNode, AttributeFunction] = Map()
   
@@ -517,8 +553,8 @@ class AttributeFunction(f : (KaggleData => Boolean), s : String){
  *  were the tree to end here.
  */
 class DTAttributeNode(override val f : AttributeFunction, val m : Map[DTNode, AttributeFunction], 
-    val label : KaggleLabel.Value, override val elms : List[KaggleData], override val description : String) 
-    extends DTNode(f, elms, description){
+    override val label : KaggleLabel.Value, override val elms : List[KaggleData], override val description : String) 
+    extends DTNode(f, elms, label, description){
   
   /** Passes control to child for classification. Iterates over all children
    *  and checks if any is matched with a function that accepts data.
