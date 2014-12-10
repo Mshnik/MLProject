@@ -6,6 +6,8 @@ from sklearn.datasets import load_svmlight_file
 import tempfile
 import time
 
+
+
 START = time.time()
 def gettime():
     now = time.time() - START
@@ -23,9 +25,16 @@ def get_in_str(binary,ff):
         in_str = '_'
     return in_str
 
-def get_output(binary, ff):
+def get_validation(binary, ff, test_ff):
     in_str = get_in_str(binary, ff)
-    outfile = '../data/results/output' + in_str[:-1] + '.csv'
+    if ff <> test_ff:
+        in_str += "tested_on" + get_in_str(binary,test_ff)
+    outfile = '../data/results/validation' + in_str[:-1] + '.csv'
+    return outfile
+
+def get_mecnemar_filename(binary, ff):
+    in_str = get_in_str(binary, ff)
+    outfile = '../data/results/mecnemar_' + in_str[:-1] + '.csv'
     return outfile
 
 
@@ -36,22 +45,24 @@ class Instance():
             self.test_binary = binary
         if test_ff is None:
             self.test_ff = ff
-        self.train_data_num = train_dat_num
-        self.test_data_num = test_dat_num
+        self.binary = binary
+        self.ff = ff
+        self.train_dat_num = train_dat_num
+        self.test_dat_num = test_dat_num
         self.val_dat_num = val_dat_num
         self.c = c
         self.j = j
         self.t = t
         self.b = b
         in_str = get_in_str(binary, ff)
-        test_in_str = get_in_str(test_binary,test_ff)
-        self.outfile = '../data/results/output' + in_str[:-1] + '.csv'
+        test_in_str = get_in_str(self.test_binary,test_ff)
+        self.outfile = '../data/results/validation' + in_str[:-1] + '.csv'
         in_folder =  '../data/svm' + in_str + 'norm_data/dat_'
-        self.train_file = in_folder + str(train_dat_num) +'.txt'
-        self.val_file = in_folder + str(train_dat_num) +'.txt'
-        self.test_file = '../data/svm' + test_in_str + 'norm_data/dat_' + str(test_dat_num) +'.txt'
+        self.train_file = in_folder + str(self.train_dat_num) +'.txt'
+        self.val_file = in_folder + str(self.train_dat_num) +'.txt'
+        self.test_file = '../data/svm' + test_in_str + 'norm_data/dat_' + str(self.test_dat_num) +'.txt'
         out_folder =  '../data/svm'+ in_str +'out/dat_'
-        prefix = out_folder  + str(train_dat_num)
+        prefix = out_folder  + str(self.train_dat_num)
         if c != None:
             prefix += '_c_' + str(c).replace('.','-')
         if j != None:
@@ -61,8 +72,8 @@ class Instance():
         if b != None:
             prefix += '_b_' + str(b).replace('.','-')
         self.model = prefix + '.model'
-        self.prediction = prefix + '_dat_'+ str(test_dat_num) + '.prediction'
-        self.classify_out = prefix+ '_dat_'+ str(test_dat_num)  +'_classify.out'
+        self.prediction = prefix + '_dat_'+ str(self.test_dat_num) + '.prediction'
+        self.classify_out = prefix+ '_dat_'+ str(self.test_dat_num)  +'_classify.out'
         self.kernel = None
         self.accuracy = None
         self.fp = None
@@ -74,6 +85,34 @@ class Instance():
         self.recall = None
         self.w = None
         self.sorted_w = None
+
+#This is a terrible class and should not exist
+class Training_Instance():
+    def __init__(self, train_dat_num, model, prediction, c,j, t, b, ff, binary):
+        self.train_dat_num = train_dat_num
+        self.model = model
+        self.prediction = prediction
+        self.c = c
+        self.j = j
+        self.t = t
+        self.b = b
+        self.ff = ff
+        self.binary = binary
+        self.accuracy = 0
+        self.num_instances = 0
+
+    def get_accuracy(self):
+        if self.num_instances == 0:
+            return -1
+        return self.accuracy/self.num_instances
+
+    def add_value(self, accuracy):
+        self.accuracy += accuracy
+        self.num_instances += 1
+
+    def __eq__(self, other):
+        return self.train_dat_num == other.train_dat_num and self.c == other.c and self.j == other.j and self.t == other.t \
+               and self.b == other.b and self.binary == other.binary and self.ff == other.ff
 
 class Kernel():
     def __init__(self, type, pd, pg, ps, pr, pu, hfi, num_t_docs, num_sup_vec_plus_1, threshold):
@@ -114,14 +153,14 @@ def learn(instance):
     f_tmp.close()
 
 def classify(instance):
-    if os.path.isfile(instance.prediction):
-        print "Skipping classifying " + instance.classify_out
-        return
-    output = open(instance.classify_out, 'w')
+#    if os.path.isfile(instance.prediction):
+#        print "Skipping classifying " + instance.classify_out
+#        return
+    validation = open(instance.classify_out, 'w')
     args = ('./svm_light/svm_classify', instance.test_file, instance.model, instance.prediction)
-    popen = subprocess.Popen(args, stdout=output)
+    popen = subprocess.Popen(args, stdout=validation)
     popen.wait()
-    output.close()
+    validation.close()
 
 def read_model(instance):
     f = open(instance.model, 'r')
@@ -167,9 +206,11 @@ def process(instance):
     find_results(instance)
     find_w(instance)
 
-def run(train_test_pairs, j_vals=[None], c_vals=[None], t_vals=[None], b=None, ff=False, binary=False, ONLY_EXISTING_MODELS=False):
-    output = open(get_output(binary,ff), 'ab')
-    writer = csv.writer(output)
+def run(train_test_pairs, j_vals=[None], c_vals=[None], t_vals=[None], b=None, ff=False, binary=False, test_ff = None, ONLY_EXISTING_MODELS=False):
+    if test_ff is None:
+        test_ff = ff
+    validation = open(get_validation(binary,ff,test_ff), 'ab')
+    writer = csv.writer(validation)
     for (train, val, test) in train_test_pairs:
         print "---------------------------------------------------------------------" + str(train) + "---------------" + str(test)
         for t in t_vals:
@@ -177,38 +218,77 @@ def run(train_test_pairs, j_vals=[None], c_vals=[None], t_vals=[None], b=None, f
                 print "j: " + str(j) + "\t" + gettime()
                 for c in c_vals:
                     print "c: " + str(c) + "\t" + gettime()
-                    instance = Instance(train, val, test, c=c, j=j, t=t, b=b, ff=ff,binary=binary)
+                    instance = Instance(train, val, test, c=c, j=j, t=t, b=b, ff=ff,binary=binary,test_ff=test_ff)
                     if ONLY_EXISTING_MODELS and not os.path.isfile(instance.model):
                         continue
                     process(instance)
                     row = [instance.train_file, instance.test_file, instance.j, instance.c, instance.t, instance.b, instance.fn, instance.fp, instance.accuracy, instance.precision, instance.recall, instance.f1,instance.f_ff, instance.w, instance.sorted_w]
                     writer.writerow(row)
-    output.close()
+                    INSTANCE_LIST.append(instance)  
+    validation.close()
 
 
-def logistical_regression(instance):
-    x_data, y_data = load_svmlight_file(instance.train_file)
-    #TODO
+def test(writer, binary, ff):
+    best = max([i for i in INSTANCE_LIST if i.binary == binary and i.ff == ff], key=lambda x:x.accuracy)
+    instance = Instance(best.train_dat_num,0,6,c=best.c,j=best.j,t=best.t,b=best.b,ff=ff,binary=binary)
+    process(instance)
+    row = [instance.binary, instance.ff, instance.train_file, instance.test_file, instance.j, instance.c, instance.t, instance.b, instance.fn, instance.fp, instance.accuracy, instance.precision, instance.recall, instance.f1,instance.f_ff, instance.w, instance.sorted_w]
+    writer.writerow(row)
 
+def test_average(writer, binary, ff):
+    filtered = [i for i in INSTANCE_LIST if i.binary == binary and i.ff == ff]
+    m = {}
+    for i in filtered:
+        if m.get((i.train_dat_num, i.c,i.j, i.t, i.b, i.ff, i.binary)) is None:
+            m[(i.train_dat_num, i.c,i.j, i.t, i.b, i.ff, i.binary)] = Training_Instance(i.train_dat_num,i.model,i.prediction,i.c,i.j,i.t,i.b,i.ff,i.binary)
+        else:
+            m[(i.train_dat_num, i.c,i.j, i.t, i.b, i.ff, i.binary)].add_value(i.accuracy)
+    best = max(m.values(), key=lambda x: x.get_accuracy())
+    instance = Instance(best.train_dat_num,0,VALIDATION,c=best.c,j=best.j,t=best.t,b=best.b,ff=ff,binary=binary)
+    process(instance)
+    row = [instance.binary, instance.ff, instance.train_file, instance.test_file, instance.j, instance.c, instance.t, instance.b, instance.fn, instance.fp, instance.accuracy, instance.precision, instance.recall, instance.f1,instance.f_ff, instance.w, instance.sorted_w, "AVERAGE"]
+    writer.writerow(row)
+    macnemar_test(best,instance.test_file)
 
+def macnemar_test(instance,test_file):
+    f_out = open(get_mecnemar_filename(instance.binary,instance.ff),'wb')
+    writer = csv.writer(f_out)
+    f = open(instance.prediction, 'r')
+    _, y_data = load_svmlight_file(test_file)
+    predictions = [float(x.split()[0]) for x in f.readlines()]
+    row = ['actual','assigned']
+    writer.writerow(row)
+    for (t,p) in zip(y_data,predictions):
+        row = [t,p]
+        writer.writerow(row)
+    f_out.close()
 
-
-
-
+INSTANCE_LIST = []
 DAT_NUMS = range(1,11) #TODO zero index the data files
 
+results_file = open('../data/results/results.csv','ab')
+results_writer = csv.writer(results_file)
+
 J_VALS = [.75]
-C_VALS = [50,100,200]
+C_VALS = [1, 10, 50, 100, 200, 1000]
 T_VALS = [1,2]
 B_VALS = [0,None]
-pairs = [(i,9,j) for i in range(1,3) for j in range(8,11)]
+pairs = [(i,9,j) for i in range(1,2) for j in range(8,11)]
+VALIDATION = 6
 
 
-run(pairs,c_vals=C_VALS,j_vals=J_VALS,t_vals=T_VALS, b=0,binary=False, ONLY_EXISTING_MODELS=False)
+run(pairs,c_vals=C_VALS,j_vals=J_VALS,t_vals=T_VALS, b=0,binary=False, ff= False,ONLY_EXISTING_MODELS=True)
 print "**************************************************************** A "
-run(pairs,c_vals=C_VALS,j_vals=J_VALS,t_vals=T_VALS, b=0,binary=True, ONLY_EXISTING_MODELS=False)
+run(pairs,c_vals=C_VALS,j_vals=J_VALS,t_vals=T_VALS, b=0,binary=True, ff=False, ONLY_EXISTING_MODELS=True)
 print "**************************************************************** B "
-run(pairs,c_vals=C_VALS,j_vals=J_VALS,t_vals=T_VALS, b=0, binary=True, ff=True, ONLY_EXISTING_MODELS=False)
+run(pairs,c_vals=C_VALS,j_vals=J_VALS,t_vals=T_VALS, b=0, binary=True, ff=True,  ONLY_EXISTING_MODELS=True)
 print "**************************************************************** C "
-run(pairs,c_vals=C_VALS,j_vals=J_VALS,t_vals=T_VALS, b=0,ff=True, ONLY_EXISTING_MODELS=False)
+run(pairs,c_vals=C_VALS,j_vals=J_VALS,t_vals=T_VALS, b=0,ff=True, binary=False,  ONLY_EXISTING_MODELS=True)
 print "**************************************************************** D "
+
+test_average(results_writer,True,True)
+test_average(results_writer,True,False)
+test_average(results_writer,False,True)
+test_average(results_writer,False,False)
+
+results_file.close()
