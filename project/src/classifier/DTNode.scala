@@ -32,7 +32,7 @@ object DTNode{
 //      yield ((n, 1.0/p.toDouble, d, (1.0,1.0), attributeSplits))).toList
 
     
-    val out = "data/DT_out/forest_bin_macnemar.txt"
+    val out = "data/DT_out/forest_bin_funTestULTIMATE.txt"
     System.setOut(new PrintStream(new File(out)))
     System.out.println("\nSquewed-Squewed Bin Size of Forest Test")
     trainList = ReaderWriter.readSVMData(ReaderWriter.svmBinFile(trainFil))
@@ -49,9 +49,12 @@ object DTNode{
     val arg = (201,0.009950248756218905,2147483647,(1.0,1.0),0.3333333333333333)
     val classifier = AbsClassifier.trainValidateTest(o)("Accuracy", AbsClassifier.accuracy, 
 	        trainList, validationList, testList, forestTrainer, List(arg))
-	testList.foreach(e => System.out.println(e.toClassifiedString(classifier)))
-//	val attrMap = classifier.asInstanceOf[Forest].attributeCount(1)
-//	attrMap.toList.sortBy( a => -(Math.abs(a._2._1 - a._2._2))).foreach(a => System.out.println(a))
+//	testList.foreach(e => System.out.println(e.toClassifiedString(classifier)))
+	for(d <- List(1, 2, 3)){
+	  val attrMap = classifier.asInstanceOf[Forest].attributeCount(d)
+	  attrMap.toList.sortBy( a => -a._2).foreach(a => System.out.println(a))
+	  System.out.println("\n\n")
+	}
 //    for(p <- List(0.25, 0.5, 1.0, 2.0, 4.0)){
 //	    o.println("Testing... " + p)
 //	    val argsList = (for(n <- List(51, 101, 201); w <- List(1.0); 
@@ -380,22 +383,27 @@ class Forest(val trees : List[DTNode], override val description : String) extend
     count.toList.maxBy(_._2)._1
   }
   
-  def attributeCount(depth : Int) : Map[String, (Int, Int)] = {
+  def attributeCount(depth : Int) : Map[String, Int] = {
+    def getAttr(s : String) : String = {
+      val gInd = if (s.indexOf('>') != -1) s.indexOf('>') else 9999
+      val lInd = if (s.indexOf('<') != -1) s.indexOf('<') else 9999
+      val eInd = if (s.indexOf('=') != -1) s.indexOf('=') else 9999
+      val ind = List(gInd, lInd, eInd).min
+      s.substring(5, ind)
+    }
+    
+    
     var count = 0
-    def folder(acc : Map[String, (Int, Int)], a : DTNode) ={
+    def folder(acc : Map[String, Int], a : DTNode) ={
       count += 1
       DTNode.o.println("Working tree  " + count)
       recF(List(a), 0)(acc)
     } 
-    def recF(lst : List[DTNode], i : Int)(acc : Map[String, (Int, Int)]) : Map[String, (Int, Int)] = {
-	    def f(acc : Map[String, (Int, Int)], a : DTNode) : Map[String, (Int, Int)] = {
-	      val c = acc.getOrElse(a.f.toString(), (0,0))
-	      val c2 = a.label match{
-	        case KaggleLabel.TRUE => (c._1 + 1, c._2)
-	        case KaggleLabel.FALSE => (c._1, c._2 + 1)
-	        case _ => c
-	      }
-	      acc - a.f.toString() + ((a.f.toString(), c2))
+    def recF(lst : List[DTNode], i : Int)(acc : Map[String, Int]) : Map[String, Int] = {
+	    def f(acc : Map[String, Int], a : DTNode) : Map[String, Int] = {
+	      val s = getAttr(a.f.toString())
+	      val c = acc.getOrElse(s, 0)
+	      acc - s + ((s, c + 1))
 	    }
 	    if(i.equals(depth)){
 	          lst.foldLeft(acc)(f)
@@ -408,7 +416,7 @@ class Forest(val trees : List[DTNode], override val description : String) extend
 	      recF(children, (i+1))(acc)
 	    }
     }
-    trees.foldLeft(Map[String, (Int, Int)]())(folder)
+    trees.foldLeft(Map[String, Int]())(folder)
   }
   
   override def toString : String = {

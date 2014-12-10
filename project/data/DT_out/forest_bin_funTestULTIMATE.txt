@@ -1,0 +1,63 @@
+
+Squewed-Squewed Bin Size of Forest Test
+Best Accuracy: (201,0.009950248756218905,2147483647,(1.0,1.0),0.3333333333333333) (TP, FN, FP, TN)(6571,385,2434,582)
+
+Test : (6611,366,2427,575)
+Accuracy,Recall,Precision,F1
+0.7201122356949594,0.9475419234628064,0.7314671387475105,0.825600999063378
+--------------------------------------------
+--------------------------------------------
+(Total Price),256)
+(Optional Support),42)
+(Date Posted),26)
+(Month Posted),22)
+(Latitude),14)
+(Longitude),12)
+(Prev Project By School),10)
+(Eligible For Double Your Impact) ,6)
+(Students Reached),6)
+(Year Posted),4)
+(School Charter) ,4)
+
+
+
+(Date Posted),94)
+(Longitude),92)
+(Total Price),92)
+(Month Posted),86)
+(Students Reached),86)
+(Latitude),62)
+(Prev Project By School),56)
+(Prev Projects By Teacher),30)
+(Year Posted),22)
+(Optional Support),22)
+(Teach For America) ,20)
+(Eligible For Double Your Impact) ,18)
+(School Magnet) ,12)
+(Eligible Almost Home Match) ,8)
+(School Charter) ,8)
+(School Year Round) ,6)
+
+
+
+(Month Posted),152)
+(Longitude),130)
+(Date Posted),118)
+(Students Reached),118)
+(Total Price),116)
+(Latitude),114)
+(Prev Project By School),92)
+(Year Posted),48)
+(Optional Support),38)
+(School Magnet) ,22)
+(Prev Projects By Teacher),22)
+(Eligible For Double Your Impact) ,20)
+(School Charter) ,18)
+(Eligible Almost Home Match) ,14)
+(School Year Round) ,6)
+(Teach For America) ,6)
+(Teacher NY Teaching Fellow) ,6)
+(School Nlns) ,4)
+
+
+
