@@ -81,41 +81,28 @@ For every algorithm, we ran a full train-validate-test framework. We selected tr
 \subsection{Results}
 Singleton decision trees did not achieve notable success, producing equivalent results to naively guessing positive (funded) on all instances. Random forests did produce significantly better results, however. The best Random Forest for the binarized data was achieved using full attribute selection (1.0), a 100\% training set usage, and a 201 trees (the odd number was chosen to avoid classification ties), and achieved an accuracy rate of 72.222\%. Using McNemar?s test the number of unique errors for our algorithm and the naive were 353 and 583 respectively. This gives that the probability that these two algorithms come from the same distribution is $2.69*10^{-14}$, so we concluded that these two algorithms are not from the same distribution. Hypothesis testing with a significance level of 99\% shows that the chance we would get 7207/9979 correct classifications given a success rate of $0.6991$ or less is only $1.86*10^{-7}$. Thus we rejected the null hypothesis and concluded that our algorithm does indeed have a success rate greater than the naive classification on the original binarized data. We also calculated that the true success rate of our algorithm is in the range $[.713, .731]$ with 95\% confidence.
 
-From here we ran tests to determine which of the attributes in this best performing Random Forest caused it to outperform its neighbors. Both attribute selection and training set usage were uncorrelated with any of the performance metrics. Number of trees, however, has a strong correlation with performance (accuracy). Accuracy improves when moving from a single tree towards 201 trees, then slides back towards the naive success rate of 69.8%.
-(Include Graph)
-
-Random Forests performed even better on the binarized and equalized data, vastly outperforming the naive success rate of 50\% and improving with number of trees. 
-(Include Graph)
+From here we ran tests to determine which of the attributes in this best performing Random Forest caused it to outperform its neighbors. Both attribute selection and training set usage were uncorrelated with any of the performance metrics. Number of trees, however, has a strong correlation with performance (accuracy). Accuracy improves when moving from a single tree towards 201 trees, then slides back towards the naive success rate of 69.8\%. (See fig. 1, in appendix).
+Random Forests performed even better on the binarized and equalized data, vastly outperforming the naive success rate of 50\% and improving with number of trees.  (See fig. 2, in appendix)
 
 Accuracy, Recall, and F-1 reach a peak at 51 trees, whereas Precision continues to rise until 101 trees. The peak accuracy at 64.55\% was achieved with 51 trees. McNemar?s test similarly showed that the given errors under the same distribution occur with a probability of $2.02*10^{-63}$ so we can conclude that our algorithm is not from the same distribution as the naive algorithm which classifies correctly 50\% of the time. Hypothesis testing at a significance level of 99\% similarly shows that we can achieve such success with probability virtually zero (less than $1*10^{-20}$) given that our true success rate is 50\% or less. Thus we can reject the null hypothesis and conclude that our algorithm does indeed have a success rate greater than the naive classification (50\%) on the 50/50 binarized data.
 
 In our SVM approach, we found biased hyperplanes to perform better than unbiased hyperplanes. Initially the most significant attributes were longitude, latitude, and the amount of money being requested.  We quickly noted that these were the largest values, thus caused the greatest impact within the svm algorithm. We resolved this issue by normalizing attributes across all of the data. For kernels we found that polynomial and radial basis function both worked well, but that linear and sigmoid did not fit the data. Initially when cost was 1, all values were labeled positive, thus the SVM did not learn any better than the naive approach.  We found a cost of 0.75 to work well and explored similar values such as 0.6, 0.7, 0.8. The optimal C value was dependent on the other parameters.  Our strategy was to start with 10, 100, 1000 and then do a few iterations of binary search based on the which of those values performed best. Despite the sheer magnitude of arguments we provided, however, we could not learn a significant rule using SVMlight.  
 
-After breaking down the data and analyzing subsets of the data we were able to find some interesting trends. First, the success rate of funding is correlated with the month of the year that the campaign was started with a cyclic trend. The peak of success is in December with a success rate of (INCLUDE) and the lowest rate of success comes in June with a success rate of (Include). Success in funding increases from June to December and decreases from December to June almost monotonically. These findings are shown here:
-(Include graph)
+After breaking down the data and analyzing subsets of the data we were able to find some interesting trends. First, the success rate of funding is correlated with the month of the year that the campaign was started with a cyclic trend. The peak of success is in December with a success rate of 76\% and the lowest rate of success comes in June with a success rate of 61\%. Success in funding increases from June to December and decreases from December to June almost monotonically. These findings are shown in fig 3. (See appendix).
 
-We also found that teachers with more projects tend to do better with each new project they attempt over time.
-(Include graph)
-This graph shows that the cumulative success rate of teachers increases as the number of projects they propose increases.
+We also found that teachers with more projects tend to do better with each new project they attempt over time, (See fig 4, in appendix), showing that the cumulative success rate of teachers increases as the number of projects they propose increases.
 
-A similar trend with schools was found, to a certain extent.
-(include cumulative graph)
-This graph shows that cumulative success rate of a school also improves with more projects funded, but if we look at success rate at each specific time ordered project, we see that the trend for schools is not as clear.
-
-(Include both pdf graph and inverse cumulative.)
-
-The first graph shows that there is downward trend in success rate after (INCLUDE NUMBEAR) projects have been proposed. The inverse cumulative graph sheds light on this situation and shows that attempting too many projects has some sort of negative effect on success rate.
+A similar trend with schools was found, to a certain extent. Fig 5 shows that cumulative success rate of a school also improves with more projects funded, but if we look at success rate at each specific time ordered project, we see that the trend for schools is not as clear, whereas Fig 6 shows that there is downward trend in success rate after 37 projects have been proposed. 
 
 \subsection{Discussion}
 
 The best accuracy rate for any svm we were able to achieve in any test set was $0.702$. Hypothesis testing with a significance level of 99\% showed that the chance we would get 6996/9966 correct classifications given a success rate of .699 or less (naive classification success rate) is $0.25$. Thus we cannot reject the null hypothesis, because $0.25>0.01$ and conclude that our algorithm does not necessarily have a success rate greater than the naive classification on the original binarized data. 
 
-We investigated the structure of the size 201 Random Forest that achieved the 72.222\% accuracy rate. Below is a chart counting the number of splits at depths 1, 2, and 3 that occur on each attribute.
-(Include Bar Graph)
+We investigated the structure of the size 201 Random Forest that achieved the 72.222\% accuracy rate. See fig 7 for a count of the number of splits at depths 1, 2, and 3 that occur on each attribute.
 
 From the graph, it is clear that the single most defining characteristic is, unsurprisingly, the total price of the project. More investigation into this revealed that more expensive projects are less likely to be funded. The second most important attribute is the month during which the project is posted, affirming that the cyclical time trend discussed above does have predictive power over the funding of a project.
 
-\section{4. Related Work}
+\section{Related Work}
 In our background readings we found that many people were doing post-mortem analysis of crowdfunding campaigns and looking for metrics to predict success after the project has already started. Vincent Etter, Matthias Grossglauser, Patrick Thiran (http://goo.gl/gWXrtf) looked into modelling the amount of money as a HMM and using KNN to find past projects at a similar state, tracking social media activity around a specific campaign, and graphing the other projects that the backers participated in. They found that the best way of predicting success at a given interval of time was to train a SVM that pulled from the results of modelling the donations and the social media activity. Professor Mollick (http://goo.gl/Pnyu8) tried to understand crowd funding through an analytical perspective and found that the strength of a person?s social network had a major effect in how successful the project was. 
 
 Our work differs from these papers because we?re focusing on what the creators can do to maximize their chance of getting funded as opposed to predicting success once a project has started. We are also using different mechanics to solve our problem than this related work since we?re using machine learning algorithms to extract insights from the data instead of using the data as a basis for future prediction. We?re confident that this approach will yield more meaningful results to the crowdfunding community since we?ll be able to deliver actionable insights instead of statistical significance.
@@ -126,9 +113,33 @@ Although we were able to achieve significant improvements at classifying data fr
 \section{Conclusion} 
 Overall, developing a hypothesis that would classify our data significantly better than a naive classifier proved difficult. After cleaning our dataset we were able to successfully predict if a project would be funded or not with 72.22\% accuracy and are 95\% confident that the actual success rate is in the range 71.3\% to 73.1\%, using the random forest algorithm. Based on those results we were able to conclude that teachers who want to maximize their chance of being funded should ask for as little as money as possible, and launch their project between June and December. We hope these results will encourage other researchers to examine the initial characteristics of crowdfunding projects more closely and hopefully we can find more insights that can help teachers and creators of these projects improve their odds of getting funded. 
 
-Resources
-scikit-learn
-svmlight
-scipy
+\section{Appendix}
+
+Fig 1:\\
+\includegraphics[width=\textwidth / 2]{Forest1.png}
+\\\\
+Fig 2: \\
+\includegraphics[width=\textwidth / 2]{Forest2.png}
+\\\\
+Fig 3:\\
+\includegraphics[width=\textwidth / 2]{OverTimeSuccess.png}
+\\\\
+Fig 4:\\
+\includegraphics[width=\textwidth / 2]{TeacherSuccess.png}
+\\\\
+Fig 5:\\
+\includegraphics[width=\textwidth / 2]{SchoolSuccess.png}
+\\\\
+Fig 6:\\
+\includegraphics[width=\textwidth / 2]{SchoolSuccessCumulative.png}
+\newpage
+Fig 7:\\
+\includegraphics[width=\textwidth]{Forest3.png}
+
+\begin{thebibliography}{3} 
+\bibitem{scikit} Fabian Pedregosa, Gaël Varoquaux, Alexandre Gramfort, Vincent Michel, Bertrand Thirion, Olivier Grisel, Mathieu Blondel, Peter Prettenhofer, Ron Weiss, Vincent Dubourg, Jake Vanderplas, Alexandre Passos, David Cournapeau, Matthieu Brucher, Matthieu Perrot, Édouard Duchesnay. \emph{Scikit-learn: Machine Learning in Python}, Journal of Machine Learning Research, 12, 2825-2830 (2011) 
+\bibitem{scipy}Jones E, Oliphant E, Peterson P, et al. \emph{SciPy: Open Source Scientific Tools for Python}, 2001-, \url{http://www.scipy.org/} [Online; accessed 2014-12-11].
+\bibitem{svm} T. Joachims, Making large-Scale SVM Learning Practical. Advances in Kernel Methods - Support Vector Learning, B. Schölkopf and C. Burges and A. Smola (ed.), MIT-Press, 1999. 
+\end{thebibliography}
 
 \end{document} 
